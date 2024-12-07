@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 {
+  # Enable git.
   programs.git.enable = true;
-  programs.lazygit.enable = true;
 
   environment.systemPackages = with pkgs; [
     # Compiler stuff.

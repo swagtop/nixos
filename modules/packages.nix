@@ -1,7 +1,7 @@
 { pkgs, ... }: 
 
 {
-  # Global packages.
+  # Generally useful packages.
   environment.systemPackages = with pkgs; [
     # Zipping.
     zip
@@ -10,11 +10,7 @@
     # Etc.
     keyd
     wget
+    curl
     flatpak
-    wayland
-    xwayland
-    wayland-protocols
-    linux-firmware
   ];
-
 }

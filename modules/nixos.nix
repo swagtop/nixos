@@ -1,8 +1,10 @@
 { pkgs, ... }:
 
 {
+  # Set system to auto update and upgrade flake.
   system.autoUpgrade = {
     enable = true;
+    flake = "$(config.users.users.thedb.home)/.config/flake";
     flags = [
       "--update-input"
       "nixpkgs"
@@ -25,6 +27,7 @@
     };
   }; 
 
+  # Useful Nix commands.
   environment.systemPackages = with pkgs; [
     nix-search-cli
     nix-index

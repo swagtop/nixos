@@ -6,8 +6,7 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs@{ 
-    self, 
+  outputs = { 
     nixpkgs, 
     nixpkgs-unstable, 
     ... 

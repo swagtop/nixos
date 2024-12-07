@@ -1,20 +1,26 @@
 { pkgs, ... }:
 
 {
+  # TUI file manager / filesystem navigator.
   programs.yazi = {
     enable = true;
   };
 
   environment.systemPackages = with pkgs; [
+    # Pseudo-ide combo.
     zellij
     helix
 
+    # TUI git manager.
     lazygit
 
+    # ISO image burner.
+    caligula
+
+    # Fluff.
+    fastfetch
     pipes
     btop
-
-    caligula
   ];
 
   # Bash aliases.
@@ -32,8 +38,12 @@
     pipes = "pipes.sh -t 0 -c 1 -c 2 -c 3 -c 4 -c 5 -c 6 -c";
   };
 
-  # Green, red prompts for users and root.
+  # First, green, red prompts for users and root.
+  # Second, bash function enabling filesystem navigation with yazi.
   programs.bash.promptInit = ''
+
+    # First
+
     if [ "$EUID" -ne 0 ]
     then
       # Root, red prompt
@@ -43,7 +53,8 @@
       PS1='\[\e[1;31m\]\u \w £ \[\e[0;0m\]'
     fi
 
-    # Enable directory navigation with Yazi.
+    # Second
+
     function y() {
     	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     	yazi "$@" --cwd-file="$tmp"
@@ -57,6 +68,7 @@
      }
   '';
 
+  # Set Helix as default editor.
   environment.variables = {
     EDITOR = "hx";
   };

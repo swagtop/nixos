@@ -1,5 +1,6 @@
 { pkgs, lib, ... }:
 
+# Define preferred GNOME settings.
 let 
   gnomeSettings = [{
     settings = {
@@ -33,20 +34,31 @@ in
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-  # Use GNOME settings.
+  # Use preferred GNOME settings.
   programs.dconf.profiles.user.databases = gnomeSettings;
   programs.dconf.profiles.gdm.databases = gnomeSettings;
   environment.variables = {
     GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
   };
 
+  # Enable web browser.
   programs.firefox.enable = true;
  
   environment.systemPackages = with pkgs; [
     # Terminal emulator.
     alacritty
+
+    # Disk utility.
     gparted
+
+    # Libadwaita theme for legary GTK-3 applications.
     adw-gtk3
+
+    # Wayland and other useful packages.
+    wayland
+    xwayland
+    wayland-protocols
+    linux-firmware
   ];
 
   # Extra fonts.

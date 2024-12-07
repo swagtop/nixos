@@ -9,6 +9,7 @@
   # Compile all packages locally.
   # nix.settings.substitute = false;
 
+
   # Allow unfree packages.
   nixpkgs.config.allowUnfree = true;
 

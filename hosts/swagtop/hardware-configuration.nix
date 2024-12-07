@@ -4,11 +4,9 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  networking.hostName = lib.mkForce "swagtop";
-
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports = [ 
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "uas" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];

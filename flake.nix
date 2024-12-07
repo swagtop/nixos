@@ -19,11 +19,14 @@
         modules = [ 
           # ({ pkgs, ... }: { nixpkgs.config.allowUnfree = true; })
           ./hosts/gamebeast/configuration.nix 
-          ./modules/packages.nix
-          ./modules/gnome.nix
-          ./modules/bash.nix
           ./modules/nixos.nix
           ./modules/linker.nix
+
+          ./modules/packages.nix
+
+          ./modules/gnome.nix
+          ./modules/dev.nix
+          ./modules/tui.nix
         ];
         specialArgs = {
           nixpkgs-unstable = import nixpkgs-unstable {
@@ -37,11 +40,14 @@
         modules = [ 
           # ({ pkgs, ... }: { nixpkgs.config.allowUnfree = true; })
           ./hosts/swagtop/configuration.nix 
-          ./modules/packages.nix
-          ./modules/gnome.nix
-          ./modules/bash.nix
           ./modules/nixos.nix
           ./modules/linker.nix
+
+          ./modules/packages.nix
+
+          ./modules/gnome.nix
+          ./modules/dev.nix
+          ./modules/tui.nix
         ];
         specialArgs = {
           nixpkgs-unstable = import nixpkgs-unstable {

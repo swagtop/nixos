@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ pkgs, lib, ... }:
 
 let 
   gnomeSettings = [{
@@ -39,4 +39,18 @@ in
   environment.variables = {
     GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
   };
+
+  programs.firefox.enable = true;
+ 
+  environment.systemPackages = with pkgs; [
+    # Terminal emulator.
+    alacritty
+    gparted
+    adw-gtk3
+  ];
+
+  # Extra fonts.
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "Hack" ]; })
+  ];
 }

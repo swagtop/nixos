@@ -23,6 +23,7 @@
           ./modules/gnome.nix
           ./modules/bash.nix
           ./modules/nixos.nix
+          ./modules/linker.nix
         ];
         specialArgs = {
           nixpkgs-unstable = import nixpkgs-unstable {
@@ -40,6 +41,7 @@
           ./modules/gnome.nix
           ./modules/bash.nix
           ./modules/nixos.nix
+          ./modules/linker.nix
         ];
         specialArgs = {
           nixpkgs-unstable = import nixpkgs-unstable {

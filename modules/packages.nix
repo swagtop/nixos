@@ -11,6 +11,6 @@
     keyd
     wget
     curl
-    flatpak
+    speedtest-cli
   ];
 }

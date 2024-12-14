@@ -30,6 +30,7 @@
     (python312.withPackages (ps: with ps; [
       pyyaml
       python-lsp-ruff
+      requests
     ]))
 
     # Github authenticator.

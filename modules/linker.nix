@@ -1,5 +1,4 @@
 { pkgs, ... }:
-
 {
   # Enable dynamic linking.
   programs.nix-ld.enable = true;
@@ -7,6 +6,7 @@
     # Bevy dependencies
     alsa-utils
     alsa-lib
+    libsndfile
     pkg-config
     udev
     libudev0-shim
@@ -15,6 +15,12 @@
     xorg.libXrandr
     xorg.libXcursor
     xorg.libXi
+    xorg.libSM
+    xorg.libICE
+    xorg.libXext
+    libGL
+    freetype
+    libstdcxx5
     rustup
     steam-run
     stdenv.cc.cc.lib

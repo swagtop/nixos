@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ unstable, pkgs, lib, ... }:
 
 # Define preferred GNOME settings.
 let 
@@ -30,6 +30,8 @@ let
   }];
 in
 {
+  nixpkgs.config.allowUnfree = true;
+
   # Enable GNOME, GDM.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
@@ -46,13 +48,16 @@ in
  
   environment.systemPackages = with pkgs; [
     # Terminal emulator.
-    alacritty
+    unstable.alacritty
 
     # Disk utility.
     gparted
 
     # Libadwaita theme for legary GTK-3 applications.
     adw-gtk3
+
+    # Media.
+    vlc
 
     # Wayland and other useful packages.
     wayland

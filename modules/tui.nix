@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ unstable, pkgs, ... }:
 
 {
   # TUI file manager / filesystem navigator.
@@ -8,8 +8,8 @@
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
-    zellij
-    helix
+    unstable.zellij
+    unstable.helix
 
     # TUI git manager.
     lazygit

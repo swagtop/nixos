@@ -80,7 +80,13 @@
   users.users.thedb = {
     isNormalUser = true;
     description = "thedb";
-    extraGroups = [ "networkmanager" "wheel" "keyd" ];
+    extraGroups = [ 
+      "networkmanager" 
+      "wheel" 
+      "keyd" 
+      "realtime" 
+      "audio" 
+    ];
     packages = with pkgs; [
     #  thunderbird
     ];

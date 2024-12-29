@@ -4,27 +4,29 @@ let
     name = "bitwig-fhs-env";
     targetPkgs = pkgs: with pkgs; [
       # Add any other dependencies that might be required
-      unstable.bitwig-studio
-      alsa-utils
       alsa-lib
-      libsndfile
-      udev
-      libudev0-shim
-      vulkan-loader
-      pkg-config
-      xorg.libX11
-      xorg.libXrandr
-      xorg.libXcursor
-      xorg.libXi
-      xorg.libSM
-      xorg.libICE
-      xorg.libXext
-      libGL
-      libstdcxx5
+      alsa-utils
+      fontconfig
       freetype
+      libGL
+      libsndfile
+      libstdcxx5
+      libudev0-shim
+      pkg-config
+      udev
+      unstable.bitwig-studio
+      vulkan-loader
       wayland
-      xwayland
       wayland-protocols
+      xorg.libICE
+      xorg.libSM
+      xorg.libX11
+      xorg.libXcursor
+      xorg.libXext
+      xorg.libXi
+      xorg.libXrandr
+      xwayland
+      zlib
     ];
     runScript = "${unstable.bitwig-studio}/bin/bitwig-studio";
   };

@@ -68,6 +68,14 @@ in
 
   # Extra fonts.
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "Hack" "CascadiaCode" "Recursive" ]; })
+    (nerdfonts.override { 
+      fonts = [ 
+        "Hack" 
+        "CascadiaCode" 
+        "CascadiaMono"
+        "Recursive" 
+        "0xProto"
+      ]; 
+    })
   ];
 }

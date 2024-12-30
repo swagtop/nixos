@@ -51,8 +51,23 @@
   };
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver = {
+    enable = true;
+    videoDrivers = [ "amdgpu" ];
+  };
   services.libinput.enable = true;
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      amdvlk
+      vulkan-loader
+      vulkan-validation-layers
+      vulkan-extension-layer
+    ];
+  };
+  hardware.amdgpu.amdvlk.enable = true;
+  services.udev.enable = true;
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -108,6 +123,7 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
   services.dbus.enable = true;
+  services.geoclue2.enable = false;
 
   services.keyd = {
     enable = true;

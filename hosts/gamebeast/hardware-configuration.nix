@@ -9,12 +9,18 @@
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  
+  # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
+  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.kernelModules = [ "kvm-intel" "amdgpu" ];
   boot.extraModulePackages = [ ];
+  boot.blacklistedKernelModules = [ "radeon" ];
   boot.kernelParams = [
     "radeon.cik_support=0"
+    "radeon.si_support=0"
     "amdgpu.cik_support=1"
+    "amdgpu.si_support=1"
+    "amdgpu.dc=1"
   ];
 
   fileSystems."/" =

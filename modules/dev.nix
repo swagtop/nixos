@@ -35,6 +35,9 @@
 
     # Github authenticator.
     gh
+
+    # GPU Tooling
+    vulkan-tools
   ];
 
   # Bash aliases.

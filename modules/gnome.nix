@@ -50,6 +50,9 @@ in
     # Terminal emulator.
     unstable.alacritty
 
+    # 3D editor.
+    unstable.blender
+
     # Disk utility.
     gparted
 

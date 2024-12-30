@@ -3,7 +3,7 @@ let
   bitwig-fhs = pkgs.buildFHSUserEnv {
     name = "bitwig-fhs-env";
     targetPkgs = pkgs: with pkgs; [
-      # Add any other dependencies that might be required
+      # Depencencies that loaded plugins may need.
       alsa-lib
       alsa-utils
       fontconfig
@@ -49,8 +49,8 @@ in
     [Desktop Entry]
     Name=Bitwig Studio
     Comment=Music Production Software
-    Exec=${pkgs.writeShellScriptBin "bitwig-fhs" "${bitwig-fhs}/bin/bitwig-fhs-env"}
-    Icon=${unstable.bitwig-studio}/share/icons/hicolor/512x512/apps/bitwig.png
+    Exec="${bitwig-fhs}/bin/bitwig-fhs-env"}
+    Icon=${unstable.bitwig-studio}/share/icons/hicolor/128x128/apps/com.bitwig.BitwigStudio.png
     Terminal=false
     Type=Application
     Categories=AudioVideo;Audio;Music;Multimedia;

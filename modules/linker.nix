@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ unstable, pkgs, ... }:
 {
    # Enable dynamic linking.
   programs.nix-ld.enable = true;
@@ -7,15 +7,16 @@
     alsa-lib
     alsa-utils
     freetype
-    glibc.dev
+    unstable.glibc.dev
+    unstable.gcc14
     libGL
     libsndfile
-    libstdcxx5
+    # libstdcxx5
     libudev0-shim
     libudev-zero
     libxkbcommon
     pkg-config
-    stdenv.cc.cc.lib
+    unstable.stdenv.cc.cc.lib
     steam-run
     udev
     vulkan-loader

@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ unstable, pkgs, ... }:
 
 {
   imports =
@@ -56,16 +56,31 @@
     videoDrivers = [ "amdgpu" ];
   };
   services.libinput.enable = true;
+  hardware.enableAllFirmware = true;
+  hardware.enableRedistributableFirmware = true;
   hardware.graphics = {
     enable = true;
-    extraPackages = with pkgs; [
-      amdvlk
+    extraPackages = with unstable; [
+      gcc14
       vulkan-loader
       vulkan-validation-layers
       vulkan-extension-layer
     ];
   };
-  hardware.amdgpu.amdvlk.enable = true;
+  hardware.amdgpu.legacySupport.enable = true;
+  hardware.amdgpu.amdvlk = {
+    enable = true; 
+    package = unstable.amdvlk;
+    settings = {
+      AllowVkPipelineCachingToDisk = 1;
+      EnableVmAlwaysValid = 1;
+      IFH = 0;
+      IdleAfterSubmitGpuMask = 1;
+      ShaderCacheMode = 1;
+    };
+    support32Bit.enable = true;
+  };
+  environment.variables.AMD_VULKAN_ICD = "RADV";
   services.udev.enable = true;
 
 
@@ -142,14 +157,22 @@
   systemd.services.flatpak-repo = {
     wantedBy = [ "multi-user.target" ];
     path = [ pkgs.flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists \
-      flathub https://flathub.org/repo/flathub.flatpakrepo
-    '';
+    # script = ''
+    #   flatpak remote-add --if-not-exists \
+    #   flathub https://flathub.org/repo/flathub.flatpakrepo
+    # '';
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 8000 ];
+  networking.firewall.allowedTCPPorts = [ 
+    8000 
+    16261
+    16262
+  ];
+  networking.firewall.allowedUDPPorts = [ 
+    16261
+    16262
+  ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

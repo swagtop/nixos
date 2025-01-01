@@ -4,26 +4,22 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    # nix-ld.url = "github:nix-community/nix-ld";
-    # nix-ld.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { 
     nixpkgs, 
     unstable, 
-    # nix-ld,
     ... 
   }: {
-
     nixosConfigurations = {
       gamebeast = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         modules = [ 
           # ({ pkgs, ... }: { nixpkgs.config.allowUnfree = true; })
-          # nix-ld.nixosModules.nix-ld
           ./hosts/gamebeast/configuration.nix 
+          ./hosts/gamebeast/hardware-configuration.nix 
           ./modules/nixos.nix
-          ./modules/linker.nix
+          # ./modules/linker.nix
 
           ./modules/packages.nix
 
@@ -31,7 +27,6 @@
           ./modules/music.nix
           ./modules/dev.nix
           ./modules/tui.nix
-          # { programs.nix-ld.dev.enable = true; }
         ];
         specialArgs = {
           unstable = import unstable {
@@ -46,7 +41,7 @@
           # ({ pkgs, ... }: { nixpkgs.config.allowUnfree = true; })
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
-          # ./modules/linker.nix
+          ./modules/linker.nix
 
           ./modules/packages.nix
 

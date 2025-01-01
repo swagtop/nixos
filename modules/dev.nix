@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-
+{ unstable, pkgs, ... }:
 {
   # Enable git.
   programs.git.enable = true;
@@ -8,9 +7,9 @@
     # Compiler stuff.
     gnumake
     rustup
-    gcc
+    unstable.gcc14
     pkg-config
-    glibc.dev
+    unstable.glibc.dev
 
     # Language servers and co.
     rust-analyzer

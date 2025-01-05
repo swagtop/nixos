@@ -60,8 +60,7 @@
   hardware.enableRedistributableFirmware = true;
   hardware.graphics = {
     enable = true;
-    extraPackages = with unstable; [
-      gcc14
+    extraPackages = with pkgs; [
       vulkan-loader
       vulkan-validation-layers
       vulkan-extension-layer

@@ -35,6 +35,7 @@ in
   # Enable GNOME, GDM.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  programs.sway.enable = true;
 
   # Use preferred GNOME settings.
   programs.dconf.profiles.user.databases = gnomeSettings;
@@ -51,7 +52,7 @@ in
     unstable.alacritty
 
     # 3D editor.
-    unstable.blender
+    blender-hip
 
     # Disk utility.
     gparted
@@ -67,6 +68,7 @@ in
     xwayland
     wayland-protocols
     linux-firmware
+    pairdrop
   ];
 
   # Extra fonts.
@@ -80,5 +82,6 @@ in
         "0xProto"
       ]; 
     })
+    texlivePackages.latex-fonts
   ];
 }

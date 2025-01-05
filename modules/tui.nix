@@ -46,11 +46,11 @@
 
     if [ "$EUID" -ne 0 ]
     then
-      # Root, red prompt
-      PS1='\[\e[1;32m\]\u \w € \[\e[0;0m\]'
-    else
       # Normal user, green prompt
-      PS1='\[\e[1;31m\]\u \w £ \[\e[0;0m\]'
+      PS1='\[\e[1;32m\]\u \[\e[1;33m\]$DEV_SHELL\[\e[1;32m\]\w € \[\e[0;0m\]'
+    else
+      # Root, red prompt
+      PS1='\[\e[1;31m\]\u \[\e[1;33m\]$DEV_SHELL\[\e[1;31m\]\w £ \[\e[0;0m\]'
     fi
 
     # Second

@@ -17,6 +17,7 @@
     lldb
     nil
     bash-language-server
+    tinymist
 
     # Software development tools.
     man-pages

@@ -38,7 +38,7 @@ in
     bitwig-fhs
     yabridge
     yabridgectl
-    wineWow64Packages.full
+    wineWow64Packages.base
     libsndfile
     # unstable.vital
     desktop-file-utils

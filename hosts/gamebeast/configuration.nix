@@ -82,6 +82,10 @@
   environment.variables.AMD_VULKAN_ICD = "RADV";
   services.udev.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    libvirt
+  ];
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -115,6 +119,7 @@
       "keyd" 
       "realtime" 
       "audio" 
+      "libvirtd"
     ];
     packages = with pkgs; [
     #  thunderbird
@@ -133,6 +138,10 @@
   # };
 
   # List services that you want to enable:
+  programs.virt-manager.enable = true;
+
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;

@@ -12,7 +12,7 @@
   
   # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
   boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ "kvm-intel" "amdgpu" ];
+  boot.kernelModules = [ "kvm" "kvm-intel" "amdgpu" ];
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "radeon" ];
   boot.kernelParams = [

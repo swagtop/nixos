@@ -33,8 +33,13 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Enable GNOME, GDM.
-  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm = {
+    enable = true;
+    wayland = true;
+  };
   services.xserver.desktopManager.gnome.enable = true;
+  programs.xwayland.enable = true;
+
   programs.sway.enable = true;
 
   # Use preferred GNOME settings.

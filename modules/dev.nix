@@ -6,7 +6,7 @@
   environment.systemPackages = with pkgs; [
     # Compiler stuff.
     gnumake
-    rustup
+    # rustup
     unstable.gcc14
     pkg-config
     unstable.glibc.dev
@@ -24,6 +24,7 @@
     man-pages-posix
     valgrind
     steam-run
+    libtree
 
     # Python and its packages, relevant tools.
     uv

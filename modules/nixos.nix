@@ -28,10 +28,12 @@
   }; 
 
   # Useful Nix commands.
-  environment.systemPackages = with pkgs; [
-    nix-search-cli
-    nix-index
-  ];
+  environment = {
+    systemPackages = with pkgs; [
+      nix-search-cli
+      nix-index
+    ];
+  }; 
 
   # Bash aliases.
   programs.bash.shellAliases = {
@@ -41,12 +43,8 @@
     # Rebuild.
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
-    # Edit config, hardware config, and modules.
-    ec = "$EDITOR /etc/nixos/hosts/$(hostname)/configuration.nix";
-    ehc = "$EDITOR /etc/nixos/hosts/$(hostname)/hardware-configuration.nix";
-    ep = "$EDITOR /etc/nixos/modules/packages.nix";
-    eb = "$EDITOR /etc/nixos/modules/bash.nix";
-    en = "$EDITOR /etc/nixos/modules/nixos.nix";
+    # 'Edit flake'. Go to /etc/nixos as root.
+    ef = "/bin/sh -c 'cd /etc/nixos; su'";
 
     # Nix commands.
     ns = "nix-shell";

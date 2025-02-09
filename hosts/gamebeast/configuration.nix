@@ -60,16 +60,22 @@
   hardware.enableRedistributableFirmware = true;
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [
+      amdvlk
       vulkan-loader
       vulkan-validation-layers
       vulkan-extension-layer
+      libvdpau-va-gl
+      intel-media-driver
+      mesa.opencl
+      rocmPackages.clr.icd
     ];
   };
   hardware.amdgpu.legacySupport.enable = true;
   hardware.amdgpu.amdvlk = {
     enable = true; 
-    package = unstable.amdvlk;
+    package = pkgs.amdvlk;
     settings = {
       AllowVkPipelineCachingToDisk = 1;
       EnableVmAlwaysValid = 1;
@@ -79,7 +85,12 @@
     };
     support32Bit.enable = true;
   };
-  environment.variables.AMD_VULKAN_ICD = "RADV";
+
+  environment.variables = {
+    AMD_VULKAN_ICD = "RADV";
+    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+    ROC_ENABLE_PRE_VEGA = "1";
+  };
   services.udev.enable = true;
 
   environment.systemPackages = with pkgs; [
@@ -108,6 +119,7 @@
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
   };
+  programs.dconf.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.thedb = {
@@ -119,6 +131,7 @@
       "keyd" 
       "realtime" 
       "audio" 
+      "video" 
       "libvirtd"
     ];
     packages = with pkgs; [
@@ -140,7 +153,9 @@
   # List services that you want to enable:
   programs.virt-manager.enable = true;
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+  };
   virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable the OpenSSH daemon.

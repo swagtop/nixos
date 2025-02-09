@@ -4,7 +4,7 @@
   # Set system to auto update and upgrade flake.
   system.autoUpgrade = {
     enable = true;
-    flake = "$(config.users.users.thedb.home)/.config/flake";
+    flake = "/etc/nixos";
     flags = [
       "--update-input"
       "nixpkgs"
@@ -36,17 +36,17 @@
   # Bash aliases.
   programs.bash.shellAliases = {
     # Update.
-    ud = "sudo nix flake update --flake ~/.config/flake";
+    ud = "sudo nix flake update --flake /etc/nixos";
 
     # Rebuild.
-    rb = "sudo nixos-rebuild switch --flake ~/.config/flake";
+    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # Edit config, hardware config, and modules.
-    ec = "$EDITOR ~/.config/flake/hosts/$(hostname)/configuration.nix";
-    ehc = "$EDITOR ~/.config/flake/hosts/$(hostname)/hardware-configuration.nix";
-    ep = "$EDITOR ~/.config/flake/modules/packages.nix";
-    eb = "$EDITOR ~/.config/flake/modules/bash.nix";
-    en = "$EDITOR ~/.config/flake/modules/nixos.nix";
+    ec = "$EDITOR /etc/nixos/hosts/$(hostname)/configuration.nix";
+    ehc = "$EDITOR /etc/nixos/hosts/$(hostname)/hardware-configuration.nix";
+    ep = "$EDITOR /etc/nixos/modules/packages.nix";
+    eb = "$EDITOR /etc/nixos/modules/bash.nix";
+    en = "$EDITOR /etc/nixos/modules/nixos.nix";
 
     # Nix commands.
     ns = "nix-shell";

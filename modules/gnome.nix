@@ -56,8 +56,9 @@ in
     # Terminal emulator.
     unstable.alacritty
 
-    # 3D editor.
+    # Graphics.
     blender-hip
+    inkscape
 
     # Disk utility.
     gparted

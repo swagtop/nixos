@@ -59,6 +59,7 @@ in
     # Graphics.
     blender-hip
     inkscape
+    typst
 
     # Disk utility.
     gparted

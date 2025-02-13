@@ -22,8 +22,8 @@
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;  
     
-  # Get latest Linux kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Kernel.
+  boot.kernelPackages = pkgs.linuxPackages;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

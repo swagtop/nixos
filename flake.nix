@@ -56,6 +56,24 @@
           };
         };
       };
+      servtop = nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        modules = [ 
+          ./hosts/servtop/configuration.nix 
+          ./modules/nixos.nix
+
+          ./modules/packages.nix
+
+          ./modules/dev.nix
+          ./modules/tui.nix
+        ];
+        specialArgs = {
+          unstable = import unstable {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        };
+      };
     };
   };
 }

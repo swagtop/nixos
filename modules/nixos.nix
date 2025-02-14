@@ -48,8 +48,8 @@
 
     # Nix commands.
     ns = "nix-shell";
+    nd = "nix develop";
     ni = "nix-index";
     nl = "nix-locate";
-    nd = "nix develop";
   };
 }

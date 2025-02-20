@@ -19,6 +19,8 @@
     nil
     bash-language-server
     tinymist
+    vscode-langservers-extracted
+    typescript-language-server
 
     # Software development tools.
     man-pages

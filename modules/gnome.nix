@@ -78,6 +78,12 @@ in
     pairdrop
   ];
 
+
+  programs.bash.shellAliases = {
+    # Open nautilus in current directory.
+    naut = "nautilus .";
+  };
+
   # Extra fonts.
   fonts.packages = with pkgs; [
     (nerdfonts.override { 

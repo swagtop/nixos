@@ -12,14 +12,15 @@
   }: 
   let
     system = "x86_64-linux";
+    lib = nixpkgs.lib;
     unstable = import nixpkgs-unstable {
       inherit system;
       config.allowUnfree = true;
     };
   in {
     nixosConfigurations = {
-      gamebeast = nixpkgs.lib.nixosSystem rec {
-        specialArgs = { inherit system; inherit unstable; };
+      gamebeast = lib.nixosSystem {
+        specialArgs = { inherit system unstable; };
         modules = [ 
           ./hosts/gamebeast/configuration.nix 
           ./hosts/gamebeast/hardware-configuration.nix 
@@ -34,8 +35,8 @@
           ./modules/tui.nix
         ];
       };
-      swagtop = nixpkgs.lib.nixosSystem rec {
-        specialArgs = { inherit system; inherit unstable; };
+      swagtop = lib.nixosSystem {
+        specialArgs = { inherit system unstable; };
         modules = [ 
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
@@ -48,8 +49,8 @@
           ./modules/tui.nix
         ];
       };
-      servtop = nixpkgs.lib.nixosSystem rec {
-        specialArgs = { inherit system; inherit unstable; };
+      servtop = lib.nixosSystem {
+        specialArgs = { inherit system unstable; };
         modules = [ 
           ./hosts/servtop/configuration.nix 
           ./modules/nixos.nix

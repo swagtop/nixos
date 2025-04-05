@@ -28,6 +28,11 @@ let
       };
     };
   }];
+
+  shellAliases = {
+    # Open nautilus in current directory.
+    naut = "nautilus .";
+  };
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -64,7 +69,7 @@ in
     # Disk utility.
     gparted
 
-    # Libadwaita theme for legary GTK-3 applications.
+    # Libadwaita theme for legacy GTK-3 applications.
     adw-gtk3
 
     # Media.
@@ -75,14 +80,9 @@ in
     xwayland
     wayland-protocols
     linux-firmware
-    pairdrop
   ];
 
-
-  programs.bash.shellAliases = {
-    # Open nautilus in current directory.
-    naut = "nautilus .";
-  };
+  programs.bash.shellAliases = shellAliases;
 
   # Extra fonts.
   fonts.packages = with pkgs; [

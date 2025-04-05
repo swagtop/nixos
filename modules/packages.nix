@@ -12,5 +12,6 @@
     wget
     curl
     speedtest-cli
+    file
   ];
 }

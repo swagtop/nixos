@@ -1,4 +1,14 @@
-{ unstable, pkgs, ... }:
+{ config, pkgs, ... }:
+
+let
+  shellAliases = {
+    # Python.
+    py = "python";
+
+    # Activate python venv.
+    venv = "source .venv/bin/activate";
+  };
+in
 {
   # Enable git.
   programs.git.enable = true;
@@ -7,13 +17,9 @@
     # Compiler stuff.
     gnumake
 
-    # rustup
-    unstable.gcc14
     pkg-config
-    unstable.glibc.dev
 
     # Language servers and co.
-    rust-analyzer
     clang-tools
     lldb
     nil
@@ -43,14 +49,11 @@
 
     # GPU Tooling
     vulkan-tools
+
+    # GPU TOoling
+    config.boot.kernelPackages.perf
   ];
 
   # Bash aliases.
-  programs.bash.shellAliases = {
-    # Python.
-    py = "python";
-
-    # Activate python venv.
-    venv = "source .venv/bin/activate";
-  };
+  programs.bash.shellAliases = shellAliases;
 }

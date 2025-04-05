@@ -6,7 +6,7 @@ let
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
-  shellPrompt = ''
+  promptInit = ''
     if [ "$EUID" -ne 0 ]
     then
       # Normal user, green prompt
@@ -80,11 +80,7 @@ in {
 
   # Add shell aliases.
   programs.bash = {
-    promptInit = shellPrompt;
-    shellAliases = shellAliases;
-  };
-  programs.zsh = {
-    promptInit = shellPrompt;
+    promptInit = promptInit;
     shellAliases = shellAliases;
   };
 

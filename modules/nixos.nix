@@ -1,5 +1,23 @@
 { pkgs, ... }:
 
+let
+  shellAliases = {
+    # Update.
+    ud = "sudo nix flake update --flake /etc/nixos";
+
+    # Rebuild.
+    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
+
+    # 'Edit flake'. Go to /etc/nixos as root.
+    ef = "/bin/sh -c 'cd /etc/nixos; su'";
+
+    # Nix commands.
+    ns = "nix-shell";
+    nd = "nix develop";
+    ni = "nix-index";
+    nl = "nix-locate";
+  };
+in
 {
   # Set system to auto update and upgrade flake.
   system.autoUpgrade = {
@@ -36,20 +54,5 @@
   }; 
 
   # Bash aliases.
-  programs.bash.shellAliases = {
-    # Update.
-    ud = "sudo nix flake update --flake /etc/nixos";
-
-    # Rebuild.
-    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
-
-    # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "/bin/sh -c 'cd /etc/nixos; su'";
-
-    # Nix commands.
-    ns = "nix-shell";
-    nd = "nix develop";
-    ni = "nix-index";
-    nl = "nix-locate";
-  };
+  programs.bash.shellAliases = shellAliases;
 }

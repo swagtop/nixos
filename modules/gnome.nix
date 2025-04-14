@@ -1,4 +1,4 @@
-{ unstable, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 # Define preferred GNOME settings.
 let 
@@ -62,7 +62,7 @@ in
     unstable.alacritty
 
     # Graphics.
-    blender-hip
+    unstable.blender-hip
     inkscape
     typst
 

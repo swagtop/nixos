@@ -1,4 +1,4 @@
-{ unstable, pkgs, ... }:
+{ pkgs, ... }:
 {
    # Enable dynamic linking.
   programs.nix-ld.enable = true;

@@ -1,4 +1,4 @@
-{ lib, unstable, pkgs, ... }:
+{ lib, pkgs, ... }:
 let
   bitwig-fhs = pkgs.buildFHSUserEnv {
     name = "bitwig-fhs-env";
@@ -28,7 +28,7 @@ let
       xwayland
       zlib
     ];
-    runScript = "${unstable.bitwig-studio}/bin/bitwig-studio";
+    runScript = "${pkgs.unstable.bitwig-studio}/bin/bitwig-studio";
   };
 in
 {
@@ -50,7 +50,7 @@ in
     Name=Bitwig Studio
     Comment=Music Production Software
     Exec="${bitwig-fhs}/bin/bitwig-fhs-env"}
-    Icon=${unstable.bitwig-studio}/share/icons/hicolor/128x128/apps/com.bitwig.BitwigStudio.png
+    Icon=${pkgs.unstable.bitwig-studio}/share/icons/hicolor/128x128/apps/com.bitwig.BitwigStudio.png
     Terminal=false
     Type=Application
     Categories=AudioVideo;Audio;Music;Multimedia;

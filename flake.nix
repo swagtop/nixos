@@ -5,19 +5,25 @@
     nixpkgs-unstable.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, ... }: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, ... }: 
   let
-    system = "x86_64-linux";
-    lib = nixpkgs.lib;
-    unstable = import nixpkgs-unstable {
-      inherit system;
-      config.allowUnfree = true;
+    unstable-overlay = { pkgs, ... }: {
+      nixpkgs.overlays = [
+        (final: prev: {
+          unstable = import nixpkgs-unstable {
+            inherit (prev.stdenv.hostPlatform) system;
+            config.allowUnfree = true; # Optional
+          };
+        })
+      ];
     };
-  in {
+  in
+  {
     nixosConfigurations = {
-      gamebeast = lib.nixosSystem {
-        specialArgs = { inherit system unstable; };
+      gamebeast = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit nixpkgs-unstable; };
         modules = [ 
+          unstable-overlay
           ./hosts/gamebeast/configuration.nix 
           ./hosts/gamebeast/hardware-configuration.nix 
           ./modules/nixos.nix
@@ -31,9 +37,10 @@
           ./modules/tui.nix
         ];
       };
-      swagtop = lib.nixosSystem {
-        specialArgs = { inherit system unstable; };
+      swagtop = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit nixpkgs-unstable; };
         modules = [ 
+          unstable-overlay
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
           ./modules/linker.nix
@@ -45,9 +52,10 @@
           ./modules/tui.nix
         ];
       };
-      servtop = lib.nixosSystem {
-        specialArgs = { inherit system unstable; };
+      servtop = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit nixpkgs-unstable; };
         modules = [ 
+          unstable-overlay
           ./hosts/servtop/configuration.nix 
           ./modules/nixos.nix
 

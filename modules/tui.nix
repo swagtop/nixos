@@ -1,4 +1,4 @@
-{ unstable, pkgs, ... }:
+{ pkgs, ... }:
 
 let
   # Adds name of Nix shell to PS1, if in one.

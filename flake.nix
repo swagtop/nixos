@@ -7,16 +7,13 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, ... }: 
   let
-    unstable-overlay = {
-      nixpkgs.overlays = [
-        (final: prev: {
-          unstable = import nixpkgs-unstable {
-            system = final.system;
-            config.allowUnfree = true;
-          };
-        })
-      ];
-    };
+    unstable-overlay.nixpkgs.overlays = [
+      (final: prev: {
+        unstable = import nixpkgs-unstable {
+          inherit (final) system config;
+        };
+      })
+    ];
   in
   {
     nixosConfigurations = {

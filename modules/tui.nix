@@ -3,7 +3,14 @@
 let
   # Adds name of Nix shell to PS1, if in one.
   nixShell = "\${name:+[$name] }";
-  sshName = "\${SSH_CONNECTION:+@$HOSTNAME }";
+  # Adds name of hostname if connected through SSH.
+  ssh = "\${SSH_CONNECTION:+@$HOSTNAME }";
+  # ANSI escape codes for changing colors of terminal text.
+  reset = ''\[\e[0;0m\]'';
+  green = ''\[\e[1;32m\]'';
+  red = ''\[\e[1;31m\]'';
+  cyan = ''\[\e[1;36m\]'';
+  orange = ''\[\e[1;33m\]'';
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
@@ -11,10 +18,10 @@ let
     if [ "$EUID" -ne 0 ]
     then
       # Normal user, green prompt
-      PS1='\[\e[1;32m\]\u \[\e[1;33m\]${sshName}\[\e[1;36m\]${nixShell}\[\e[1;32m\]\w € \[\e[0;0m\]'
+      PS1='${green}\u ${orange}${ssh}${cyan}${nixShell}${green}\w € ${reset}'
     else
       # Root, red prompt
-      PS1='\[\e[1;31m\]\u \[\e[1;33m\]${sshName}\[\e[1;36m\]${nixShell}\[\e[1;31m\]\w £ \[\e[0;0m\]'
+      PS1='${red}\u ${orange}${ssh}${cyan}${nixShell}${red}\w £ ${reset}'
     fi
 
     y() {

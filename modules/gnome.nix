@@ -52,7 +52,12 @@ in
   programs.dconf.profiles.gdm.databases = gnomeSettings;
   environment.variables = {
     GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
+    COLORTERM = "truecolor";
   };
+
+  programs.ssh.extraConfig = ''
+    SendEnv COLORTERM
+  '';
 
   # Enable web browser.
   programs.firefox.enable = true;

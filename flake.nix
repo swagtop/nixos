@@ -26,8 +26,7 @@
           ./hosts/gamebeast/hardware-configuration.nix 
           ./modules/nixos.nix
           # ./modules/linker.nix
-
-          ./modules/packages.nix
+          ./modules/common.nix
 
           ./modules/gnome.nix
           ./modules/music.nix
@@ -42,8 +41,7 @@
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
           ./modules/linker.nix
-
-          ./modules/packages.nix
+          ./modules/common.nix
 
           ./modules/gnome.nix
           ./modules/dev.nix
@@ -56,11 +54,11 @@
           unstable-overlay
           ./hosts/servtop/configuration.nix 
           ./modules/nixos.nix
-
-          ./modules/packages.nix
+          ./modules/common.nix
 
           ./modules/dev.nix
           ./modules/tui.nix
+          ./modules/ssh-server.nix
         ];
       };
     };

@@ -3,6 +3,7 @@
 let
   # Adds name of Nix shell to PS1, if in one.
   nixShell = "\${name:+[$name] }";
+  sshName = "\${SSH_CONNECTION:+@$HOSTNAME }";
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
@@ -10,10 +11,10 @@ let
     if [ "$EUID" -ne 0 ]
     then
       # Normal user, green prompt
-      PS1='\[\e[1;32m\]\u \[\e[1;33m\]${nixShell}\[\e[1;32m\]\w € \[\e[0;0m\]'
+      PS1='\[\e[1;32m\]\u \[\e[1;33m\]${sshName}\[\e[1;36m\]${nixShell}\[\e[1;32m\]\w € \[\e[0;0m\]'
     else
       # Root, red prompt
-      PS1='\[\e[1;31m\]\u \[\e[1;33m\]${nixShell}\[\e[1;31m\]\w £ \[\e[0;0m\]'
+      PS1='\[\e[1;31m\]\u \[\e[1;33m\]${sshName}\[\e[1;36m\]${nixShell}\[\e[1;31m\]\w £ \[\e[0;0m\]'
     fi
 
     y() {

@@ -7,6 +7,7 @@
 
   outputs = { nixpkgs, nixpkgs-unstable, ... }: 
   let
+    allow-unfree = { nixpkgs.config.allowUnfree = true; };
     unstable-overlay.nixpkgs.overlays = [
       (final: prev: {
         unstable = import nixpkgs-unstable {
@@ -19,6 +20,7 @@
     nixosConfigurations = {
       gamebeast = nixpkgs.lib.nixosSystem {
         modules = [ 
+          allow-unfree
           unstable-overlay
           ./hosts/gamebeast/configuration.nix 
           ./hosts/gamebeast/hardware-configuration.nix 
@@ -35,6 +37,7 @@
       };
       swagtop = nixpkgs.lib.nixosSystem {
         modules = [ 
+          allow-unfree
           unstable-overlay
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
@@ -49,6 +52,7 @@
       };
       servtop = nixpkgs.lib.nixosSystem {
         modules = [ 
+          allow-unfree
           unstable-overlay
           ./hosts/servtop/configuration.nix 
           ./modules/nixos.nix

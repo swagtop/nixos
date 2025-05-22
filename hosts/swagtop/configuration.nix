@@ -83,6 +83,8 @@
     description = "thedb";
     extraGroups = [ "networkmanager" "wheel" "keyd" ];
     packages = with pkgs; [
+      spotify
+      discord
     #  thunderbird
     ];
   };

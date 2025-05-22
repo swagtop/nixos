@@ -3,6 +3,10 @@
 {
   # Generally useful packages.
   environment.systemPackages = with pkgs; [
+    # Common utilities.
+    file
+    binutils
+    
     # Zipping.
     zip
     unzip
@@ -12,6 +16,5 @@
     wget
     curl
     speedtest-cli
-    file
   ];
 }

@@ -12,11 +12,28 @@ let
     ef = "/bin/sh -c 'cd /etc/nixos; su'";
 
     # Nix commands.
-    ns = "nix-shell";
     nd = "nix develop";
     ni = "nix-index";
     nl = "nix-locate";
   };
+
+  # Shorthand for `nix shell nixpkgs#$1 nixpkgs#$2 ...`.
+  promptInit = ''
+    ns() {
+      ORIGINAL_NAME="$name"
+      local NIX_SHELL="nix shell"
+      if [[ "$@" == "" ]]; then
+        return
+      fi
+      name='ns'
+      for arg in "$@"; do
+        NIX_SHELL+=" nixpkgs#$arg"
+        name+="-$arg"
+      done
+      export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)
+      export name=$ORIGINAL_NAME
+    }
+  '';
 in
 {
   # Set system to auto update and upgrade flake.
@@ -41,7 +58,7 @@ in
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
+      options = "--delete-older-than 14d";
     };
   }; 
 
@@ -54,5 +71,8 @@ in
   }; 
 
   # Bash aliases.
-  programs.bash.shellAliases = shellAliases;
+  programs.bash = {
+    promptInit = promptInit;
+    shellAliases = shellAliases;
+  };
 }

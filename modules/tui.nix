@@ -18,10 +18,10 @@ let
     if [ "$EUID" -ne 0 ]
     then
       # Normal user, green prompt
-      PS1='${green}\u ${orange}${ssh}${cyan}${nixShell}${green}\w € ${reset}'
+      PS1='${green}\u${orange}${ssh}${cyan}${nixShell}${green}\w € ${reset}'
     else
       # Root, red prompt
-      PS1='${red}\u ${orange}${ssh}${cyan}${nixShell}${red}\w £ ${reset}'
+      PS1='${red}\u${orange}${ssh}${cyan}${nixShell}${red}\w £ ${reset}'
     fi
 
     y() {

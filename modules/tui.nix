@@ -48,6 +48,11 @@ let
     exec ${pkgs.unstable.helix}/bin/hx -c "${self}/configs/helix/config.toml" "$@"
   '';
 
+  # Wrapper for Zellij, using config in flake.
+  zellij-wrapper = pkgs.writeShellScriptBin "zellij" ''
+    exec ${pkgs.unstable.zellij}/bin/zellij -c "${self}/configs/zellij/config.kdl" "$@"
+  '';
+
   # Quick shortcuts.
   shellAliases = {
     # Zellij.
@@ -74,7 +79,7 @@ in {
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
-    unstable.zellij
+    zellij-wrapper
     helix-wrapper
 
     # TUI git manager.

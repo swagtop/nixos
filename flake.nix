@@ -5,7 +5,7 @@
     nixpkgs-unstable.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, ... }: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, ... }: 
   let
     allow-unfree = { nixpkgs.config.allowUnfree = true; };
     unstable-overlay.nixpkgs.overlays = [
@@ -19,6 +19,7 @@
   {
     nixosConfigurations = {
       gamebeast = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
           unstable-overlay
@@ -35,6 +36,7 @@
         ];
       };
       swagtop = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
           unstable-overlay
@@ -49,6 +51,7 @@
         ];
       };
       servtop = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
           unstable-overlay

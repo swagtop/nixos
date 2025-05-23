@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ self, pkgs, ... }:
 
 let
   # Adds name of Nix shell to PS1, if in one.
@@ -40,6 +40,12 @@ let
       # Remove the temporary file
       rm -f -- "$tmp"
     }
+
+  '';
+
+  # Wrapper for Helix, using config in flake.
+  helix-wrapper = pkgs.writeShellScriptBin "hx" ''
+    exec ${pkgs.unstable.helix}/bin/hx -c "${self}/configs/helix/config.toml" "$@"
   '';
 
   # Quick shortcuts.
@@ -65,10 +71,11 @@ in {
     enable = true;
   };
 
+
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
     unstable.zellij
-    unstable.helix
+    helix-wrapper
 
     # TUI git manager.
     lazygit

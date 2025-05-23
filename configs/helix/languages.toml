@@ -1,0 +1,15 @@
+[[language]]
+name = "rust"
+rulers = [101]
+auto-format = false
+language-servers = [ "rust-analyzer" ]
+
+[[language]]
+name = "fasto"
+file-types = ["fo"]
+scope = "source.fasto"
+grammar = "fasto"
+
+[[grammar]]
+name = "fasto"
+source = { git = "https://github.com/swagtop/tree-sitter-fasto", rev = "06ffca27c733340998f8c3f81100f3071270d3b6" }

@@ -1,0 +1,14 @@
+inherits = "adwaita-dark"
+
+"ui.cursor.normal" = { fg = "libadwaita_dark", bg = "#6A6A67" }
+
+"ui.statusline" = { fg = "libadwaita_dark", bg = "active_window" }
+"ui.virtual.ruler" = { fg = "red_1", bg = "libadwaita_dark_middle" }
+"ui.virtual.jump-label" = { fg = "#000000", bg = "orange_2" }
+
+"ui.cursorline.primary" = { bg = "#1B1B1B" }
+"ui.cursorline.secondary" = { bg = "#1B1B1B" }
+
+[palette]
+active_window = "#9e9c98"
+libadwaita_dark_middle = "#202020"

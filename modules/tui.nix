@@ -105,7 +105,7 @@ in {
   };
 
   # Set Helix as default editor.
-  environment.variables = pkgs.lib.mkForce {
+  environment.variables = {
     EDITOR = "hx";
   };
 }

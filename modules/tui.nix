@@ -45,7 +45,7 @@ let
 
   # Wrapper for Helix, using config in flake.
   helix-wrapper = pkgs.writeShellScriptBin "hx" ''
-    exec ${pkgs.unstable.helix}/bin/hx -c "${self}/configs/helix/config.toml" "$@"
+    HELIX_RUNTIME="${self}/configs/helix/" ${pkgs.unstable.helix}/bin/hx -c "${self}/configs/helix/config.toml" "$@"
   '';
 
   # Wrapper for Zellij, using config in flake.

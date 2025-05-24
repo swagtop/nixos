@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 let
-  bitwig-fhs = pkgs.buildFHSUserEnv {
+  bitwig-fhs = pkgs.buildFHSEnv {
     name = "bitwig-fhs-env";
     targetPkgs = pkgs: with pkgs; [
       # Depencencies that loaded plugins may need.
@@ -10,7 +10,6 @@ let
       freetype
       libGL
       libsndfile
-      libstdcxx5
       libudev0-shim
       pkg-config
       udev

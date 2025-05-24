@@ -1,7 +1,7 @@
 {
   description = "My cool system flake!";
   inputs = {
-    nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-25.05";
     nixpkgs-unstable.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-unstable";
   };
 

@@ -26,6 +26,14 @@ let
       "org/gnome/desktop/background" = {
         primary-color = "#000000";
       };
+      "org/gnome/desktop/applications/terminal" = {
+        exec = "alacritty";
+        exec-arg = "--";
+      };
+      "org/gnome/desktop/default-applications/terminal" = {
+        exec = "alacritty";
+        exec-arg = "--";
+      };
     };
   }];
 
@@ -42,7 +50,9 @@ in
     enable = true;
     wayland = true;
   };
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+  };
   programs.xwayland.enable = true;
 
   programs.sway.enable = true;
@@ -91,15 +101,11 @@ in
 
   # Extra fonts.
   fonts.packages = with pkgs; [
-    (nerdfonts.override { 
-      fonts = [ 
-        "Hack" 
-        "CascadiaCode" 
-        "CascadiaMono"
-        "Recursive" 
-        "0xProto"
-      ]; 
-    })
+    nerd-fonts.hack
+    nerd-fonts.caskaydia-cove
+    nerd-fonts.caskaydia-mono
+    nerd-fonts.recursive-mono
+    nerd-fonts._0xproto
     texlivePackages.latex-fonts
   ];
 }

@@ -1,0 +1,40 @@
+[font]
+size = 13
+
+normal = { family = "CaskaydiaMono Nerdfont Mono", style = "Regular" }
+bold = { family = "CaskaydiaMono Nerdfont Mono", style = "Bold" }
+italic = { family = "CaskaydiaMono Nerdfont Mono", style = "Italic" }
+bold_italic = { family = "CaskaydiaMono Nerdfont Mono", style = "Bold Italic" }
+
+# normal = { family = "RecMonoLinear Nerdfont Mono", style = "Regular" }
+# bold = { family = "RecMonoLinear Nerdfont Mono", style = "Bold" }
+# italic = { family = "RecMonoLinear Nerdfont Mono", style = "Italic" }
+# bold_italic = { family = "RecMonoLinear Nerdfont Mono", style = "Bold Italic" }
+
+# normal = { family = "0xProto NerdFont Propo", style = "Regular" }
+# bold = { family = "0xProto NerdFont Propo", style = "Bold" }
+# italic = { family = "0xProto NerdFont Propo", style = "Italic" }
+# bold_italic = { family = "0xProto NerdFont Propo", style = "Bold Italic" }
+
+[terminal.shell]
+program = "/usr/bin/env"
+args = ["bash", "-c", "bash -c 'zellij; bash; exit'"]
+#args = ["bash", "-c", "zellij; exec bash"]
+
+[window]
+dimensions = { columns = 87, lines = 30 }
+title = "Alacritty"
+dynamic_title = false
+
+[mouse]
+hide_when_typing = false
+
+[colors.normal]
+black = "#1D1D1D"
+red = "#C01C28"
+green = "#2EC27E"
+yellow = "#FFA348"
+blue = "#1E78E4"
+magenta = "#9841BB"
+cyan = "#0AB9DC"
+white = "#C0BFBC"

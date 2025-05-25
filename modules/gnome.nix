@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ self, pkgs, lib, ... }:
 
 # Define preferred GNOME settings.
 let 
@@ -41,6 +41,10 @@ let
     # Open nautilus in current directory.
     naut = "nautilus .";
   };
+
+  alacritty-wrapper = pkgs.writeShellScriptBin "alacritty" ''
+    ${pkgs.unstable.alacritty}/bin/alacritty --config-file ${self}/configs/alacritty/alacritty.toml "$@"
+  '';
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -71,10 +75,9 @@ in
 
   # Enable web browser.
   programs.firefox.enable = true;
- 
   environment.systemPackages = with pkgs; [
     # Terminal emulator.
-    unstable.alacritty
+    alacritty-wrapper
 
     # Graphics.
     unstable.blender-hip

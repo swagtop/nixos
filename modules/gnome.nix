@@ -41,10 +41,6 @@ let
     # Open nautilus in current directory.
     naut = "nautilus .";
   };
-
-  alacritty-wrapper = pkgs.writeShellScriptBin "alacritty" ''
-    ${pkgs.unstable.alacritty}/bin/alacritty --config-file ${self}/configs/alacritty/alacritty.toml "$@"
-  '';
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -76,8 +72,12 @@ in
   # Enable web browser.
   programs.firefox.enable = true;
   environment.systemPackages = with pkgs; [
-    # Terminal emulator.
-    alacritty-wrapper
+    # Terminal emulator, wrapping in shell script for config.
+    (pkgs.writeShellScriptBin "alacritty" ''
+      exec ${pkgs.unstable.alacritty}/bin/alacritty \
+      --config-file ${self}/configs/alacritty/alacritty.toml "$@"
+    '' )
+    unstable.alacritty # For the .desktop entry.
 
     # Graphics.
     unstable.blender-hip

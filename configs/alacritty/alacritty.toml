@@ -29,6 +29,9 @@ dynamic_title = false
 [mouse]
 hide_when_typing = false
 
+[colors.primary]
+background = "#1D1D1D"
+
 [colors.normal]
 black = "#1D1D1D"
 red = "#C01C28"

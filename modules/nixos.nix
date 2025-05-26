@@ -21,7 +21,7 @@ let
   promptInit = ''
     ns() {
       ORIGINAL_NAME="$name"
-      local NIX_SHELL="nix shell"
+      local NIX_SHELL="NIXPKGS_ALLOW_UNFREE=1 nix shell --impure"
       if [[ "$@" == "" ]]; then
         return
       fi

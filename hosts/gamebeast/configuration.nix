@@ -134,7 +134,9 @@
       "libvirtd"
     ];
     packages = with pkgs; [
-    #  thunderbird
+      spotify
+      discord
+      steam
     ];
   };
 

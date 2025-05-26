@@ -8,8 +8,15 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ahci"
+    "nvme"
+    "usbhid"
+    "sd_mod"
+  ];
   
+  boot.supportedFilesystems = [ "ntfs" ];
   # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm" "kvm-intel" "amdgpu" ];
@@ -23,16 +30,31 @@
     "amdgpu.dc=1"
   ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/83ddf5fd-8eab-4173-956d-451dccd814b6";
-      fsType = "ext4";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/83ddf5fd-8eab-4173-956d-451dccd814b6";
+    fsType = "ext4";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/4CC7-FD3C";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/4CC7-FD3C";
+    fsType = "vfat";
+    options = [ "fmask=0077" "dmask=0077" ];
+  };
+
+  fileSystems."/run/media/thedb/stor dreng" = {
+    device = "/dev/disk/by-uuid/94686AF9686AD98E";
+    fsType = "ntfs3";
+    options = [
+      "rw"
+      "nosuid"
+      "nodev"
+      "relatime"
+      "uid=1000"
+      "gid=100"
+      "iocharset=utf8"
+      "uhelper=udisks2"
+    ];
+  };
 
   swapDevices = [ ];
 

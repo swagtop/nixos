@@ -53,6 +53,7 @@
       "gid=100"
       "iocharset=utf8"
       "uhelper=udisks2"
+      "x-gvfs-hide" # Hide unmount button, don't want that happening.
     ];
   };
 

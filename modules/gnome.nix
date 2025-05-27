@@ -91,7 +91,7 @@ in
     adw-gtk3
 
     # Media.
-    vlc
+    celluloid
 
     # Wayland and other useful packages.
     wayland

@@ -22,7 +22,7 @@
   # networking.wireless.enable = true;  
     
   # Kernel.
-  boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

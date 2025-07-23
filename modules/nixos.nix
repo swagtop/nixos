@@ -9,7 +9,7 @@ let
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "/bin/sh -c 'cd /etc/nixos; su'";
+    ef = "/bin/sh -c 'cd /etc/nixos; sudo su'";
 
     # Nix commands.
     nd = "nix develop";
@@ -54,6 +54,8 @@ in
     settings = {
       auto-optimise-store = true;
       experimental-features = [ "nix-command" "flakes" ];
+      keep-derivations = true;
+      keep-outputs = true;
     };
     gc = {
       automatic = true;
@@ -69,6 +71,16 @@ in
       nix-index
     ];
   }; 
+
+  programs.direnv = {
+    enable = true;
+    package = pkgs.direnv;
+    silent = true;
+    nix-direnv = {
+      enable = true;
+      package = pkgs.nix-direnv;
+    };
+  };
 
   # Bash aliases.
   programs.bash = {

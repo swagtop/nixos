@@ -16,6 +16,7 @@ let
       };
       "org/gnome/mutter" = {
         edge-tiling = true;
+        experimental-features = [ "scale-monitor-framebuffer" ];
       };
       "org/gnome/settings/daemon/plugins/color" = {
         night-light-enable = true;
@@ -26,14 +27,14 @@ let
       "org/gnome/desktop/background" = {
         primary-color = "#000000";
       };
-      "org/gnome/desktop/applications/terminal" = {
-        exec = "alacritty";
-        exec-arg = "--";
-      };
-      "org/gnome/desktop/default-applications/terminal" = {
-        exec = "alacritty";
-        exec-arg = "--";
-      };
+      # "org/gnome/desktop/applications/terminal" = {
+      #   exec = "alacritty";
+      #   exec-arg = "--";
+      # };
+      # "org/gnome/desktop/default-applications/terminal" = {
+      #   exec = "alacritty";
+      #   exec-arg = "--";
+      # };
     };
   }];
 
@@ -41,6 +42,15 @@ let
     # Open nautilus in current directory.
     naut = "nautilus .";
   };
+
+  gstreamerPackages = with pkgs.gst_all_1; [
+    gstreamer
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-bad
+    gst-plugins-ugly
+    gst-libav
+  ];
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -49,6 +59,10 @@ in
   services.xserver.displayManager.gdm = {
     enable = true;
     wayland = true;
+    # extraGSettingsOverrides = ''
+    #   [org.gnome.mutter]
+    #   experimental-features=['scale-monitor-framebuffer']
+    # '';
   };
   services.xserver.desktopManager.gnome = {
     enable = true;
@@ -63,10 +77,12 @@ in
   environment.variables = {
     GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
     COLORTERM = "truecolor";
+    TERM = "xterm-256color";
   };
 
   programs.ssh.extraConfig = ''
     SendEnv COLORTERM
+    SendEnv TERM
   '';
 
   # Enable web browser.
@@ -98,7 +114,10 @@ in
     xwayland
     wayland-protocols
     linux-firmware
-  ];
+  ] ++ gstreamerPackages;
+
+  environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 =
+    lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstreamerPackages;
 
   programs.bash.shellAliases = shellAliases;
 

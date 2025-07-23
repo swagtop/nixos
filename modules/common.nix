@@ -6,6 +6,7 @@
     # Common utilities.
     file
     binutils
+    ripgrep
     
     # Zipping.
     zip

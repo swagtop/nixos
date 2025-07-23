@@ -26,7 +26,7 @@
           ./hosts/gamebeast/configuration.nix 
           ./hosts/gamebeast/hardware-configuration.nix 
           ./modules/nixos.nix
-          # ./modules/linker.nix
+          ./modules/linker.nix
           ./modules/common.nix
 
           ./modules/gnome.nix

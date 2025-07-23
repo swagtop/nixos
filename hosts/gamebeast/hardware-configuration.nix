@@ -18,8 +18,17 @@
   
   boot.supportedFilesystems = [ "ntfs" ];
   # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
-  boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ "kvm" "kvm-intel" "amdgpu" ];
+  boot.initrd.kernelModules = [ "amdgpu" "vfio_pci" "vfio" "vfio_iommu_type1" ];
+  boot.kernelModules = [
+    "kvm"
+    "kvm-intel"
+    "amdgpu"
+    # GPU Passthrough stuff.
+    "vfio_pci"
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio_virqfd"
+  ];
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "radeon" ];
   boot.kernelParams = [
@@ -28,7 +37,18 @@
     "amdgpu.cik_support=1"
     "amdgpu.si_support=1"
     "amdgpu.dc=1"
+    "mem_sleep_default=deep"
+    "acpi_sleep=nonvs"
+    "pci=noaer"
+    "intel_iommu=on"
+    "amd_iommu=on"
+    "iommu=pt"
+    "vfio-pci.ids=1002:aac8"
   ];
+
+  # boot.extraModprobeConfig = ''
+  #   options vfio-pci.ids=1002:aac8
+  # '';
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/83ddf5fd-8eab-4173-956d-451dccd814b6";

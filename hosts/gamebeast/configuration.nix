@@ -132,13 +132,44 @@
       "audio" 
       "video" 
       "libvirtd"
+      "qemu-libvirtd"
     ];
     packages = with pkgs; [
       spotify
       discord
-      steam
+      transmission_4-gtk
     ];
   };
+
+  programs.steam = {
+    enable = true;
+    package = 
+      pkgs.steam.override {
+        extraArgs = "steam://unlockh264/";
+      };
+    protontricks.enable = true;
+    # gamescopeSession.enable = true;
+    localNetworkGameTransfers.openFirewall = true;
+  };
+
+  programs.kdeconnect = {
+    enable = true;
+    package = pkgs.gnomeExtensions.gsconnect;
+  };
+
+  virtualisation.docker = {
+    enable = false;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+      daemon.settings = {
+        # dns = [ "10.10.10.1" ];
+        registry-mirrors = [ "https://mirror.gcr.io" ];
+      };
+    };
+  };
+
+  zramSwap.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -152,10 +183,20 @@
   # };
 
   # List services that you want to enable:
-  programs.virt-manager.enable = true;
+  programs.virt-manager = {
+    enable = true;
+    package = pkgs.virt-manager;
+  };
 
   virtualisation.libvirtd = {
     enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      ovmf.enable = true;
+      ovmf.packages = [ pkgs.OVMFFull.fd ];
+      swtpm.enable = true;
+      runAsRoot = false;
+    };
   };
   virtualisation.spiceUSBRedirection.enable = true;
 

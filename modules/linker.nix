@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-   # Enable dynamic linking.
+  # Enable dynamic linking.
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     alsa-lib

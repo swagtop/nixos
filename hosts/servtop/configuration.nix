@@ -71,6 +71,12 @@
     git
     steamcmd
     zulu
+    conspy
+    jellyfin
+    jellyfin-web
+    jellyfin-ffmpeg
+    unstable.cloudflared
+    terraria-server
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -85,6 +91,7 @@
 
   # Open ports in the firewall.
   networking.firewall.allowedUDPPorts = [ 16261 16262 ];
+  networking.firewall.allowedTCPPorts = [ 8096 8920 ] ++ [ 7777 ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -100,6 +107,114 @@
   programs.nix-ld.libraries = with pkgs; [
     zulu
   ];
+
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "servtop";
+        "netbios name" = "servtop";
+        "security" = "user";
+        #"use sendfile" = "yes";
+        #"max protocol" = "smb2";
+        # note: localhost is the ipv6 localhost ::1
+        "hosts allow" = "10.10.10. 127.0.0.1 localhost";
+        "hosts deny" = "0.0.0.0/0";
+        "guest account" = "nobody";
+        "map to guest" = "Bad User";
+      };
+      "delemappppe" = {
+        "path" = "/home/thedb/delemappe";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-music" = {
+        "path" = "/srv/data/media/music";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-movies" = {
+        "path" = "/srv/data/media/movies";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+    };
+  };
+
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  networking.firewall.enable = true;
+  networking.firewall.allowPing = true;
+
+  services.jellyfin = {
+    dataDir = "/srv/data/media";
+    user = "thedb";
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.cloudflared = {
+    enable = true;
+    tunnels = {
+      "63208175-0ebb-4482-9382-061dfef32455" = {
+        credentialsFile = "${config.users.users."thedb".home}/.cloudflared/63208175-0ebb-4482-9382-061dfef32455.json";
+        default = "http_status:404";
+        ingress = {
+          "jf.spirre.vip" = {
+            service = "http://localhost:8096";
+          };
+        };
+      };
+    };
+  };
+
+  systemd.services.terraria =
+  let
+    map = "1";
+    playerCount = "16";
+    serverPort = "7777";
+    autoPortForward = "n";
+    serverPassword = "suneenus";
+    input = builtins.concatStringsSep "\\n" [
+      "${map}"
+      "${playerCount}"
+      "${serverPort}"
+      "${autoPortForward}"
+      "${serverPassword}"
+    ];
+  in {
+    enable = true;
+    description = "Terraria Dedicated Server";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''
+        /bin/sh -c "printf '${input}' | ${pkgs.terraria-server}/bin/TerrariaServer"
+      '';
+      User = "thedb";
+    };
+  };
 
   services.logind.lidSwitchExternalPower = "ignore";
   systemd.sleep.extraConfig = ''

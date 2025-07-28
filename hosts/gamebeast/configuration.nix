@@ -133,6 +133,7 @@
       "video" 
       "libvirtd"
       "qemu-libvirtd"
+      "nix"
     ];
     packages = with pkgs; [
       spotify

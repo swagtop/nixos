@@ -1,42 +1,88 @@
 { lib, pkgs, ... }:
 let
-  bitwig-fhs = pkgs.buildFHSEnv {
-    name = "bitwig-fhs-env";
-    targetPkgs = pkgs: with pkgs; [
-      # Depencencies that loaded plugins may need.
-      alsa-lib
-      alsa-utils
-      fontconfig
-      freetype
-      libGL
-      libsndfile
-      libudev0-shim
-      pkg-config
-      udev
-      unstable.bitwig-studio
-      vulkan-loader
-      wayland
-      wayland-protocols
-      xorg.libICE
-      xorg.libSM
-      xorg.libX11
-      xorg.libXcursor
-      xorg.libXext
-      xorg.libXi
-      xorg.libXrandr
-      xwayland
-      zlib
-    ];
-    runScript = "${pkgs.unstable.bitwig-studio}/bin/bitwig-studio";
-  };
-in
-{
+  # bitwig-fhs = pkgs.buildFHSEnv {
+  #   name = "bitwig-fhs-env";
+  #   targetPkgs = pkgs: with pkgs; [
+  #     # Depencencies that loaded plugins may need.
+  #     alsa-lib
+  #     alsa-utils
+  #     fontconfig
+  #     freetype
+  #     libGL
+  #     libsndfile
+  #     libudev0-shim
+  #     pkg-config
+  #     udev
+  #     unstable.bitwig-studio
+  #     vulkan-loader
+  #     wayland
+  #     wayland-protocols
+  #     xorg.libICE
+  #     xorg.libSM
+  #     xorg.libX11
+  #     xorg.libXcursor
+  #     xorg.libXext
+  #     xorg.libXi
+  #     xorg.libXrandr
+  #     xwayland
+  #     zlib
+  #   ];
+  #   runScript = "${pkgs.unstable.bitwig-studio}/bin/bitwig-studio";
+  # };
+  bitwig-with-libs =
+  let
+    bitwig-wrapper = 
+      pkgs.writeShellScriptBin "bitwig-studio" ''
+        export LD_LIBRARY_PATH="${
+          lib.makeLibraryPath (with pkgs; [
+            alsa-lib
+            alsa-utils
+            fontconfig
+            freetype
+            libGL
+            libsndfile
+            libudev0-shim
+            pkg-config
+            udev
+            unstable.bitwig-studio
+            vulkan-loader
+            wayland
+            wayland-protocols
+            xorg.libICE
+            xorg.libSM
+            xorg.libX11
+            xorg.libXcursor
+            xorg.libXext
+            xorg.libXi
+            xorg.libXrandr
+            xwayland
+            zlib
+          ])
+        }"
+        exec ${pkgs.unstable.bitwig-studio}/bin/bitwig-studio "$@"
+      '';
+  in
+    pkgs.symlinkJoin {
+      inherit (pkgs.bitwig-studio) version;
+      name = "bitwig-with-libs";
+      pname = "bitwig-studio";
+      ignoreCollisions = true;
+      paths = [
+        bitwig-wrapper
+        pkgs.bitwig-studio
+      ];
+    };
+in {
   environment.systemPackages = with pkgs; [
     nix-ld
     # Music stuff.
-    bitwig-fhs
+    bitwig-with-libs
+    wineWow64Packages.yabridge
     yabridge
-    yabridgectl
+    (yabridgectl.overrideAttrs {
+      wine = wineWow64Packages.base;
+    })
+    # wineWow64Packages.base
     wineWow64Packages.base
     libsndfile
     # unstable.vital
@@ -44,15 +90,22 @@ in
   ];
 
   # Add a .desktop entry for Bitwig Studio
-  environment.etc."xdg/autostart/bitwig.desktop".text = ''
+    # Icon=${pkgs.unstable.bitwig-studio}/share/icons/hicolor/scalable/apps/com.bitwig.BitwigStudio.svg
+  environment.etc."xdg/applications/bitwig.desktop".text = ''
     [Desktop Entry]
     Name=Bitwig Studio
-    Comment=Music Production Software
-    Exec="${bitwig-fhs}/bin/bitwig-fhs-env"}
-    Icon=${pkgs.unstable.bitwig-studio}/share/icons/hicolor/128x128/apps/com.bitwig.BitwigStudio.png
+    Comment=Modern music production and performance
+    GenericName=Digital Audio Workstation
+    Exec=${bitwig-with-libs}/bin/bitwig-studio
     Terminal=false
     Type=Application
-    Categories=AudioVideo;Audio;Music;Multimedia;
+    Categories=AudioVideo;Music;Audio;Sequencer;Midi;Mixer;Player;Recorder
+    NoDisplay=false
+    Icon=com.bitwig.BitwigStudio
+    MimeType=application/bitwig-clip;application/bitwig-device;application/bitwig-package;application/bitwig-preset;application/bitwig-project;application/bitwig-scene;application/bitwig-template;application/bitwig-extension;application/bitwig-remote-controls;application/bitwig-module;application/bitwig-modulator;application/vnd.bitwig.dawproject
+    Keywords=daw;bitwig;audio;midi
+    StartupNotify=true
+    StartupWMClass=com.bitwig.BitwigStudio
   '';
 
   security.rtkit.enable = lib.mkForce false;

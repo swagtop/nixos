@@ -1,45 +1,29 @@
 { lib, pkgs, ... }:
 let
-  # bitwig-fhs = pkgs.buildFHSEnv {
-  #   name = "bitwig-fhs-env";
-  #   targetPkgs = pkgs: with pkgs; [
-  #     # Depencencies that loaded plugins may need.
-  #     alsa-lib
-  #     alsa-utils
-  #     fontconfig
-  #     freetype
-  #     libGL
-  #     libsndfile
-  #     libudev0-shim
-  #     pkg-config
-  #     udev
-  #     unstable.bitwig-studio
-  #     vulkan-loader
-  #     wayland
-  #     wayland-protocols
-  #     xorg.libICE
-  #     xorg.libSM
-  #     xorg.libX11
-  #     xorg.libXcursor
-  #     xorg.libXext
-  #     xorg.libXi
-  #     xorg.libXrandr
-  #     xwayland
-  #     zlib
-  #   ];
-  #   runScript = "${pkgs.unstable.bitwig-studio}/bin/bitwig-studio";
-  # };
   bitwig-with-libs =
   let
+    newest-bitwig-studio = 
+      pkgs.unstable.bitwig-studio.override (old: {
+        bitwig-studio-unwrapped = old.bitwig-studio-unwrapped.overrideAttrs rec {
+          version = "5.3.13";
+          src = pkgs.fetchurl {
+            name = "bitwig-studio-${version}.deb";
+            url = "https://www.bitwig.com/dl/Bitwig%20Studio/${version}/installer_linux/";
+            hash = "sha256-tx+Dz9fTm4DIobwLa055ZOCMG+tU7vQl11NFnEKMAno=";
+          };
+        };
+      });
     bitwig-wrapper = 
       pkgs.writeShellScriptBin "bitwig-studio" ''
         export LD_LIBRARY_PATH="${
           lib.makeLibraryPath (with pkgs; [
             alsa-lib
             alsa-utils
+            curlWithGnuTls
             fontconfig
             freetype
             libGL
+            libsecret.out
             libsndfile
             libudev0-shim
             pkg-config
@@ -59,7 +43,8 @@ let
             zlib
           ])
         }"
-        exec ${pkgs.unstable.bitwig-studio}/bin/bitwig-studio "$@"
+        export VST3_PATH="${pkgs.unstable.vital}/lib/vst3"
+        exec ${newest-bitwig-studio}/bin/bitwig-studio "$@"
       '';
   in
     pkgs.symlinkJoin {
@@ -69,7 +54,7 @@ let
       ignoreCollisions = true;
       paths = [
         bitwig-wrapper
-        pkgs.bitwig-studio
+        newest-bitwig-studio
       ];
     };
 in {
@@ -85,7 +70,7 @@ in {
     # wineWow64Packages.base
     wineWow64Packages.base
     libsndfile
-    # unstable.vital
+    unstable.vital
     desktop-file-utils
   ];
 

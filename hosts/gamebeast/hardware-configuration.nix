@@ -9,6 +9,7 @@
   ];
 
   boot.initrd.availableKernelModules = [
+    "amdgpu"
     "xhci_pci"
     "ahci"
     "nvme"
@@ -18,16 +19,19 @@
   
   boot.supportedFilesystems = [ "ntfs" ];
   # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
-  boot.initrd.kernelModules = [ "amdgpu" "vfio_pci" "vfio" "vfio_iommu_type1" ];
+  boot.initrd.kernelModules = [
+    "amdgpu"
+    # "vfio_pci" "vfio" "vfio_iommu_type1"
+  ];
   boot.kernelModules = [
     "kvm"
     "kvm-intel"
     "amdgpu"
     # GPU Passthrough stuff.
-    "vfio_pci"
-    "vfio"
-    "vfio_iommu_type1"
-    "vfio_virqfd"
+    # "vfio_pci"
+    # "vfio"
+    # "vfio_iommu_type1"
+    # "vfio_virqfd"
   ];
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "radeon" ];

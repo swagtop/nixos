@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -22,8 +22,8 @@
   # networking.wireless.enable = true;  
     
   # Kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
+  boot.kernelPackages = pkgs.linuxPackages-rt_latest;
+  
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -52,7 +52,10 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
-    videoDrivers = [ "amdgpu" ];
+    videoDrivers = [
+      "amdgpu"
+      "modesetting"
+    ];
   };
   services.libinput.enable = true;
   hardware.enableAllFirmware = true;
@@ -61,33 +64,36 @@
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      amdvlk
-      vulkan-loader
-      vulkan-validation-layers
-      vulkan-extension-layer
-      libvdpau-va-gl
-      intel-media-driver
-      mesa.opencl
-      rocmPackages.clr.icd
+      mesa
+      # amdvlk
+      # vulkan-loader
+      # vulkan-validation-layers
+      # vulkan-extension-layer
+      # libvdpau-va-gl
+      # intel-media-driver
+      # mesa.opencl
+      # rocmPackages.clr.icd
     ];
   };
-  hardware.amdgpu.legacySupport.enable = true;
-  hardware.amdgpu.amdvlk = {
-    enable = true; 
-    package = pkgs.amdvlk;
-    settings = {
-      AllowVkPipelineCachingToDisk = 1;
-      EnableVmAlwaysValid = 1;
-      IFH = 0;
-      IdleAfterSubmitGpuMask = 1;
-      ShaderCacheMode = 1;
+  hardware.amdgpu = {
+    legacySupport.enable = true;
+    amdvlk = {
+      enable = true;
+      package = pkgs.amdvlk;
+      support32Bit.enable = true;
+      settings = {
+        AllowVkPipelineCachingToDisk = 1;
+        EnableVmAlwaysValid = 1;
+        IFH = 0;
+        IdleAfterSubmitGpuMask = 1;
+        ShaderCacheMode = 1;
+      };
     };
-    support32Bit.enable = true;
   };
 
   environment.variables = {
     AMD_VULKAN_ICD = "RADV";
-    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+    VK_ICD_FILENAMES = "${pkgs.mesa}/share/vulkan/icd.d/radeon_icd.x86_64.json";
     ROC_ENABLE_PRE_VEGA = "1";
   };
   services.udev.enable = true;
@@ -153,10 +159,10 @@
     localNetworkGameTransfers.openFirewall = true;
   };
 
-  programs.kdeconnect = {
-    enable = true;
-    package = pkgs.gnomeExtensions.gsconnect;
-  };
+  # programs.kdeconnect = {
+  #   enable = true;
+  #   package = pkgs.gnomeExtensions.gsconnect;
+  # };
 
   virtualisation.docker = {
     enable = false;
@@ -170,7 +176,10 @@
     };
   };
 
-  zramSwap.enable = true;
+  zramSwap = {
+    enable = false;
+    algorithm = "lz4";
+  };
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -217,6 +226,8 @@
       };
     };
   };
+
+  services.mullvad-vpn.enable = true;
 
   # Flatpak and flathub, and adw-gtk3 theme for flatpaks.
   services.flatpak.enable = true;

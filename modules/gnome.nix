@@ -56,7 +56,7 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Enable GNOME, GDM.
-  services.xserver.displayManager.gdm = {
+  services.displayManager.gdm = {
     enable = true;
     wayland = true;
     # extraGSettingsOverrides = ''
@@ -64,7 +64,7 @@ in
     #   experimental-features=['scale-monitor-framebuffer']
     # '';
   };
-  services.xserver.desktopManager.gnome = {
+  services.desktopManager.gnome = {
     enable = true;
   };
   programs.xwayland.enable = true;
@@ -114,6 +114,7 @@ in
     xwayland
     wayland-protocols
     linux-firmware
+    mullvad-vpn
   ] ++ gstreamerPackages;
 
   environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 =

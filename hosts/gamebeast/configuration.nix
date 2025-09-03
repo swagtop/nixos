@@ -22,7 +22,11 @@
   # networking.wireless.enable = true;  
     
   # Kernel.
-  boot.kernelPackages = pkgs.linuxPackages-rt_latest;
+  boot.kernelPackages = pkgs.linuxPackagesFor (
+    pkgs.linuxPackages_latest.kernel.override (old: {
+      stdenv = pkgs.stdenvAdapters.impureUseNativeOptimizations pkgs.stdenv;
+    })
+  );
   
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -102,7 +106,6 @@
     libvirt
   ];
 
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "dk";
@@ -159,11 +162,6 @@
     localNetworkGameTransfers.openFirewall = true;
   };
 
-  # programs.kdeconnect = {
-  #   enable = true;
-  #   package = pkgs.gnomeExtensions.gsconnect;
-  # };
-
   virtualisation.docker = {
     enable = false;
     rootless = {
@@ -177,7 +175,7 @@
   };
 
   zramSwap = {
-    enable = false;
+    enable = true;
     algorithm = "lz4";
   };
 
@@ -243,12 +241,12 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 
     8000 
-    16261
-    16262
+    # 16261
+    # 16262
   ];
   networking.firewall.allowedUDPPorts = [ 
-    16261
-    16262
+    # 16261
+    # 16262
   ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.

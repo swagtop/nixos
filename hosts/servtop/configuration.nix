@@ -75,7 +75,7 @@
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
-    unstable.cloudflared
+    cloudflared
     terraria-server
   ];
 

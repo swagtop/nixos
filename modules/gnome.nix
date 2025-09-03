@@ -70,6 +70,7 @@ in
   programs.xwayland.enable = true;
 
   programs.sway.enable = true;
+  programs.foot.enable = lib.mkForce false;
 
   # Use preferred GNOME settings.
   programs.dconf.profiles.user.databases = gnomeSettings;
@@ -90,13 +91,13 @@ in
   environment.systemPackages = with pkgs; [
     # Terminal emulator, wrapping in shell script for config.
     (pkgs.writeShellScriptBin "alacritty" ''
-      exec ${pkgs.unstable.alacritty}/bin/alacritty \
+      exec ${pkgs.alacritty-graphics}/bin/alacritty \
       --config-file ${self}/configs/alacritty/alacritty.toml "$@"
     '' )
-    unstable.alacritty # For the .desktop entry.
+    alacritty-graphics # For the .desktop entry.
 
     # Graphics.
-    unstable.blender-hip
+    blender-hip
     inkscape
     typst
 

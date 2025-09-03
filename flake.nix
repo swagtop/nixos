@@ -2,19 +2,11 @@
   description = "My cool system flake!";
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }: 
+  outputs = { self, nixpkgs, ... }: 
   let
     allow-unfree = { nixpkgs.config.allowUnfree = true; };
-    unstable-overlay.nixpkgs.overlays = [
-      (final: prev: {
-        unstable = import nixpkgs-unstable {
-          inherit (final) system config;
-        };
-      })
-    ];
   in
   {
     nixosConfigurations = {
@@ -22,7 +14,6 @@
         specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
-          unstable-overlay
           ./hosts/gamebeast/configuration.nix 
           ./hosts/gamebeast/hardware-configuration.nix 
           ./modules/nixos.nix
@@ -39,7 +30,6 @@
         specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
-          unstable-overlay
           ./hosts/swagtop/configuration.nix 
           ./modules/nixos.nix
           ./modules/linker.nix
@@ -54,7 +44,6 @@
         specialArgs = { inherit self; };
         modules = [ 
           allow-unfree
-          unstable-overlay
           ./hosts/servtop/configuration.nix 
           ./modules/nixos.nix
           ./modules/common.nix

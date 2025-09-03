@@ -3,7 +3,7 @@ let
   bitwig-with-libs =
   let
     newest-bitwig-studio = 
-      pkgs.unstable.bitwig-studio.override (old: {
+      pkgs.bitwig-studio.override (old: {
         bitwig-studio-unwrapped = old.bitwig-studio-unwrapped.overrideAttrs rec {
           version = "5.3.13";
           src = pkgs.fetchurl {
@@ -28,7 +28,7 @@ let
             libudev0-shim
             pkg-config
             udev
-            unstable.bitwig-studio
+            bitwig-studio
             vulkan-loader
             wayland
             wayland-protocols
@@ -43,7 +43,7 @@ let
             zlib
           ])
         }"
-        export VST3_PATH="${pkgs.unstable.vital}/lib/vst3"
+        export VST3_PATH="${pkgs.vital}/lib/vst3"
         exec ${newest-bitwig-studio}/bin/bitwig-studio "$@"
       '';
   in
@@ -70,7 +70,7 @@ in {
     # wineWow64Packages.base
     wineWow64Packages.base
     libsndfile
-    unstable.vital
+    vital
     desktop-file-utils
   ];
 

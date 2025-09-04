@@ -97,7 +97,18 @@ in
   '';
 
   # Enable web browser.
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    wrapperConfig = {
+      pipewireSupport = true;
+    };
+    preferences = {
+      "media.hardware-video-decoding.force-enabled" = 1;
+      "media.navigator.mediadatadecoder_vp8_hardware_enabled" = 1;
+      "media.videocontrols.picture-in-picture.enabled" = 0;
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     # Terminal emulator, wrapping in shell script for config.
     (pkgs.writeShellScriptBin "alacritty" ''

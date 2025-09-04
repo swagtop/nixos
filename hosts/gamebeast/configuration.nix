@@ -66,11 +66,15 @@
   hardware.enableRedistributableFirmware = true;
   hardware.graphics = {
     enable = true;
-    enable32Bit = true;
     extraPackages = with pkgs; [
       mesa
       amdvlk
       libvdpau-va-gl
+      intel-media-driver
+    ];
+    enable32Bit = true;
+    extraPackages32 = with pkgs.pkgsi686Linux; [
+      intel-vaapi-driver
     ];
   };
   hardware.amdgpu = {
@@ -90,14 +94,19 @@
   };
 
   environment.variables = {
+    # AMD stuff
     AMD_VULKAN_ICD = "RADV";
     VK_ICD_FILENAMES = "${pkgs.mesa}/share/vulkan/icd.d/radeon_icd.x86_64.json";
     ROC_ENABLE_PRE_VEGA = "1";
+
+    # Intel stuff
+    LIBVA_DRIVER_NAME = "iHD";
   };
   services.udev.enable = true;
 
   environment.systemPackages = with pkgs; [
     libvirt
+    rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 
   # Configure keymap in X11

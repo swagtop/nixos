@@ -1,22 +1,23 @@
 { pkgs, lib, ... }:
 {
-  environment.systemPackages =
-  let
-    mkDiscord = string: 
-      (pkgs.writeShellScriptBin "${string}" ''
-        exec ${pkgs.discord}/bin/"${string}" \
-          --ignore-gpu-blocklist \
-          --disable-features=UseOzonePlatform \
-          --enable-features=VaapiVideoDecoder \
-          --use-gl=desktop \
-          --enable-gpu-rasterization \
-          --enable-zero-copy \
-          "$@"
-      '');
-  in [
-    (mkDiscord "discord")
-    (mkDiscord "Discord")
-    pkgs.discord
+  environment.systemPackages = with pkgs; [
+    (discord.overrideAttrs (old:
+      let
+        flags = "${lib.concatStringsSep " " [
+          "--ignore-gpu-blocklist"
+          "--disable-features=UseOzonePlatform"
+          "--enable-features=VaapiVideoDecoder"
+          "--use-gl=desktop"
+          "--enable-gpu-rasterization"
+          "--enable-zero-copy"
+        ]}";
+      in {
+        nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
+        postInstall = old.postInstall + ''
+          wrapProgram $out/bin/discord --add-flags "${flags}"
+          wrapProgram $out/bin/Discord --add-flags "${flags}"
+        '';
+      }))
   ];
 
   programs.steam = {

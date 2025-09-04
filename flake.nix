@@ -20,7 +20,8 @@
           ./modules/linker.nix
           ./modules/common.nix
 
-          ./modules/gnome.nix
+          ./modules/gaming.nix
+          ./modules/gui.nix
           ./modules/music.nix
           ./modules/dev.nix
           ./modules/tui.nix
@@ -35,7 +36,7 @@
           ./modules/linker.nix
           ./modules/common.nix
 
-          ./modules/gnome.nix
+          ./modules/gui.nix
           ./modules/dev.nix
           ./modules/tui.nix
         ];

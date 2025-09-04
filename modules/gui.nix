@@ -69,7 +69,17 @@ in
   };
   programs.xwayland.enable = true;
 
-  programs.sway.enable = true;
+  programs.sway = {
+    enable = true;
+    # Getting rid of pulseaudio and foot packages.
+    extraPackages = with pkgs; [
+      brightnessctl
+      grim
+      swayidle
+      swaylock
+      wmenu
+    ];
+  };
   programs.foot.enable = lib.mkForce false;
 
   # Use preferred GNOME settings.
@@ -123,6 +133,11 @@ in
 
   programs.bash.shellAliases = shellAliases;
 
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+  
   # Extra fonts.
   fonts.packages = with pkgs; [
     nerd-fonts.hack

@@ -69,14 +69,8 @@
     enable32Bit = true;
     extraPackages = with pkgs; [
       mesa
-      # amdvlk
-      # vulkan-loader
-      # vulkan-validation-layers
-      # vulkan-extension-layer
-      # libvdpau-va-gl
-      # intel-media-driver
-      # mesa.opencl
-      # rocmPackages.clr.icd
+      amdvlk
+      libvdpau-va-gl
     ];
   };
   hardware.amdgpu = {
@@ -122,7 +116,7 @@
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
-    pulse.enable = true;
+    # pulse.enable = true;
 
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
@@ -146,21 +140,10 @@
     ];
     packages = with pkgs; [
       spotify
-      discord
       transmission_4-gtk
     ];
   };
 
-  programs.steam = {
-    enable = true;
-    package = 
-      pkgs.steam.override {
-        extraArgs = "steam://unlockh264/";
-      };
-    protontricks.enable = true;
-    # gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
 
   virtualisation.docker = {
     enable = false;
@@ -189,6 +172,10 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  programs.steam = {
+    localNetworkGameTransfers.openFirewall = true;
+  };
 
   # List services that you want to enable:
   programs.virt-manager = {

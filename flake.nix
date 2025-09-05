@@ -4,54 +4,53 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, ... }: 
+  outputs = inputs@{ self, ... }: 
   let
-    allow-unfree = { nixpkgs.config.allowUnfree = true; };
+    nixpkgs =
+      inputs.nixpkgs.lib.recursiveUpdate
+        inputs.nixpkgs { nixpkgs.config.allowUnfree = true; };
+    mkSystem = config: nixpkgs.lib.nixosSystem
+      (nixpkgs.lib.recursiveUpdate { specialArgs = { inherit self; }; } config);
   in
   {
     nixosConfigurations = {
-      gamebeast = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit self; };
+      gamebeast = mkSystem {
         modules = [ 
-          allow-unfree
           ./hosts/gamebeast/configuration.nix 
-          ./hosts/gamebeast/hardware-configuration.nix 
-          ./modules/nixos.nix
-          ./modules/linker.nix
           ./modules/common.nix
+          ./modules/nixos.nix
 
+          ./modules/dev.nix
           ./modules/gaming.nix
           ./modules/gui.nix
           ./modules/music.nix
-          ./modules/dev.nix
           ./modules/tui.nix
-        ];
-      };
-      swagtop = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit self; };
-        modules = [ 
-          allow-unfree
-          ./hosts/swagtop/configuration.nix 
-          ./modules/nixos.nix
+
           ./modules/linker.nix
-          ./modules/common.nix
-
-          ./modules/gui.nix
-          ./modules/dev.nix
-          ./modules/tui.nix
         ];
       };
-      servtop = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit self; };
+      swagtop = mkSystem {
         modules = [ 
-          allow-unfree
-          ./hosts/servtop/configuration.nix 
-          ./modules/nixos.nix
+          ./hosts/swagtop/configuration.nix 
           ./modules/common.nix
+          ./modules/nixos.nix
 
           ./modules/dev.nix
+          ./modules/gui.nix
           ./modules/tui.nix
+
+          ./modules/linker.nix
+        ];
+      };
+      servtop = mkSystem {
+        modules = [ 
+          ./hosts/servtop/configuration.nix 
+          ./modules/common.nix
+          ./modules/nixos.nix
+
+          ./modules/dev.nix
           ./modules/ssh-server.nix
+          ./modules/tui.nix
         ];
       };
     };

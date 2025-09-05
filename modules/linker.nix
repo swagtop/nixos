@@ -3,7 +3,7 @@
   # Enable dynamic linking.
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    alsa-lib
+    alsa-lib-with-plugins
     libGL
     libxkbcommon
     pkg-config

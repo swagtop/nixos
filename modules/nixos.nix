@@ -87,9 +87,4 @@ in
     promptInit = promptInit;
     shellAliases = shellAliases;
   };
-
-  systemd.tmpfiles.settings."10-nixos-directory"."/etc/nixos".d = {
-    group = "nix";
-    mode = "0755";
-  };
 }

@@ -43,16 +43,6 @@ let
 
   '';
 
-  # Wrapper for Helix, using config in flake.
-  helix-wrapper = pkgs.writeShellScriptBin "hx" ''
-    HELIX_RUNTIME="${self}/configs/helix/" exec ${pkgs.helix}/bin/hx -c "${self}/configs/helix/config.toml" "$@"
-  '';
-
-  # Wrapper for Zellij, using config in flake.
-  zellij-wrapper = pkgs.writeShellScriptBin "zellij" ''
-    exec ${pkgs.zellij}/bin/zellij -c "${self}/configs/zellij/config.kdl" "$@"
-  '';
-
   # Quick shortcuts.
   shellAliases = {
     # Zellij.
@@ -79,8 +69,8 @@ in {
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
-    zellij-wrapper
-    helix-wrapper
+    zellij
+    helix
 
     # TUI git manager.
     lazygit

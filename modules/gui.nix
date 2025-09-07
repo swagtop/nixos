@@ -111,11 +111,7 @@ in
 
   environment.systemPackages = with pkgs; [
     # Terminal emulator, wrapping in shell script for config.
-    (pkgs.writeShellScriptBin "alacritty" ''
-      exec ${pkgs.alacritty-graphics}/bin/alacritty \
-      --config-file ${self}/configs/alacritty/alacritty.toml "$@"
-    '' )
-    alacritty-graphics # For the .desktop entry.
+    alacritty
 
     # Graphics.
     blender-hip

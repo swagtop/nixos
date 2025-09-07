@@ -8,17 +8,27 @@
   let
     nixpkgs =
       inputs.nixpkgs.lib.recursiveUpdate
-        inputs.nixpkgs { nixpkgs.config.allowUnfree = true; };
-    mkSystem = config: nixpkgs.lib.nixosSystem
-      (nixpkgs.lib.recursiveUpdate { specialArgs = { inherit self; }; } config);
+        inputs.nixpkgs { nixpkgs = { config.allowUnfree = true; }; };
+    overlay = {
+      nixpkgs.overlays = [ (import ./modules/overlay.nix {
+        inherit self;
+        inherit (nixpkgs) lib;
+      }) ];
+    };
+    mkSystem = config: nixpkgs.lib.nixosSystem (config // {
+      specialArgs = { inherit self; } // (config.specialArgs or {});
+      modules = [
+        overlay
+        ./modules/common.nix
+        ./modules/nixos.nix
+      ] ++ (config.modules or []);
+    });
   in
   {
     nixosConfigurations = {
       gamebeast = mkSystem {
         modules = [ 
           ./hosts/gamebeast/configuration.nix 
-          ./modules/common.nix
-          ./modules/nixos.nix
 
           ./modules/dev.nix
           ./modules/gaming.nix
@@ -32,8 +42,6 @@
       swagtop = mkSystem {
         modules = [ 
           ./hosts/swagtop/configuration.nix 
-          ./modules/common.nix
-          ./modules/nixos.nix
 
           ./modules/dev.nix
           ./modules/gui.nix
@@ -45,8 +53,6 @@
       servtop = mkSystem {
         modules = [ 
           ./hosts/servtop/configuration.nix 
-          ./modules/common.nix
-          ./modules/nixos.nix
 
           ./modules/dev.nix
           ./modules/ssh-server.nix

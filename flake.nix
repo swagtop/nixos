@@ -59,6 +59,17 @@
           ./modules/tui.nix
         ];
       };
+      cooltop = mkSystem {
+        modules = [ 
+          ./hosts/cooltop/configuration.nix 
+
+          ./modules/gui.nix
+          ./modules/dev.nix
+          ./modules/tui.nix
+
+          ./modules/linker.nix
+        ];
+      };
     };
   };
 }

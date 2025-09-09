@@ -100,7 +100,7 @@ in {
     package = prev.helix;
     execName = "hx";
     args = [
-      "--set HELIX_RUNTIME \"${prev.helix}/lib/runtime\""
+      "--set HELIX_RUNTIME \"${self}/configs/helix/\""
       "--add-flags \"-c ${self}/configs/helix/config.toml\""
     ];
   };

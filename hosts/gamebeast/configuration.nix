@@ -1,4 +1,7 @@
 { pkgs, lib, ... }:
+let
+  nativeStdenv = (pkgs.stdenvAdapters.impureUseNativeOptimizations pkgs.stdenv);
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -24,9 +27,40 @@
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
     pkgs.linuxPackages_latest.kernel.override (old: {
-      stdenv = pkgs.stdenvAdapters.impureUseNativeOptimizations pkgs.stdenv;
+      stdenv = nativeStdenv;
     })
   );
+
+  nixpkgs.overlays = [
+    # Building GNOME stuff with native optimizations.
+    (final: prev:
+    let
+      gtk4 = prev.gtk4.override {
+        stdenv = nativeStdenv;
+      };
+    in {
+      gnome-desktop = prev.gnome-desktop.override {
+        stdenv = nativeStdenv;
+      };
+      gnome-session = prev.gnome-session.override {
+        inherit (final) gnome-desktop;
+        stdenv = nativeStdenv;
+      };
+      mutter = prev.mutter.override {
+        inherit gtk4;
+        inherit (final) gnome-desktop;
+        stdenv = nativeStdenv;
+      };
+      gnome-shell = prev.gnome-shell.override {
+        inherit gtk4;
+        inherit (final) mutter gnome-desktop;
+        stdenv = nativeStdenv;
+        gjs = prev.gjs.override {
+          stdenv = nativeStdenv;
+        };
+      };
+    })
+  ];
   
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

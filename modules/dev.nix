@@ -50,7 +50,7 @@ in
     # GPU Tooling
     vulkan-tools
 
-    # GPU TOoling
+    # GPU Tooling
     config.boot.kernelPackages.perf
   ];
 

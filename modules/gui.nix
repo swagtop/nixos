@@ -16,7 +16,10 @@ let
       };
       "org/gnome/mutter" = {
         edge-tiling = true;
-        experimental-features = [ "scale-monitor-framebuffer" ];
+        experimental-features = [
+          "scale-monitor-framebuffer"
+          "xwayland-native-scaling"
+        ];
       };
       "org/gnome/settings/daemon/plugins/color" = {
         night-light-enable = true;
@@ -104,8 +107,10 @@ in
     };
     preferences = {
       "media.hardware-video-decoding.force-enabled" = 1;
+      "media.ffmpeg.vaapi.enabled" = 1;
       "media.navigator.mediadatadecoder_vp8_hardware_enabled" = 1;
       "media.videocontrols.picture-in-picture.enabled" = 0;
+      "gfx.webrender.all" = 1;
     };
   };
 
@@ -133,6 +138,7 @@ in
     wayland-protocols
     linux-firmware
     mullvad-vpn
+    ffmpeg
   ] ++ gstreamerPackages;
 
   environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 =

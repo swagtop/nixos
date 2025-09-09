@@ -27,7 +27,7 @@ let
       fi
       name='ns'
       for arg in "$@"; do
-        NIX_SHELL+=" nixpkgs#$arg"
+        NIX_SHELL+=" nixpkgs/nixos-unstable#$arg"
         name+="-$arg"
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)

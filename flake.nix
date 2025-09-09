@@ -9,7 +9,7 @@
     nixpkgs =
       inputs.nixpkgs.lib.recursiveUpdate
         inputs.nixpkgs { nixpkgs = { config.allowUnfree = true; }; };
-    overlay = {
+    overlay-module = {
       nixpkgs.overlays = [ (import ./modules/overlay.nix {
         inherit self;
         inherit (nixpkgs) lib;
@@ -18,7 +18,7 @@
     mkSystem = config: nixpkgs.lib.nixosSystem (config // {
       specialArgs = { inherit self; } // (config.specialArgs or {});
       modules = [
-        overlay
+        overlay-module
         ./modules/common.nix
         ./modules/nixos.nix
       ] ++ (config.modules or []);

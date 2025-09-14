@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 
 {
   imports =
@@ -75,8 +75,7 @@
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
-    cloudflared
-    terraria-server
+    postgresql
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -90,8 +89,19 @@
   # List services that you want to enable:
 
   # Open ports in the firewall.
-  networking.firewall.allowedUDPPorts = [ 16261 16262 ];
-  networking.firewall.allowedTCPPorts = [ 8096 8920 ] ++ [ 7777 ];
+  networking.firewall.allowedUDPPorts = [ 53 80 443 16261 16262 ];
+  networking.firewall.allowedTCPPorts = [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ];
+  # networking.interfaces.enp1s0 = {
+  #   ipv4.addresses = [{
+  #     address = "10.10.11.2";
+  #     prefixLength = 24;
+  #   }];
+  #   useDHCP = false;
+  # };
+  # networking.defaultGateway = "10.10.11.1";
+  # networking.nameservers = [
+  #   "1.1.1.1"
+  # ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -155,6 +165,16 @@
         "force user" = "thedb";
         "force group" = "nogroup";
       };
+      "jellyfin-shows" = {
+        "path" = "/srv/data/media/shows";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
     };
   };
 
@@ -170,57 +190,126 @@
     dataDir = "/srv/data/media";
     user = "thedb";
     enable = true;
-    openFirewall = true;
+    # openFirewall = true;
   };
 
-  services.cloudflared = {
-    enable = true;
-    tunnels = {
-      "63208175-0ebb-4482-9382-061dfef32455" = {
-        credentialsFile = "${config.users.users."thedb".home}/.cloudflared/63208175-0ebb-4482-9382-061dfef32455.json";
-        default = "http_status:404";
-        ingress = {
-          "jf.spirre.vip" = {
-            service = "http://localhost:8096";
-          };
-        };
-      };
-    };
-  };
-
-  systemd.services.terraria =
-  let
-    map = "1";
-    playerCount = "16";
-    serverPort = "7777";
-    autoPortForward = "n";
-    serverPassword = "suneenus";
-    input = builtins.concatStringsSep "\\n" [
-      "${map}"
-      "${playerCount}"
-      "${serverPort}"
-      "${autoPortForward}"
-      "${serverPassword}"
-    ];
-  in {
-    enable = true;
-    description = "Terraria Dedicated Server";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = ''
-        /bin/sh -c "printf '${input}' | ${pkgs.terraria-server}/bin/TerrariaServer"
-      '';
-      User = "thedb";
-    };
-  };
-
-  services.logind.lidSwitchExternalPower = "ignore";
+  services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
   systemd.sleep.extraConfig = ''
     AllowSuspend=no
     AllowHibernation=no
     AllowHybridSleep=no
     AllowSuspendThenHibernate=no
   '';
+
+  # services.seafile = {
+  #   enable = true;
+
+  #   adminEmail = "thedb11@gmail.com";
+  #   initialAdminPassword = "change this later!";
+
+  #   ccnetSettings.General.SERVICE_URL = "https://mb.spirre.vip";
+
+  #   seafileSettings = {
+  #     fileserver = {
+  #       host = "unix:/run/seafile/server.sock";
+  #     };
+  #   };
+  # };
+
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "thedb11@gmail.com";
+  };
+
+  services.minecraft-server = {
+    enable = true;
+    eula = true;
+    declarative = false;
+    package = pkgs.papermc;
+    openFirewall = true;
+  };
+
+  services.nginx = {
+    enable = true;
+    # recommendedGzipSettings = true;
+    # recommendedOptimisation = true;
+    # recommendedProxySettings = true;
+    # recommendedTlsSettings = true;
+
+    virtualHosts = {
+      "jf.spirre.vip" = {
+        locations = {
+          "/" = {
+            proxyPass = "http://127.0.0.1:8096";
+            proxyWebsockets = true;
+          };
+        };
+        forceSSL = true;
+        enableACME = true;
+      };
+      "mus.spirre.vip" = {
+        root = "/var/www/mus.spirre.vip";
+
+        extraConfig = ''
+          error_page 403 /403.html;
+          error_page 404 /404.html;
+        '';
+
+        locations."/403.webp".root= "/var/www/errors/";
+        locations."/403.html" = {
+          root = "/var/www/errors/";
+          extraConfig = ''
+            internal;
+          '';
+        };
+        locations."/404.webp".root= "/var/www/errors/";
+        locations."/404.html" = {
+          root = "/var/www/errors/";
+          extraConfig = ''
+            internal;
+          '';
+        };
+
+        locations."/" = {
+          index = "index.html";
+          extraConfig = ''
+            allow 10.10.10.0/24;
+            deny all;
+          '';
+        };
+
+        forceSSL = true;
+        enableACME = true;
+      };
+      "mb.spirre.vip" = {
+        forceSSL = true;
+        enableACME = true;
+        locations = {
+          "/" = {
+            proxyPass = "http://unix:/run/seahub/gunicorn.sock";
+            extraConfig = ''
+              proxy_set_header   Host $host;
+              proxy_set_header   X-Real-IP $remote_addr;
+              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header   X-Forwarded-Host $server_name;
+              proxy_read_timeout  1200s;
+              client_max_body_size 0;
+            '';
+          };
+          "/seafhttp" = {
+            proxyPass = "http://unix:/run/seafile/server.sock";
+            extraConfig = ''
+              rewrite ^/seafhttp(.*)$ $1 break;
+              client_max_body_size 0;
+              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_connect_timeout  36000s;
+              proxy_read_timeout  36000s;
+              proxy_send_timeout  36000s;
+              send_timeout  36000s;
+            '';
+          };
+        };
+      };
+    };
+  };
 }

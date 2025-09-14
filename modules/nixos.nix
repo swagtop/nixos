@@ -9,7 +9,7 @@ let
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo su'";
+    ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo su -p'";
 
     # Nix commands.
     nd = "nix develop";

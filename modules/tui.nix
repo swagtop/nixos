@@ -4,7 +4,7 @@ let
   # Adds name of Nix shell to PS1, if in one.
   devShell = "\${name:+[$name] }";
   # Adds name of hostname if connected through SSH.
-  ssh = "\${SSH_CONNECTION:+@$HOSTNAME }";
+  ssh = "\${SSH_CONNECTION:+@$HOSTNAME}";
   # ANSI escape codes for changing colors of terminal text.
   reset = ''\[\e[0;0m\]'';
   green = ''\[\e[1;32m\]'';
@@ -18,10 +18,10 @@ let
     if [ "$EUID" -ne 0 ]
     then
       # Normal user, green prompt
-      PS1='${green}\u${orange} ${ssh}${cyan}${devShell}${green}\w € ${reset}'
+      PS1='${green}\u${orange}${ssh} ${cyan}${devShell}${green}\w € ${reset}'
     else
       # Root, red prompt
-      PS1='${red}\u${orange} ${ssh}${cyan}${devShell}${red}\w £ ${reset}'
+      PS1='${red}\u${orange}${ssh} ${cyan}${devShell}${red}\w £ ${reset}'
     fi
 
     y() {

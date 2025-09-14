@@ -8,13 +8,23 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
+  # Disable wakeup for Intel AX200 Bluetooth controller, otherwise cannot sleep.
+  services.udev.extraRules = ''
+    ${lib.concatStringsSep ", " [
+      "ACTION==\"add\""
+      "SUBSYSTEM==\"pci\""
+      "KERNELS==\"0000:05:00.0\""
+      "ATTR{power/wakeup}=\"disabled\""
+    ]}
+  '';
+
   boot.initrd.availableKernelModules = [
-    "amdgpu"
-    "xhci_pci"
     "ahci"
+    "amdgpu"
     "nvme"
-    "usbhid"
     "sd_mod"
+    "usbhid"
+    "xhci_pci"
   ];
   
   boot.supportedFilesystems = [ "ntfs" ];
@@ -24,9 +34,9 @@
     # "vfio_pci" "vfio" "vfio_iommu_type1"
   ];
   boot.kernelModules = [
+    "amdgpu"
     "kvm"
     "kvm-intel"
-    "amdgpu"
     # GPU Passthrough stuff.
     # "vfio_pci"
     # "vfio"
@@ -41,13 +51,16 @@
     "amdgpu.cik_support=1"
     "amdgpu.si_support=1"
     "amdgpu.dc=1"
-    "mem_sleep_default=deep"
-    "acpi_sleep=nonvs"
-    "pci=noaer"
+
     "intel_iommu=on"
     "amd_iommu=on"
     "iommu=pt"
     "vfio-pci.ids=1002:aac8"
+
+    # Sleep fixes.
+    "mem_sleep_default=deep"
+    "acpi_sleep=nonvs"
+    "pci=noaer"
   ];
 
   # boot.extraModprobeConfig = ''
@@ -72,6 +85,7 @@
       "rw"
       "nosuid"
       "nodev"
+      "nofail"
       "relatime"
       "uid=1000"
       "gid=100"
@@ -79,6 +93,7 @@
       "uhelper=udisks2"
       "x-gvfs-hide" # Hide unmount button, don't want that happening.
     ];
+    neededForBoot = false;
   };
 
   swapDevices = [ ];

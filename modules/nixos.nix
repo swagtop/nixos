@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ inputs, pkgs, nixpkgs, ... }:
 
 let
   shellAliases = {
@@ -27,7 +27,7 @@ let
       fi
       name='ns'
       for arg in "$@"; do
-        NIX_SHELL+=" nixpkgs/nixos-unstable#$arg"
+        NIX_SHELL+=" nixpkgs/${inputs.nixpkgs.rev}#$arg"
         name+="-$arg"
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)

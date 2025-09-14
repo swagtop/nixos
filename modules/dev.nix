@@ -16,7 +16,6 @@ in
   environment.systemPackages = with pkgs; [
     # Compiler stuff.
     gnumake
-
     pkg-config
 
     # Language servers and co.

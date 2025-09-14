@@ -114,6 +114,8 @@ in
     };
   };
 
+  xdg.portal.enable = true;
+
   environment.systemPackages = with pkgs; [
     # Terminal emulator, wrapping in shell script for config.
     alacritty

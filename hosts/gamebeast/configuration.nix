@@ -59,6 +59,10 @@ in
           stdenv = nativeStdenv;
         };
       };
+      # ... and ripgrep for good measure.
+      ripgrep = prev.ripgrep.override {
+        stdenv = nativeStdenv;
+      };
     })
   ];
   
@@ -117,12 +121,13 @@ in
       enable = true;
       package = pkgs.amdvlk;
       support32Bit.enable = true;
+      # https://github.com/GPUOpen-Drivers/AMDVLK?tab=readme-ov-file#runtime-settings
       settings = {
         AllowVkPipelineCachingToDisk = 1;
-        EnableVmAlwaysValid = 1;
-        IFH = 0;
-        IdleAfterSubmitGpuMask = 1;
         ShaderCacheMode = 1;
+        IFH = 0;
+        EnableVmAlwaysValid = 1;
+        IdleAfterSubmitGpuMask = 0;
       };
     };
   };

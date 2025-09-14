@@ -16,7 +16,7 @@
       }) ];
     };
     mkSystem = config: nixpkgs.lib.nixosSystem (config // {
-      specialArgs = { inherit self; } // (config.specialArgs or {});
+      specialArgs = { inherit self inputs; } // (config.specialArgs or {});
       modules = [
         overlay-module
         ./modules/common.nix

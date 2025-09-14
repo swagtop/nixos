@@ -5,8 +5,10 @@
   environment.systemPackages = with pkgs; [
     # Common utilities.
     file
-    binutils
     ripgrep
+    binutils
+    pciutils
+    usbutils
     
     # Zipping.
     zip

@@ -1,4 +1,4 @@
-{ inputs, pkgs, nixpkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
   shellAliases = {
@@ -9,16 +9,17 @@ let
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "/bin/sh -c 'cd /etc/nixos; sudo su'";
+    ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo su'";
 
     # Nix commands.
     nd = "nix develop";
     ni = "nix-index";
     nl = "nix-locate";
+
   };
 
-  # Shorthand for `nix shell nixpkgs#$1 nixpkgs#$2 ...`.
   promptInit = ''
+    # Shorthand for `nix shell nixpkgs#$1 nixpkgs#$2 ...`.
     ns() {
       ORIGINAL_NAME="$name"
       local NIX_SHELL="NIXPKGS_ALLOW_UNFREE=1 nix shell --impure"
@@ -32,6 +33,11 @@ let
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)
       export name=$ORIGINAL_NAME
+    }
+
+    # Go to derivation.
+    godrv() {
+      cd $(dirname $(realpath $(which $1)))
     }
   '';
 in

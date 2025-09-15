@@ -189,6 +189,7 @@ in
     packages = with pkgs; [
       spotify
       transmission_4-gtk
+      prismlauncher
     ];
   };
 

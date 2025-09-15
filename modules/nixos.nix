@@ -40,6 +40,8 @@ let
       cd $(dirname $(realpath $(which $1)))
     }
   '';
+
+  nixPath = "/etc/nixPath";
 in
 {
   # Set system to auto update and upgrade flake.
@@ -69,6 +71,12 @@ in
       options = "--delete-older-than 14d";
     };
   }; 
+
+  # Set nix channel to follow system flake nixpkgs input.
+  nix.nixPath = [ "nixpkgs=${nixPath}" ];
+  systemd.tmpfiles.rules = [
+    "L+ ${nixPath} - - - - ${pkgs.path}"
+  ];
 
   # Useful Nix commands.
   environment = {

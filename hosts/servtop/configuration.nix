@@ -89,8 +89,10 @@
   # List services that you want to enable:
 
   # Open ports in the firewall.
-  networking.firewall.allowedUDPPorts = [ 53 80 443 16261 16262 ];
-  networking.firewall.allowedTCPPorts = [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ];
+  networking.firewall.allowedUDPPorts =
+    [ 53 80 443 16261 16262 ] ++ [ 25565 ];
+  networking.firewall.allowedTCPPorts =
+    [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ] ++ [ 25565 ];
   # networking.interfaces.enp1s0 = {
   #   ipv4.addresses = [{
   #     address = "10.10.11.2";
@@ -224,9 +226,9 @@
   services.minecraft-server = {
     enable = true;
     eula = true;
-    declarative = false;
     package = pkgs.papermc;
     openFirewall = true;
+    declarative = false;
   };
 
   services.nginx = {

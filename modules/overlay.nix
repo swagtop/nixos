@@ -97,7 +97,9 @@ in {
   };
 
   helix = symlinkWrap {
-    package = prev.helix;
+    package = (prev.helix.overrideAttrs (oldAttrs: {
+      patches = oldAttrs.patches ++ [ "${self}/patches/helix_w.patch" ];
+    }));
     execName = "hx";
     args = [
       "--set HELIX_RUNTIME \"${self}/configs/helix/\""

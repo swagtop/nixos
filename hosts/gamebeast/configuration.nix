@@ -60,8 +60,8 @@ in
         };
       };
       # ... and ripgrep for good measure.
-      ripgrep = prev.ripgrep.override {
-        stdenv = nativeStdenv;
+      ripgrep = prev.ripgrep.overrideAttrs {
+        RUSTFLAGS = "-C target-cpu=native";
       };
     })
   ];

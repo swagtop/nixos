@@ -1,0 +1,94 @@
+diff --git a/helix-term/src/commands/typed.rs b/helix-term/src/commands/typed.rs
+index 4831b938..f2ef7b42 100644
+--- a/helix-term/src/commands/typed.rs
++++ b/helix-term/src/commands/typed.rs
+@@ -2793,7 +2793,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write",
+-        aliases: &["w"],
++        aliases: &["w", "W"],
+         doc: "Write changes to disk. Accepts an optional path (:write some/path.txt)",
+         fun: write,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2805,7 +2805,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write!",
+-        aliases: &["w!"],
++        aliases: &["w!", "W!"],
+         doc: "Force write changes to disk creating necessary subdirectories. Accepts an optional path (:write! some/path.txt)",
+         fun: force_write,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2817,7 +2817,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-buffer-close",
+-        aliases: &["wbc"],
++        aliases: &["wbc", "Wbc", "WBc", "WBC"],
+         doc: "Write changes to disk and closes the buffer. Accepts an optional path (:write-buffer-close some/path.txt)",
+         fun: write_buffer_close,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2829,7 +2829,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-buffer-close!",
+-        aliases: &["wbc!"],
++        aliases: &["wbc!", "Wbc!", "WBc!", "WBC!"],
+         doc: "Force write changes to disk creating necessary subdirectories and closes the buffer. Accepts an optional path (:write-buffer-close! some/path.txt)",
+         fun: force_write_buffer_close,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2910,7 +2910,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-quit",
+-        aliases: &["wq", "x"],
++        aliases: &["wq", "x", "Wq", "WQ"],
+         doc: "Write changes to disk and close the current view. Accepts an optional path (:wq some/path.txt)",
+         fun: write_quit,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2922,7 +2922,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-quit!",
+-        aliases: &["wq!", "x!"],
++        aliases: &["wq!", "x!", "Wq!", "WQ!"],
+         doc: "Write changes to disk and close the current view forcefully. Accepts an optional path (:wq! some/path.txt)",
+         fun: force_write_quit,
+         completer: CommandCompleter::positional(&[completers::filename]),
+@@ -2934,7 +2934,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-all",
+-        aliases: &["wa"],
++        aliases: &["wa", "Wa", "WA"],
+         doc: "Write changes from all buffers to disk.",
+         fun: write_all,
+         completer: CommandCompleter::none(),
+@@ -2946,7 +2946,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-all!",
+-        aliases: &["wa!"],
++        aliases: &["wa!", "Wa!", "WA!"],
+         doc: "Forcefully write changes from all buffers to disk creating necessary subdirectories.",
+         fun: force_write_all,
+         completer: CommandCompleter::none(),
+@@ -2958,7 +2958,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-quit-all",
+-        aliases: &["wqa", "xa"],
++        aliases: &["wqa", "xa", "Wqa", "WQa", "WQA"],
+         doc: "Write changes from all buffers to disk and close all views.",
+         fun: write_all_quit,
+         completer: CommandCompleter::none(),
+@@ -2970,7 +2970,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "write-quit-all!",
+-        aliases: &["wqa!", "xa!"],
++        aliases: &["wqa!", "xa!", "Wqa!", "WQa!", "WQA!"],
+         doc: "Write changes from all buffers to disk and close all views forcefully (ignoring unsaved changes).",
+         fun: force_write_all_quit,
+         completer: CommandCompleter::none(),

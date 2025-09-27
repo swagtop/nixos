@@ -120,14 +120,6 @@
 
   # Flatpak and flathub, and adw-gtk3 theme for flatpaks.
   services.flatpak.enable = true;
-  systemd.services.flatpak-repo = {
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.flatpak ];
-    # script = ''
-    #   flatpak remote-add --if-not-exists \
-    #   flathub https://flathub.org/repo/flathub.flatpakrepo
-    # '';
-  };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 8000 ];

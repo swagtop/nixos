@@ -84,6 +84,9 @@ in
       nix-search-cli
       nix-index
     ];
+    variables = {
+      NIXPKGS_REV = "${inputs.nixpkgs.rev}";
+    };
   }; 
 
   programs.direnv = {

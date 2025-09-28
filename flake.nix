@@ -37,6 +37,7 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
+          ./modules/store.nix
         ];
       };
       swagtop = mkSystem {
@@ -48,6 +49,7 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
+          ./modules/store.nix
         ];
       };
       servtop = mkSystem {
@@ -68,17 +70,9 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
+          ./modules/store.nix
         ];
       };
     };
-  };
-
-  nixConfig = {
-    extra-substituters = [
-      "https://cache.spirre.vip"
-    ];
-    extra-trusted-public-keys = [
-      "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU="
-    ];
   };
 }

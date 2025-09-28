@@ -9,6 +9,13 @@
     desktop-file-utils
   ];
 
+  environment.variables = {
+    CLAP_PATH = "${lib.makeSearchPath "lib/clap" [
+      pkgs.vital
+      pkgs.chow-tape-model
+    ]}";
+  };
+
   security.rtkit.enable = lib.mkForce false;
   systemd.services.rtkit = {
     enable = false;

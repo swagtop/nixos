@@ -98,7 +98,7 @@ in {
 
   helix = symlinkWrap {
     package = (prev.helix.overrideAttrs (oldAttrs: {
-      patches = oldAttrs.patches ++ [ "${self}/patches/helix_w.patch" ];
+      patches = oldAttrs.patches ++ [ ../patches/helix_w.patch ];
     }));
     execName = "hx";
     args = [

@@ -117,11 +117,11 @@
 
   services.nix-serve = {
     enable = true;
-    secretKeyFile = "/etc/nix/cache-priv-key.pem";
+    secretKeyFile = "/var/lib/nixos/cache-priv-key.pem";
   };
 
   nix.settings = {
-    secret-key-files = [ "/etc/nix/cache-priv-key.pem" ];
+    secret-key-files = [ "/var/lib/nixos/cache-priv-key.pem" ];
   };
 
   programs.nix-ld.enable = true;

@@ -117,7 +117,11 @@
 
   services.nix-serve = {
     enable = true;
-    secretKeyFile = "/var/cache-priv-key.pem";
+    secretKeyFile = "/etc/nix/cache-priv-key.pem";
+  };
+
+  nix.settings = {
+    secret-key-files = [ "/etc/nix/cache-priv-key.pem" ];
   };
 
   programs.nix-ld.enable = true;
@@ -292,6 +296,9 @@
         locations."/".proxyPass =
           "http://${config.services.nix-serve.bindAddress}:"
             + "${toString config.services.nix-serve.port}";
+
+        forceSSL = true;
+        enableACME = true;
       };
     };
   };

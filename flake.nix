@@ -78,7 +78,7 @@
       "https://cache.spirre.vip"
     ];
     extra-trusted-public-keys = [
-      "cache.spirre.vip:uYxxiQhShwKOZkS4H7zuHiH1thf+DBLYuOl16QKMCLM="
+      "cache.spirre.vip-1:VXpwweGFE5I2ikZNQLXp03GvDHpkvAsKhNfvMrzv/e4="
     ];
   };
 }

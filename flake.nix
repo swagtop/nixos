@@ -72,4 +72,13 @@
       };
     };
   };
+
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.spirre.vip"
+    ];
+    extra-trusted-public-keys = [
+      "cache.spirre.vip:uYxxiQhShwKOZkS4H7zuHiH1thf+DBLYuOl16QKMCLM="
+    ];
+  };
 }

@@ -90,9 +90,9 @@
 
   # Open ports in the firewall.
   networking.firewall.allowedUDPPorts =
-    [ 53 80 443 16261 16262 ] ++ [ 25565 ];
+    [ 53 80 443 16261 16262 ] ++ [ 25565 19132 ];
   networking.firewall.allowedTCPPorts =
-    [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ] ++ [ 25565 ];
+    [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ] ++ [ 25565 19132 ];
   # networking.interfaces.enp1s0 = {
   #   ipv4.addresses = [{
   #     address = "10.10.11.2";
@@ -114,6 +114,11 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
+
+  services.nix-serve = {
+    enable = true;
+    secretKeyFile = "/var/cache-priv-key.pem";
+  };
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
@@ -283,34 +288,10 @@
         forceSSL = true;
         enableACME = true;
       };
-      "mb.spirre.vip" = {
-        forceSSL = true;
-        enableACME = true;
-        locations = {
-          "/" = {
-            proxyPass = "http://unix:/run/seahub/gunicorn.sock";
-            extraConfig = ''
-              proxy_set_header   Host $host;
-              proxy_set_header   X-Real-IP $remote_addr;
-              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header   X-Forwarded-Host $server_name;
-              proxy_read_timeout  1200s;
-              client_max_body_size 0;
-            '';
-          };
-          "/seafhttp" = {
-            proxyPass = "http://unix:/run/seafile/server.sock";
-            extraConfig = ''
-              rewrite ^/seafhttp(.*)$ $1 break;
-              client_max_body_size 0;
-              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_connect_timeout  36000s;
-              proxy_read_timeout  36000s;
-              proxy_send_timeout  36000s;
-              send_timeout  36000s;
-            '';
-          };
-        };
+      "cache.spirre.vip" = {
+        locations."/".proxyPass =
+          "http://${config.services.nix-serve.bindAddress}:"
+            + "${toString config.services.nix-serve.port}";
       };
     };
   };

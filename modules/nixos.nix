@@ -44,19 +44,6 @@ let
   nixPath = "/etc/nixPath";
 in
 {
-  # Set system to auto update and upgrade flake.
-  system.autoUpgrade = {
-    enable = true;
-    flake = "/etc/nixos";
-    flags = [
-      "--update-input"
-      "nixpkgs"
-      "-L"
-    ];
-    dates = "09:00";
-    randomizedDelaySec = "45min";
-  };
-
   # NixOS store optimization and garbage collection.
   nix = {
     settings = {

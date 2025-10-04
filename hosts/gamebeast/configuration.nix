@@ -28,6 +28,9 @@ in
   boot.kernelPackages = pkgs.linuxPackagesFor (
     pkgs.linuxPackages_latest.kernel.override (old: {
       stdenv = nativeStdenv;
+      structuredExtraConfig = with pkgs.lib.kernel; {
+        X86_NATIVE_CPU = yes;
+      };
     })
   );
 
@@ -35,8 +38,15 @@ in
     # Building GNOME stuff with native optimizations.
     (final: prev:
     let
-      gtk4 = prev.gtk4.override {
-        stdenv = nativeStdenv;
+      # Only using native GTK4 and GJS for some derivations, too many packages
+      # need to be compiled if these are native in general.
+      native = {
+        gtk4 = prev.gtk4.override {
+          stdenv = nativeStdenv;
+        };
+        gjs = prev.gjs.override {
+          stdenv = nativeStdenv;
+        };
       };
     in {
       gnome-desktop = prev.gnome-desktop.override {
@@ -47,24 +57,27 @@ in
         stdenv = nativeStdenv;
       };
       mutter = prev.mutter.override {
-        inherit gtk4;
+        inherit (native) gtk4;
         inherit (final) gnome-desktop;
         stdenv = nativeStdenv;
       };
       gnome-shell = prev.gnome-shell.override {
-        inherit gtk4;
+        inherit (native) gtk4 gjs;
         inherit (final) mutter gnome-desktop;
         stdenv = nativeStdenv;
-        gjs = prev.gjs.override {
-          stdenv = nativeStdenv;
-        };
       };
       # ... and ripgrep for good measure.
-      ripgrep = prev.ripgrep.overrideAttrs {
-        RUSTFLAGS = "-C target-cpu=native";
-      };
+      ripgrep = prev.ripgrep.overrideAttrs (oldAttrs: {
+        RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
+      });
     })
   ];
+
+  # Giving GNOME lower niceness, for smoother performance.
+  systemd.user.services."gnome-shell".serviceConfig = {
+    Nice = -10;
+    IOSchedulingPriority = 0;
+  };
   
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -106,7 +119,6 @@ in
     enable = true;
     extraPackages = with pkgs; [
       mesa
-      amdvlk
       libvdpau-va-gl
       intel-media-driver
     ];
@@ -117,19 +129,19 @@ in
   };
   hardware.amdgpu = {
     legacySupport.enable = true;
-    amdvlk = {
-      enable = true;
-      package = pkgs.amdvlk;
-      support32Bit.enable = true;
-      # https://github.com/GPUOpen-Drivers/AMDVLK?tab=readme-ov-file#runtime-settings
-      settings = {
-        AllowVkPipelineCachingToDisk = 1;
-        ShaderCacheMode = 1;
-        IFH = 0;
-        EnableVmAlwaysValid = 1;
-        IdleAfterSubmitGpuMask = 0;
-      };
-    };
+    # amdvlk = {
+    #   enable = true;
+    #   package = pkgs.amdvlk;
+    #   support32Bit.enable = true;
+    #   # https://github.com/GPUOpen-Drivers/AMDVLK?tab=readme-ov-file#runtime-settings
+    #   settings = {
+    #     AllowVkPipelineCachingToDisk = 1;
+    #     ShaderCacheMode = 1;
+    #     IFH = 0;
+    #     EnableVmAlwaysValid = 1;
+    #     IdleAfterSubmitGpuMask = 0;
+    #   };
+    # };
   };
 
   environment.variables = {
@@ -247,7 +259,7 @@ in
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
   services.dbus.enable = true;
-  services.geoclue2.enable = false;
+  services.geoclue2.enable = lib.mkForce false;
 
   services.keyd = {
     enable = true;

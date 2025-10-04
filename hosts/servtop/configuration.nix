@@ -115,15 +115,6 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  services.nix-serve = {
-    enable = true;
-    secretKeyFile = "/var/lib/nixos/cache-priv-key.pem";
-  };
-
-  nix.settings = {
-    secret-key-files = [ "/var/lib/nixos/cache-priv-key.pem" ];
-  };
-
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     zulu

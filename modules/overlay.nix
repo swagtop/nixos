@@ -114,4 +114,33 @@ in {
       "--add-flags \"-c ${self}/configs/zellij/config.kdl\""
     ];
   };
+
+  locd = prev.stdenv.mkDerivation (
+    let
+      version = "1.0.5";
+      pname = "locd";
+      name = "${pname}-${version}";
+    in {
+      inherit name pname version;
+      src = prev.fetchurl {
+        url = "https://api.crql.works/download?id=LOCD&os=Linux&version=${version}";
+        sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
+      };
+      nativeBuildInputs = [ prev.unzip ];
+      buildInputs = with prev; [
+        alsa-lib
+        fontconfig
+        freetype
+        libgcc
+      ];
+      unpackPhase = ''
+        unzip $src
+      '';
+      installPhase = ''
+        mkdir -p $out/{lib,bin}
+        cp -r CLAP $out/lib/clap
+        cp -r VST3 $out/lib/vst3
+        cp -r Standalone/* $out/bin/
+      '';
+    });
 })

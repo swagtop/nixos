@@ -60,6 +60,8 @@
           ./modules/dev.nix
           ./modules/ssh-server.nix
           ./modules/tui.nix
+
+          ./modules/host-cache.nix
         ];
       };
       cooltop = mkSystem {

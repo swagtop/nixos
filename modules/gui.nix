@@ -67,8 +67,9 @@ in
     #   experimental-features=['scale-monitor-framebuffer']
     # '';
   };
-  services.desktopManager.gnome = {
-    enable = true;
+  services.desktopManager = {
+    gnome.enable = true;
+    # cosmic.enable = true;
   };
   programs.xwayland.enable = true;
 

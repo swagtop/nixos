@@ -21,7 +21,8 @@
         overlay-module
         ./modules/common.nix
         ./modules/nixos.nix
-      ] ++ (config.modules or []);
+      ]
+      ++ (config.modules or []);
     });
   in
   {
@@ -37,7 +38,7 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
-          ./modules/store.nix
+          ./modules/use-cache.nix
         ];
       };
       swagtop = mkSystem {
@@ -49,7 +50,7 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
-          ./modules/store.nix
+          ./modules/use-cache.nix
         ];
       };
       servtop = mkSystem {
@@ -70,7 +71,7 @@
           ./modules/tui.nix
 
           ./modules/linker.nix
-          ./modules/store.nix
+          ./modules/use-cache.nix
         ];
       };
     };

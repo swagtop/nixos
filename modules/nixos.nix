@@ -6,7 +6,7 @@ let
     ud = "sudo nix flake update --flake /etc/nixos";
 
     # Rebuild.
-    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
+    rb = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git pull --ff-only'";
 
     # 'Edit flake'. Go to /etc/nixos as root.
     ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo -E su'";

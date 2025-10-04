@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   services.nix-serve = {
     enable = true;
@@ -19,7 +19,25 @@
       "-L"
       "--commit-lock-file"
     ];
-    dates = "09:00";
+    dates = "03:00";
     randomizedDelaySec = "45min";
+  };
+
+  systemd.services.push-system-flake = {
+    serviceConfig = {
+      Type = "oneshot";
+      WorkingDirectory = "/etc/nixos";
+      ExecStart = pkgs.writeShellScript "rebuild" ''
+        ${pkgs.git}/bin/git push
+      '';
+    };
+  };
+
+  systemd.timers.push-system-flake = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "10:00";
+      Persistent = true;
+    };
   };
 }

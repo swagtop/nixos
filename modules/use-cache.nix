@@ -14,8 +14,10 @@
   systemd.services.pull-system-flake = {
     serviceConfig = {
       Type = "oneshot";
+      User = "root";
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "rebuild" ''
+        ${pkgs.git}/bin/git config --global --add safe.directory .
         ${pkgs.git}/bin/git pull --ff-only
         ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
       '';

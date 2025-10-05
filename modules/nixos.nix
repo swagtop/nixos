@@ -3,10 +3,10 @@
 let
   shellAliases = {
     # Update.
-    ud = "sudo nix flake update --flake /etc/nixos";
+    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git pull --ff-only'";
 
     # Rebuild.
-    rb = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git pull --ff-only'";
+    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
     ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo -E su'";

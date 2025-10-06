@@ -14,9 +14,9 @@
       User = "root";
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "rebuild" ''
-        ${pkgs.nix}/bin/nix update .
+        ${pkgs.nix}/bin/nix flake update
         ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
-        ${pkgs.git}/bin/git commit -m flake.lock
+        ${pkgs.git}/bin/git commit -m '$(date '+%Y-%m-%d') Automatic lockfile update.' flake.lock
         ${pkgs.git}/bin/git push
       '';
     };

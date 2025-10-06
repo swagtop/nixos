@@ -12,6 +12,9 @@
   };
 
   systemd.services.pull-system-flake = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    
     serviceConfig = {
       Type = "oneshot";
       User = "root";

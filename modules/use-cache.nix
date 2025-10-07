@@ -19,10 +19,11 @@
       Type = "oneshot";
       User = "root";
       WorkingDirectory = "/etc/nixos";
-      ExecStart = pkgs.writeShellScript "rebuild" ''
-        ${pkgs.git}/bin/git config --global --add safe.directory .
-        ${pkgs.git}/bin/git pull --ff-only
-        ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
+      ExecStart = pkgs.writeShellScript "pull-system-flake" ''
+        GIT_PULL_RESULT=$(${pkgs.git}/bin/git pull --ff-only)
+        if [[ $GIT_PULL_RESULT != "Already up to date." ]]; then
+          ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
+        fi
       '';
     };
   };

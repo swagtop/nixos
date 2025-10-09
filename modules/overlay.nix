@@ -123,7 +123,7 @@ in {
     in {
       inherit name pname version;
       src = prev.fetchurl {
-        url = "https://api.crql.works/download?id=LOCD&os=Linux&version=${version}";
+        url = "https://api.crql.works/download/locd/linux/${version}";
         sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
       };
       nativeBuildInputs = [ prev.unzip ];

@@ -12,7 +12,7 @@
   environment.variables = {
     CLAP_PATH = "${lib.makeSearchPath "lib/clap" [
       pkgs.vital
-      pkgs.chow-tape-model
+      # pkgs.chow-tape-model
       pkgs.locd
     ]}";
   };

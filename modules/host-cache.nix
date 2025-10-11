@@ -17,8 +17,7 @@
         ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
         ${pkgs.nix}/bin/nix flake update
         ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
-        DATE="$(date '+%Y-%m-%d')"
-        ${pkgs.git}/bin/git commit -m '$DATE Automatic lockfile update.' flake.lock
+        ${pkgs.git}/bin/git commit -m "$(date '+%Y-%m-%d') Automatic lockfile update." flake.lock
         ${pkgs.git}/bin/git push
       '';
     };

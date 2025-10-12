@@ -1,7 +1,25 @@
 diff --git a/helix-term/src/commands/typed.rs b/helix-term/src/commands/typed.rs
-index 4831b938..f2ef7b42 100644
+index 4831b938..f43514d0 100644
 --- a/helix-term/src/commands/typed.rs
 +++ b/helix-term/src/commands/typed.rs
+@@ -2678,7 +2678,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+ pub const TYPABLE_COMMAND_LIST: &[TypableCommand] = &[
+     TypableCommand {
+         name: "quit",
+-        aliases: &["q"],
++        aliases: &["q", "Q"],
+         doc: "Close the current view.",
+         fun: quit,
+         completer: CommandCompleter::none(),
+@@ -2689,7 +2689,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
+     },
+     TypableCommand {
+         name: "quit!",
+-        aliases: &["q!"],
++        aliases: &["q!", "Q!"],
+         doc: "Force close the current view, ignoring unsaved changes.",
+         fun: force_quit,
+         completer: CommandCompleter::none(),
 @@ -2793,7 +2793,7 @@ fn noop(_cx: &mut compositor::Context, _args: Args, _event: PromptEvent) -> anyh
      },
      TypableCommand {
@@ -92,3 +110,12 @@ index 4831b938..f2ef7b42 100644
          doc: "Write changes from all buffers to disk and close all views forcefully (ignoring unsaved changes).",
          fun: force_write_all_quit,
          completer: CommandCompleter::none(),
+@@ -3817,7 +3817,7 @@ fn complete_command_line(editor: &Editor, input: &str) -> Vec<ui::prompt::Comple
+ 
+     if complete_command {
+         fuzzy_match(
+-            input,
++            (input.make_ascii_lowercase()),
+             TYPABLE_COMMAND_LIST.iter().map(|command| command.name),
+             false,
+         )

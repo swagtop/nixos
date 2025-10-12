@@ -98,7 +98,8 @@ in {
 
   helix = symlinkWrap {
     package = (prev.helix.overrideAttrs (oldAttrs: {
-      patches = oldAttrs.patches ++ [ ../patches/helix_w.patch ];
+      patches = oldAttrs.patches
+        ++ [ ../patches/helix-upppercase-commands.patch ];
     }));
     execName = "hx";
     args = [

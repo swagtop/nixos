@@ -239,6 +239,11 @@
     recommendedTlsSettings = true;
 
     virtualHosts = {
+      "spirre.vip" = {
+        locations."/f/".alias = "/srv/f/";
+        forceSSL = true;
+        enableACME = true;
+      };
       "jf.spirre.vip" = {
         locations = {
           "/" = {

@@ -20,8 +20,8 @@
         ${pkgs.git}/bin/git commit -m "$(date '+%Y-%m-%d') Automatic lockfile update." flake.lock
         ${pkgs.git}/bin/git push
       '';
-      StandardOutput = "file:/srv/f/cache-log";
-      StandardError = "file:/srv/f/cache-log";
+      StandardOutput = "file:/srv/f/cache-log.txt";
+      StandardError = "file:/srv/f/cache-log.txt";
     };
   };
 

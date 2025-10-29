@@ -15,6 +15,7 @@
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "update-system-flake" ''
         date '+%Y-%m-%d %H:%M' # For the log.
+        echo
         ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
         ${pkgs.nix}/bin/nix flake update
         ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .

@@ -15,7 +15,7 @@
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "update-system-flake" ''
         date '+%Y-%m-%d' # For the log.
-        echo "==============="
+        printf "===============\n\n"
 
         echo "$(date '+%H:%M') Pulling repository"
         echo "========================"
@@ -33,7 +33,7 @@
         echo
 
         echo "$(date '+%H:%M') Committing lockfile and pushing"
-        echo "======================="
+        echo "====================================="
         ${pkgs.git}/bin/git commit -m "$(date '+%Y-%m-%d') Automatic lockfile update." flake.lock
         ${pkgs.git}/bin/git push
         echo

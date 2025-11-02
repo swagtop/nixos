@@ -289,9 +289,19 @@
         enableACME = true;
       };
       "cache.spirre.vip" = {
-        locations."/".proxyPass =
-          "http://${config.services.nix-serve.bindAddress}:"
-            + "${toString config.services.nix-serve.port}";
+        locations = {
+          "/log" = {
+            root = "/srv/f";
+            tryFiles = "/cache-log.txt =404";
+            extraConfig = ''
+              default_type text/plain;
+              add_header Content-Disposition inline;
+            '';
+          };
+          "/".proxyPass =
+            "http://${config.services.nix-serve.bindAddress}:"
+              + "${toString config.services.nix-serve.port}";
+        };
 
         forceSSL = true;
         enableACME = true;

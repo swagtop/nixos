@@ -25,6 +25,12 @@
           ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
         fi
       '';
+
+      # Setting this service to be nicer, for less prominent background updates.
+      # https://positron.solutions/articles/building-nicely-with-rust-and-nix
+      Nice = 15;
+      IOSchedulingClass = "idle";
+      IOSchedulingPriority = 7;
     };
   };
 

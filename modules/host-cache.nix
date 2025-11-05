@@ -14,10 +14,10 @@
       User = "root";
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "update-system-flake" ''
-        rm /srv/f/cache-log.txt # Make sure log is empty.
+        printf "" > /srv/f/cache-log.txt # Clear log at beginning of service.
 
-        date '+%Y-%m-%d'
-        printf "==========\n\n"
+        echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
+        printf "===================================\n\n"
 
         echo "$(date '+%H:%M') Pulling repository"
         echo "========================"
@@ -39,6 +39,9 @@
         ${pkgs.git}/bin/git commit -m "$(date '+%Y-%m-%d') Automatic lockfile update." flake.lock
         ${pkgs.git}/bin/git push
         echo
+
+        echo "$(date '+%H:%M') Finished update"
+        echo "====================="
       '';
       StandardOutput = "file:/srv/f/cache-log.txt";
       StandardError = "file:/srv/f/cache-log.txt";

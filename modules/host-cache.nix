@@ -14,8 +14,10 @@
       User = "root";
       WorkingDirectory = "/etc/nixos";
       ExecStart = pkgs.writeShellScript "update-system-flake" ''
-        date '+%Y-%m-%d' # For the log.
-        printf "===============\n\n"
+        rm /srv/f/cache-log.txt # Make sure log is empty.
+
+        date '+%Y-%m-%d'
+        printf "==========\n\n"
 
         echo "$(date '+%H:%M') Pulling repository"
         echo "========================"

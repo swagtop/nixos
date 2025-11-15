@@ -3,10 +3,10 @@ let
   nativeStdenv = (pkgs.stdenvAdapters.impureUseNativeOptimizations pkgs.stdenv);
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Compile all packages locally.
   # nix.settings.substitute = false;
@@ -18,12 +18,12 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Set hostname. 
+  # Set hostname.
   networking.hostName = "gamebeast";
-  
+
   # Enables wireless support via wpa_supplicant.
-  # networking.wireless.enable = true;  
-    
+  # networking.wireless.enable = true;
+
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
     pkgs.linuxPackages_latest.kernel.override (old: {
@@ -36,41 +36,44 @@ in
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.
-    (final: prev:
-    let
-      # Only using native GTK4 and GJS for some derivations, too many packages
-      # need to be compiled if these are native in general.
-      native = {
-        gtk4 = prev.gtk4.override {
+    (
+      final: prev:
+      let
+        # Only using native GTK4 and GJS for some derivations, too many packages
+        # need to be compiled if these are native in general.
+        native = {
+          gtk4 = prev.gtk4.override {
+            stdenv = nativeStdenv;
+          };
+          gjs = prev.gjs.override {
+            stdenv = nativeStdenv;
+          };
+        };
+      in
+      {
+        gnome-desktop = prev.gnome-desktop.override {
           stdenv = nativeStdenv;
         };
-        gjs = prev.gjs.override {
+        gnome-session = prev.gnome-session.override {
+          inherit (final) gnome-desktop;
           stdenv = nativeStdenv;
         };
-      };
-    in {
-      gnome-desktop = prev.gnome-desktop.override {
-        stdenv = nativeStdenv;
-      };
-      gnome-session = prev.gnome-session.override {
-        inherit (final) gnome-desktop;
-        stdenv = nativeStdenv;
-      };
-      mutter = prev.mutter.override {
-        inherit (native) gtk4;
-        inherit (final) gnome-desktop;
-        stdenv = nativeStdenv;
-      };
-      gnome-shell = prev.gnome-shell.override {
-        inherit (native) gtk4 gjs;
-        inherit (final) mutter gnome-desktop;
-        stdenv = nativeStdenv;
-      };
-      # ... and ripgrep for good measure.
-      ripgrep = prev.ripgrep.overrideAttrs (oldAttrs: {
-        RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
-      });
-    })
+        mutter = prev.mutter.override {
+          inherit (native) gtk4;
+          inherit (final) gnome-desktop;
+          stdenv = nativeStdenv;
+        };
+        gnome-shell = prev.gnome-shell.override {
+          inherit (native) gtk4 gjs;
+          inherit (final) mutter gnome-desktop;
+          stdenv = nativeStdenv;
+        };
+        # ... and ripgrep for good measure.
+        ripgrep = prev.ripgrep.overrideAttrs (oldAttrs: {
+          RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
+        });
+      }
+    )
   ];
 
   # Configure network proxy if necessary
@@ -180,13 +183,13 @@ in
   users.users.thedb = {
     isNormalUser = true;
     description = "thedb";
-    extraGroups = [ 
-      "networkmanager" 
-      "wheel" 
-      "keyd" 
-      "realtime" 
-      "audio" 
-      "video" 
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "keyd"
+      "realtime"
+      "audio"
+      "video"
       "libvirtd"
       "qemu-libvirtd"
       "nix"
@@ -197,7 +200,6 @@ in
       prismlauncher
     ];
   };
-
 
   virtualisation.docker = {
     enable = false;
@@ -219,10 +221,10 @@ in
   # Install firefox.
   programs.firefox.enable = true;
 
-  # Some programs need SUID wrappers, can be configured further or are started 
-  # in user sessions. 
-  # programs.mtr.enable = true; 
-  # programs.gnupg.agent = { 
+  # Some programs need SUID wrappers, can be configured further or are started
+  # in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
   #   enable = true;
   #   enableSSHSupport = true;
   # };
@@ -256,9 +258,11 @@ in
     enable = true;
     keyboards = {
       default = {
-      	ids = ["*"];
-      	settings = {
-          main = { capslock = "esc"; };
+        ids = [ "*" ];
+        settings = {
+          main = {
+            capslock = "esc";
+          };
         };
       };
     };
@@ -278,12 +282,12 @@ in
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 
-    8000 
+  networking.firewall.allowedTCPPorts = [
+    8000
     # 16261
     # 16262
   ];
-  networking.firewall.allowedUDPPorts = [ 
+  networking.firewall.allowedUDPPorts = [
     # 16261
     # 16262
   ];

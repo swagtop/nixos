@@ -28,7 +28,7 @@ let
       tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
       cwd=""
       yazi "$@" --cwd-file="$tmp"
-  
+
       # Read the content of the temporary file into cwd
       cwd="$(command cat -- "$tmp")"
 
@@ -60,12 +60,12 @@ let
     # Search nixpkgs with television and nix-search-tv.
     nixpkgs = "tv nixpkgs";
   };
-in {
+in
+{
   # TUI file manager / filesystem navigator.
   programs.yazi = {
     enable = true;
   };
-
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.

@@ -2,13 +2,18 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -39,11 +44,9 @@
 
   zramSwap.enable = true;
 
-
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
-  
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -71,17 +74,17 @@
   #     tree
   #   ];
   # };
-    # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.thedb = {
     isNormalUser = true;
     description = "thedb";
-    extraGroups = [ 
-      "networkmanager" 
-      "wheel" 
-      "keyd" 
-      "realtime" 
-      "audio" 
-      "video" 
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "keyd"
+      "realtime"
+      "audio"
+      "video"
       "libvirtd"
     ];
     packages = with pkgs; [
@@ -96,9 +99,11 @@
     enable = true;
     keyboards = {
       default = {
-      	ids = ["*"];
-      	settings = {
-          main = { capslock = "esc"; };
+        ids = [ "*" ];
+        settings = {
+          main = {
+            capslock = "esc";
+          };
         };
       };
     };
@@ -156,4 +161,3 @@
   system.stateVersion = "24.11"; # Did you read the comment?
 
 }
-

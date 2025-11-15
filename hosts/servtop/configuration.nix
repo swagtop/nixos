@@ -2,13 +2,18 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -16,7 +21,10 @@
 
   networking.hostName = "servtop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -56,8 +64,11 @@
   users.users.thedb = {
     isNormalUser = true;
     description = "thedb";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
   };
 
   # Allow unfree packages
@@ -89,10 +100,30 @@
   # List services that you want to enable:
 
   # Open ports in the firewall.
-  networking.firewall.allowedUDPPorts =
-    [ 53 80 443 16261 16262 ] ++ [ 25565 19132 ];
-  networking.firewall.allowedTCPPorts =
-    [ 53 80 443 14341 8096 8920 ] ++ [ 7777 ] ++ [ 25565 19132 ];
+  networking.firewall.allowedUDPPorts = [
+    53
+    80
+    443
+    16261
+    16262
+  ]
+  ++ [
+    25565
+    19132
+  ];
+  networking.firewall.allowedTCPPorts = [
+    53
+    80
+    443
+    14341
+    8096
+    8920
+  ]
+  ++ [ 7777 ]
+  ++ [
+    25565
+    19132
+  ];
   # networking.interfaces.enp1s0 = {
   #   ipv4.addresses = [{
   #     address = "10.10.11.2";
@@ -262,14 +293,14 @@
           error_page 404 /404.html;
         '';
 
-        locations."/403.webp".root= "/var/www/errors/";
+        locations."/403.webp".root = "/var/www/errors/";
         locations."/403.html" = {
           root = "/var/www/errors/";
           extraConfig = ''
             internal;
           '';
         };
-        locations."/404.webp".root= "/var/www/errors/";
+        locations."/404.webp".root = "/var/www/errors/";
         locations."/404.html" = {
           root = "/var/www/errors/";
           extraConfig = ''
@@ -299,8 +330,7 @@
             '';
           };
           "/".proxyPass =
-            "http://${config.services.nix-serve.bindAddress}:"
-              + "${toString config.services.nix-serve.port}";
+            "http://${config.services.nix-serve.bindAddress}:" + "${toString config.services.nix-serve.port}";
         };
 
         forceSSL = true;

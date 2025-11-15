@@ -1,14 +1,18 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Compile all packages locally.
   # nix.settings.substitute = false;
-
 
   # Allow unfree packages.
   nixpkgs.config.allowUnfree = true;
@@ -17,12 +21,12 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Set hostname. 
+  # Set hostname.
   networking.hostName = "swagtop";
-  
+
   # Enables wireless support via wpa_supplicant.
-  # networking.wireless.enable = true;  
-    
+  # networking.wireless.enable = true;
+
   # Get latest Linux kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -81,21 +85,25 @@
   users.users.thedb = {
     isNormalUser = true;
     description = "thedb";
-    extraGroups = [ "networkmanager" "wheel" "keyd" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "keyd"
+    ];
     packages = with pkgs; [
       spotify
       discord
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
   # Install firefox.
   programs.firefox.enable = true;
 
-  # Some programs need SUID wrappers, can be configured further or are started 
-  # in user sessions. 
-  # programs.mtr.enable = true; 
-  # programs.gnupg.agent = { 
+  # Some programs need SUID wrappers, can be configured further or are started
+  # in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
   #   enable = true;
   #   enableSSHSupport = true;
   # };
@@ -110,9 +118,11 @@
     enable = true;
     keyboards = {
       default = {
-      	ids = ["*"];
-      	settings = {
-          main = { capslock = "esc"; };
+        ids = [ "*" ];
+        settings = {
+          main = {
+            capslock = "esc";
+          };
         };
       };
     };
@@ -135,4 +145,3 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.04"; # Did you read the comment?
 }
-

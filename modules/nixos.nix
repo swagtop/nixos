@@ -48,7 +48,10 @@ in
   nix = {
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       keep-derivations = true;
       keep-outputs = true;
     };
@@ -57,7 +60,7 @@ in
       dates = "weekly";
       options = "--delete-older-than 14d";
     };
-  }; 
+  };
 
   # Set nix channel to follow system flake nixpkgs input.
   nix.nixPath = [ "nixpkgs=${nixPath}" ];
@@ -74,7 +77,7 @@ in
     variables = {
       NIXPKGS_REV = "${inputs.nixpkgs.rev}";
     };
-  }; 
+  };
 
   programs.direnv = {
     enable = true;

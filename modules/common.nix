@@ -1,4 +1,4 @@
-{ pkgs, ... }: 
+{ pkgs, ... }:
 
 {
   # Generally useful packages.
@@ -9,7 +9,7 @@
     binutils
     pciutils
     usbutils
-    
+
     # Zipping.
     zip
     unzip

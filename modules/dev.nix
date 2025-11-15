@@ -37,11 +37,13 @@ in
 
     # Python and its packages, relevant tools.
     uv
-    (python312.withPackages (ps: with ps; [
-      pyyaml
-      python-lsp-ruff
-      requests
-    ]))
+    (python312.withPackages (
+      ps: with ps; [
+        pyyaml
+        python-lsp-ruff
+        requests
+      ]
+    ))
 
     # Github authenticator.
     gh

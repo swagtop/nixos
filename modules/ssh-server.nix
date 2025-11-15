@@ -2,7 +2,7 @@
 {
   networking.firewall.allowedTCPPorts = [ 22 ];
   services.openssh = {
-    enable = true; 
+    enable = true;
     extraConfig = ''
       AcceptEnv COLORTERM
     '';

@@ -48,7 +48,7 @@
         '';
       } + "/bin/update-system-flake";
       StandardOutput = "file:/srv/f/cache-log.txt";
-      StandardError = "file:/srv/f/cache-log.txt";
+      # StandardError = "file:/srv/f/cache-log.txt";
     };
   };
 

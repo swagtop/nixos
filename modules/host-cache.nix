@@ -17,16 +17,21 @@
         pkgs.writeShellApplication {
           name = "update-system-flake";
           runtimeInputs = with pkgs; [
+            coreutils
             git
             nix
             nixos-rebuild
-            coreutils
+            systemd
           ];
+          bashOptions = [ ];
           text = ''
             printf "" > /srv/f/cache-log.txt # Clear log at beginning of service.
 
             echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
             printf "===================================\n\n"
+            # Making sure this service can run, by stopping any lingering rebuilds.
+            ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+            echo
 
             echo "$(date '+%H:%M') Pulling repository"
             echo "========================"

@@ -1,7 +1,7 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, self, ... }:
 {
   environment.systemPackages = with pkgs; [
-    bitwig-studio
+    self.packages.${pkgs.stdenv.hostPlatform.system}.bitwig-studio
     yabridge
     yabridgectl
     wineWowPackages.yabridge
@@ -13,7 +13,7 @@
     CLAP_PATH = "${lib.makeSearchPath "lib/clap" [
       pkgs.vital
       # pkgs.chow-tape-model
-      pkgs.locd
+      self.packages.${pkgs.stdenv.hostPlatform.system}.locd
     ]}";
   };
 

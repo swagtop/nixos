@@ -12,15 +12,10 @@
           config.allowUnfree = true;
         };
       };
-      overlay = (
-        import ./modules/overlay.nix {
-          inherit self;
-          inherit (nixpkgs) lib;
-        }
-      );
-      overlay-module = {
-        nixpkgs.overlays = [ overlay ];
-      };
+      swagpkgs = system: (import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      }).callPackage ./swagpkgs.nix {};
       mkSystem =
         config:
         nixpkgs.lib.nixosSystem (
@@ -31,40 +26,18 @@
             }
             // (config.specialArgs or { });
             modules = [
-              overlay-module
               ./modules/common.nix
               ./modules/nixos.nix
             ]
             ++ (config.modules or [ ]);
           }
         );
-      pkgsWithOverlayFor =
-        system:
-        import nixpkgs {
-          inherit system;
-          overlays = [ overlay ];
-          config.allowUnfree = true;
-        };
       eachSystem = f: nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed f;
     in
     {
-      formatter = eachSystem (system: (pkgsWithOverlayFor system).nixfmt-tree);
+      formatter = eachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
-      packages = eachSystem (
-        system:
-        let
-          pkgs = pkgsWithOverlayFor system;
-        in
-        {
-          ide = pkgs.symlinkJoin {
-            name = "swagtop-ide";
-            paths = [
-              pkgs.helix
-              pkgs.zellij
-            ];
-          };
-        }
-      );
+      packages = eachSystem (system: swagpkgs system);
 
       nixosConfigurations = {
         gamebeast = mkSystem {
@@ -117,6 +90,5 @@
           ];
         };
       };
-
     };
 }

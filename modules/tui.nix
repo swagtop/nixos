@@ -1,4 +1,4 @@
-{ self, pkgs, ... }:
+{ pkgs, self, ... }:
 
 let
   # Adds name of Nix shell to PS1, if in one.
@@ -69,8 +69,8 @@ in
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
-    zellij
-    helix
+    self.packages.${pkgs.stdenv.hostPlatform.system}.zellij
+    self.packages.${pkgs.stdenv.hostPlatform.system}.helix
 
     # TUI git manager.
     lazygit

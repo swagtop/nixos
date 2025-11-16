@@ -28,7 +28,7 @@
 
       # Setting this service to be nicer, for less prominent background updates.
       # https://positron.solutions/articles/building-nicely-with-rust-and-nix
-      Nice = 15;
+      Nice = 18;
       IOSchedulingClass = "idle";
       IOSchedulingPriority = 7;
     };

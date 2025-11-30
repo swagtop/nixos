@@ -12,10 +12,20 @@
           config.allowUnfree = true;
         };
       };
-      swagpkgs = system: (import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      }).callPackage ./swagpkgs.nix {};
+      swagpkgs =
+        system:
+        let
+          pkgs = (
+            import nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+            }
+          );
+        in
+        import ./swagpkgs.nix {
+          inherit (nixpkgs) lib;
+          inherit pkgs;
+        };
       mkSystem =
         config:
         nixpkgs.lib.nixosSystem (

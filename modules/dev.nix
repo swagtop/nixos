@@ -47,8 +47,8 @@ in
     # GPU Tooling
     vulkan-tools
 
-    # GPU Tooling
-    config.boot.kernelPackages.perf
+    # CPU Tooling
+    perf
   ];
 
   # Bash aliases.

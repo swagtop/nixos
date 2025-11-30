@@ -28,9 +28,15 @@ in
   boot.kernelPackages = pkgs.linuxPackagesFor (
     pkgs.linuxPackages_latest.kernel.override (old: {
       stdenv = nativeStdenv;
-      structuredExtraConfig = with pkgs.lib.kernel; {
-        X86_NATIVE_CPU = yes;
-      };
+      structuredExtraConfig =
+        let
+          inherit (lib.kernel)
+            yes
+            ;
+        in
+        {
+          X86_NATIVE_CPU = yes;
+        };
     })
   );
 
@@ -70,7 +76,9 @@ in
         };
         # ... and ripgrep for good measure.
         ripgrep = prev.ripgrep.overrideAttrs (oldAttrs: {
-          RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
+          env = {
+            RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
+          };
         });
       }
     )

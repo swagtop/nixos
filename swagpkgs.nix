@@ -10,13 +10,16 @@ let
       execName,
       args,
     }:
-    pkgs.symlinkJoin {
+    (pkgs.symlinkJoin {
       name = "${package.name}-thru-overlay";
       paths = [ package ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/${execName} ${builtins.concatStringsSep " " args};
       '';
+    })
+    // {
+      meta.mainProgram = execName;
     };
 in
 {
@@ -109,7 +112,7 @@ in
     package = pkgs.alacritty;
     execName = "alacritty";
     args = [
-      "--add-flags \"--config-file ${./configs/alacritty}/alacritty.toml\""
+      "--add-flags \"--config-file ${./configs/alacritty/alacritty.toml}\""
     ];
   };
 
@@ -122,7 +125,7 @@ in
     execName = "hx";
     args = [
       "--set HELIX_RUNTIME \"${./configs/helix}\""
-      "--add-flags \"-c ${./configs/helix}/config.toml\""
+      "--add-flags \"-c ${./configs/helix/config.toml}\""
     ];
   };
 
@@ -130,7 +133,7 @@ in
     package = pkgs.zellij;
     execName = "zellij";
     args = [
-      "--add-flags \"-c ${./configs/zellij}/config.kdl\""
+      "--add-flags \"-c ${./configs/zellij/config.kdl}\""
     ];
   };
 

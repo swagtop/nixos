@@ -151,6 +151,7 @@ in
       linux-firmware
       mullvad-vpn
       ffmpeg
+      gnome-boxes
     ]
     ++ gstreamerPackages;
 

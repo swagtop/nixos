@@ -1,4 +1,9 @@
-{ lib, pkgs, self, ... }:
+{
+  lib,
+  pkgs,
+  self,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     self.packages.${pkgs.stdenv.hostPlatform.system}.bitwig-studio

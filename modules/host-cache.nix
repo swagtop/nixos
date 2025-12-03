@@ -9,6 +9,8 @@
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
 
+    restartIfChanged = false;
+    
     serviceConfig = {
       Type = "oneshot";
       User = "root";

@@ -36,11 +36,11 @@ let
         "org/gnome/desktop/background" = {
           primary-color = "#000000";
         };
-        # "org/gnome/desktop/applications/terminal" = {
-        #   exec = "alacritty";
-        #   exec-arg = "--";
-        # };
         # "org/gnome/desktop/default-applications/terminal" = {
+        #   exec = "alacritty";
+        #   "exec-arg" = "--";
+        # };
+        # "org/gnome/desktop/applications/terminal" = {
         #   exec = "alacritty";
         #   exec-arg = "--";
         # };
@@ -64,6 +64,15 @@ let
 in
 {
   nixpkgs.config.allowUnfree = true;
+
+  programs.nautilus-open-any-terminal = {
+    enable = true;
+    terminal = "alacritty";
+  };
+  # xdg.terminal-exec = {
+  #   enable = true;
+  #   package = self.packages.${pkgs.stdenv.hostPlatform.system}.alacritty;
+  # };
 
   # Enable GNOME, GDM.
   services.displayManager.gdm = {
@@ -94,8 +103,13 @@ in
   programs.foot.enable = lib.mkForce false;
 
   # Use preferred GNOME settings.
-  programs.dconf.profiles.user.databases = gnomeSettings;
-  programs.dconf.profiles.gdm.databases = gnomeSettings;
+  programs.dconf = {
+    profiles = {
+      user.databases = gnomeSettings;
+      gdm.databases = gnomeSettings;
+    };
+  };
+
   environment.variables = {
     GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
     COLORTERM = "truecolor";
@@ -128,7 +142,10 @@ in
     with pkgs;
     [
       # Terminal emulator, wrapping in shell script for config.
-      self.packages.${pkgs.hostPlatform.system}.alacritty
+      self.packages.${pkgs.stdenv.hostPlatform.system}.alacritty
+
+      nautilus # For the 'nautilus-open-any-terminal' setup.
+      element-desktop
 
       # Graphics.
       blender-hip

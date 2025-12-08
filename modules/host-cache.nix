@@ -71,7 +71,6 @@
     timerConfig = {
       RandomizedOffsetSec = "30m";
       OnCalendar = "2:37";
-      Persistent = true;
     };
   };
 }

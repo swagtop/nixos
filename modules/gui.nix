@@ -128,7 +128,7 @@ in
     with pkgs;
     [
       # Terminal emulator, wrapping in shell script for config.
-      alacritty
+      self.packages.${pkgs.hostPlatform.system}.alacritty
 
       # Graphics.
       blender-hip

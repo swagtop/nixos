@@ -33,7 +33,7 @@ in
 
     # Python and its packages, relevant tools.
     uv
-    (python312.withPackages (
+    (python313.withPackages (
       ps: with ps; [
         pyyaml
         python-lsp-ruff
@@ -49,6 +49,9 @@ in
 
     # CPU Tooling
     perf
+
+    # Network mapper
+    nmap
   ];
 
   # Bash aliases.

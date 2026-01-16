@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "hytale-flake": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768470037,
+        "narHash": "sha256-6sgMHYUtBTsNUrrMw86o3PMeM6KSpGK7Y0v+MYCOkfc=",
+        "owner": "swagtop",
+        "repo": "hytale-flake",
+        "rev": "5aadfc1a287fb4f34b6b09fce9ed67f85343bfbf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "swagtop",
+        "repo": "hytale-flake",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1768305791,
@@ -17,6 +37,7 @@
     },
     "root": {
       "inputs": {
+        "hytale-flake": "hytale-flake",
         "nixpkgs": "nixpkgs"
       }
     }

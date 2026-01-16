@@ -63,7 +63,10 @@ let
   ];
 in
 {
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    rocmSupport = true;
+  };
 
   programs.nautilus-open-any-terminal = {
     enable = true;
@@ -148,7 +151,7 @@ in
       element-desktop
 
       # Graphics.
-      blender-hip
+      blender
       inkscape
       typst
 

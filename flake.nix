@@ -2,10 +2,14 @@
   description = "My cool system flake!";
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    hytale-flake = {
+      url = "github:swagtop/hytale-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    inputs@{ self, ... }:
+    inputs@{ self, hytale-flake, ... }:
     let
       nixpkgs = inputs.nixpkgs.lib.recursiveUpdate inputs.nixpkgs {
         nixpkgs = {
@@ -59,6 +63,13 @@
             ./modules/gui.nix
             ./modules/music.nix
             ./modules/tui.nix
+
+            (
+              { pkgs, ... }:
+              {
+                environment.systemPackages = [ hytale-flake.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+              }
+            )
 
             # ./modules/linker.nix
             ./modules/use-cache.nix

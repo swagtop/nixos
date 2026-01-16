@@ -10,7 +10,7 @@
     wants = [ "network-online.target" ];
 
     restartIfChanged = false;
-    
+
     serviceConfig = {
       Type = "oneshot";
       User = "root";

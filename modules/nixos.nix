@@ -28,7 +28,7 @@ let
       fi
       name='ns'
       for arg in "$@"; do
-        NIX_SHELL+=" nixpkgs/${inputs.nixpkgs.rev}#$arg"
+        NIX_SHELL+=" github:NixOS/nixpkgs/${inputs.nixpkgs.rev}#$arg"
         name+="-$arg"
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)
@@ -59,6 +59,19 @@ in
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 14d";
+    };
+  };
+
+  systemd.services."fetch-nixpkgs-tarball-on-startup" = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+      ExecStart = pkgs.writeShellScript "fetch-nixpkgs-tarball" ''
+        exec ${pkgs.nix}/bin/nix run github:NixOS/nixpkgs/${inputs.nixpkgs.rev}#hello
+      '';
     };
   };
 

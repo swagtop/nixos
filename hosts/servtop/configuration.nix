@@ -208,6 +208,16 @@
         "force user" = "thedb";
         "force group" = "nogroup";
       };
+      "jellyfin-books" = {
+        "path" = "/srv/data/media/books";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
     };
   };
 

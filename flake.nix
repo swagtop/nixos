@@ -37,6 +37,7 @@
           // {
             specialArgs = {
               inherit self inputs;
+              swaglib = import ./swaglib.nix;
             }
             // (config.specialArgs or { });
             modules = [

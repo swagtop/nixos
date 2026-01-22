@@ -1,6 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, swaglib, ... }:
 let
-  nativeStdenv = (pkgs.stdenvAdapters.impureUseNativeOptimizations pkgs.stdenv);
+  optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
 in
 {
   imports = [
@@ -26,18 +26,7 @@ in
 
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
-    pkgs.linuxPackages_latest.kernel.override (old: {
-      stdenv = nativeStdenv;
-      structuredExtraConfig =
-        let
-          inherit (lib.kernel)
-            yes
-            ;
-        in
-        {
-          X86_NATIVE_CPU = yes;
-        };
-    })
+    optimizeForNative pkgs.linuxPackages_latest.kernel
   );
 
   nixpkgs.overlays = [
@@ -48,38 +37,34 @@ in
         # Only using native GTK4 and GJS for some derivations, too many packages
         # need to be compiled if these are native in general.
         native = {
-          gtk4 = prev.gtk4.override {
-            stdenv = nativeStdenv;
-          };
-          gjs = prev.gjs.override {
-            stdenv = nativeStdenv;
-          };
+          gtk4 = optimizeForNative prev.gtk4;
+          gjs = optimizeForNative prev.gjs;
         };
       in
       {
-        gnome-desktop = prev.gnome-desktop.override {
-          stdenv = nativeStdenv;
-        };
-        gnome-session = prev.gnome-session.override {
-          inherit (final) gnome-desktop;
-          stdenv = nativeStdenv;
-        };
-        mutter = prev.mutter.override {
-          inherit (native) gtk4;
-          inherit (final) gnome-desktop;
-          stdenv = nativeStdenv;
-        };
-        gnome-shell = prev.gnome-shell.override {
-          inherit (native) gtk4 gjs;
-          inherit (final) mutter gnome-desktop;
-          stdenv = nativeStdenv;
-        };
+        gnome-desktop = optimizeForNative prev.gnome-desktop;
+        gnome-session =
+          optimizeForNative (
+            prev.gnome-session.override {
+              inherit (final) gnome-desktop;
+            }
+          );
+        mutter =
+          optimizeForNative (
+            prev.mutter.override {
+              inherit (native) gtk4;
+              inherit (final) gnome-desktop;
+            }
+          );
+        gnome-shell =
+          optimizeForNative (
+            prev.gnome-shell.override {
+              inherit (native) gtk4 gjs;
+              inherit (final) mutter gnome-desktop;
+            }
+          );
         # ... and ripgrep for good measure.
-        ripgrep = prev.ripgrep.overrideAttrs (oldAttrs: {
-          env = {
-            RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + "-C target-cpu=native";
-          };
-        });
+        ripgrep = optimizeForNative prev.ripgrep;
       }
     )
   ];

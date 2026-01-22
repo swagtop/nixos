@@ -1,4 +1,9 @@
-{ pkgs, lib, swaglib, ... }:
+{
+  pkgs,
+  lib,
+  swaglib,
+  ...
+}:
 let
   optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
 in
@@ -25,9 +30,7 @@ in
   # networking.wireless.enable = true;
 
   # Kernel.
-  boot.kernelPackages = pkgs.linuxPackagesFor (
-    optimizeForNative pkgs.linuxPackages_latest.kernel
-  );
+  boot.kernelPackages = pkgs.linuxPackagesFor (optimizeForNative pkgs.linuxPackages_latest.kernel);
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.
@@ -43,26 +46,23 @@ in
       in
       {
         gnome-desktop = optimizeForNative prev.gnome-desktop;
-        gnome-session =
-          optimizeForNative (
-            prev.gnome-session.override {
-              inherit (final) gnome-desktop;
-            }
-          );
-        mutter =
-          optimizeForNative (
-            prev.mutter.override {
-              inherit (native) gtk4;
-              inherit (final) gnome-desktop;
-            }
-          );
-        gnome-shell =
-          optimizeForNative (
-            prev.gnome-shell.override {
-              inherit (native) gtk4 gjs;
-              inherit (final) mutter gnome-desktop;
-            }
-          );
+        gnome-session = optimizeForNative (
+          prev.gnome-session.override {
+            inherit (final) gnome-desktop;
+          }
+        );
+        mutter = optimizeForNative (
+          prev.mutter.override {
+            inherit (native) gtk4;
+            inherit (final) gnome-desktop;
+          }
+        );
+        gnome-shell = optimizeForNative (
+          prev.gnome-shell.override {
+            inherit (native) gtk4 gjs;
+            inherit (final) mutter gnome-desktop;
+          }
+        );
         # ... and ripgrep for good measure.
         ripgrep = optimizeForNative prev.ripgrep;
       }

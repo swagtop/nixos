@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   services.nix-serve = {
     enable = true;
@@ -28,7 +28,11 @@
           bashOptions = [ ];
           text =
             let
-              nixosSystemsToBuild = [ "gamebeast" "cooltop" "servtop" ];
+              nixosSystemsToBuild = [
+                "gamebeast"
+                "cooltop"
+                "servtop"
+              ];
             in
             ''
               printf "" > /srv/f/cache-log.txt # Clear log at beginning of service.
@@ -49,13 +53,16 @@
               ${pkgs.nix}/bin/nix flake update
               echo
 
-              echo "$(date '+%H:%M') Building systems"
-              echo "======================="
               ${builtins.concatStringsSep "\n" (
-                map 
-                  (s: "${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s}")
-                  nixosSystemsToBuild
+                map (s: ''
+                  echo "$(date '+%H:%M') Building '${s}'"
+                  echo "=====================${lib.concatMapStrings (_: "=") (lib.range 0 (builtins.stringLength s))}"
+                  "${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s}"
+                '') nixosSystemsToBuild
               )}
+
+              echo "$(date '+%H:%M') Rebuilding and switching"
+              echo "======================="
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
               echo
 

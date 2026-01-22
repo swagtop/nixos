@@ -6,9 +6,13 @@
   lib,
   config,
   pkgs,
+  swaglib,
   ...
 }:
 
+let
+  optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -18,6 +22,12 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  # Optimize kernel.
+  boot.kernelPackages = pkgs.linuxPackagesFor (
+    optimizeForNative pkgs.linuxPackages_latest.kernel
+  );
+
 
   networking.hostName = "servtop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.

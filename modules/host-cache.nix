@@ -53,16 +53,15 @@
               ${pkgs.nix}/bin/nix flake update
               echo
 
-              ${builtins.concatStringsSep "\n" (
+              ${builtins.concatStringsSep "\n\n" (
                 map (s: ''
                   echo "$(date '+%H:%M') Building '${s}'"
-                  echo "=====================${lib.concatMapStrings (_: "=") (lib.range 0 (builtins.stringLength s))}"
-                  "${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s}"
+                  echo "================${lib.concatMapStrings (_: "=") (lib.range 0 (builtins.stringLength s))}"
+                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s} --no-link
                 '') nixosSystemsToBuild
               )}
-
               echo "$(date '+%H:%M') Rebuilding and switching"
-              echo "======================="
+              echo "=============================="
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
               echo
 

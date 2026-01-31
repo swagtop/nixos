@@ -172,6 +172,7 @@ in
       mullvad-vpn
       ffmpeg
       gnome-boxes
+      geary
     ]
     ++ gstreamerPackages;
 

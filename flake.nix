@@ -65,6 +65,8 @@
             ./modules/music.nix
             ./modules/tui.nix
 
+            ./modules/office.nix
+
             (
               { pkgs, ... }:
               {

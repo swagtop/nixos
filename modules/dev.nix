@@ -52,6 +52,7 @@ in
 
     # Network mapper
     nmap
+    dig
   ];
 
   # Bash aliases.

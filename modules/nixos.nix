@@ -28,7 +28,7 @@ let
       fi
       name='ns'
       for arg in "$@"; do
-        NIX_SHELL+=" github:NixOS/nixpkgs/${inputs.nixpkgs.rev}#$arg"
+        NIX_SHELL+=" ${pkgs.path}#$arg"
         name+="-$arg"
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)
@@ -70,7 +70,7 @@ in
       Type = "oneshot";
       User = "root";
       ExecStart = pkgs.writeShellScript "fetch-nixpkgs-tarball" ''
-        exec ${pkgs.nix}/bin/nix run github:NixOS/nixpkgs/${inputs.nixpkgs.rev}#hello
+        exec ${pkgs.nix}/bin/nix run ${pkgs.path}#hello
       '';
     };
   };

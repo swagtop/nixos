@@ -20,7 +20,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Optimize kernel.
-  boot.kernelPackages = pkgs.linuxPackagesFor (optimizeForNative pkgs.linuxPackages_latest.kernel);
+  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linuxPackages_latest.kernel;
 
   networking.hostName = "cooltop"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -112,42 +112,6 @@ in
     };
   };
 
-  nixpkgs.overlays = [
-    # Building GNOME stuff with native optimizations.
-    (
-      final: prev:
-      let
-        # Only using native GTK4 and GJS for some derivations, too many packages
-        # need to be compiled if these are native in general.
-        native = {
-          gtk4 = optimizeForNative prev.gtk4;
-          gjs = optimizeForNative prev.gjs;
-        };
-      in
-      {
-        gnome-desktop = optimizeForNative prev.gnome-desktop;
-        gnome-session = optimizeForNative (
-          prev.gnome-session.override {
-            inherit (final) gnome-desktop;
-          }
-        );
-        mutter = optimizeForNative (
-          prev.mutter.override {
-            inherit (native) gtk4;
-            inherit (final) gnome-desktop;
-          }
-        );
-        gnome-shell = optimizeForNative (
-          prev.gnome-shell.override {
-            inherit (native) gtk4 gjs;
-            inherit (final) mutter gnome-desktop;
-          }
-        );
-        # ... and ripgrep for good measure.
-        ripgrep = optimizeForNative prev.ripgrep;
-      }
-    )
-  ];
   # programs.firefox.enable = true;
 
   # List packages installed in system profile. To search, run:

@@ -28,7 +28,7 @@ let
       fi
       name='ns'
       for arg in "$@"; do
-        NIX_SHELL+=" ${pkgs.path}#$arg"
+        NIX_SHELL+=" nixpkgs#$arg"
         name+="-$arg"
       done
       export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)

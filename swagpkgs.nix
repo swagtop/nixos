@@ -137,7 +137,7 @@ in
     ];
   };
 
-  locd = pkgs.stdenv.mkDerivation (
+  locd = pkgs.stdenvNoCC.mkDerivation (
     let
       version = "1.0.5";
       pname = "locd";

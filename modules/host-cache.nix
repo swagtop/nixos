@@ -37,6 +37,9 @@
             ''
               printf "" > /srv/f/cache-log.txt # Clear log at beginning of service.
 
+              # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
+              export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
+
               echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
               printf "===================================\n\n"
               # Making sure this service can run, by stopping any lingering rebuilds.

@@ -9,7 +9,6 @@
     self.packages.${pkgs.stdenv.hostPlatform.system}.bitwig-studio
     yabridge
     yabridgectl
-    wineWowPackages.yabridge
     libsndfile
     desktop-file-utils
   ];

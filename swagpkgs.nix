@@ -48,6 +48,7 @@ in
             [
               alsa-lib
               alsa-utils
+              bitwig-studio
               curlWithGnuTls
               fontconfig
               freetype
@@ -57,10 +58,10 @@ in
               libudev0-shim
               pkg-config
               udev
-              bitwig-studio
               vulkan-loader
               wayland
               wayland-protocols
+              wineWowPackages.yabridge
               xorg.libICE
               xorg.libSM
               xorg.libX11
@@ -165,6 +166,7 @@ in
         cp -r VST3 $out/lib/vst3
         cp -r Standalone/* $out/bin/
       '';
+      preferLocaBuild = true;
     }
   );
 }

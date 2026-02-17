@@ -146,7 +146,7 @@ in
     {
       inherit name pname version;
       src = pkgs.fetchurl {
-        url = "https://api.crql.works/download/locd/linux/${version}";
+        url = "https://f002.backblazeb2.com/file/crql-works/LOCD/LOCD-Linux-${version}.zip";
         sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
       };
       nativeBuildInputs = [ pkgs.unzip ];

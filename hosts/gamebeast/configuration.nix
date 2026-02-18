@@ -20,7 +20,21 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot = {
+    enable = true;
+    windows = {
+      "Windows" = {
+        title = "Windows 11";
+        sortKey = "0";
+        efiDeviceHandle = "HD1b";
+      };
+    };
+
+    # To find out the 'efiDeviceHandle' value for 'windows', boot into this and
+    # run 'map -c'. Run 'ls <device>:\EFI' per handle to look for the
+    # 'Microsoft' directory. Use this handle for Windows.
+    # edk2-uefi-shell.enable = true;
+  };
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Set hostname.

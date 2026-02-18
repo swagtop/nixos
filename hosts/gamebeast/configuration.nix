@@ -30,7 +30,23 @@ in
   # networking.wireless.enable = true;
 
   # Kernel.
-  boot.kernelPackages = pkgs.linuxPackagesFor (optimizeForNative pkgs.linuxPackages_latest.kernel);
+  boot.kernelPackages = pkgs.linuxPackagesFor (
+    optimizeForNative (pkgs.linuxPackages_latest.kernel.override {
+      # Check current config with 'zcat /proc/config.gz'.
+      structuredExtraConfig =
+        let
+          inherit (pkgs.lib.kernel) yes;
+        in
+        {
+          # Build AMDGPU into the kernel, instead of loading as module.
+          DRM = yes;
+          DRM_KMS_HELPER = yes;
+          DRM_TTM = yes;
+          DRM_AMDGPU = yes;
+          FB = yes;
+        };
+    })
+  );
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.

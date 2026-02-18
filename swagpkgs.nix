@@ -61,7 +61,7 @@ in
               vulkan-loader
               wayland
               wayland-protocols
-              wineWowPackages.yabridge
+              # wineWowPackages.yabridge
               xorg.libICE
               xorg.libSM
               xorg.libX11

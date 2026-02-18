@@ -36,13 +36,13 @@
   boot.supportedFilesystems = [ "ntfs" ];
   # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
   boot.initrd.kernelModules = [
-    "amdgpu"
+    # "amdgpu"
     # "vfio_pci" "vfio" "vfio_iommu_type1"
   ];
   boot.kernelModules = [
-    "amdgpu"
-    "kvm"
-    "kvm-intel"
+    # "amdgpu"
+    # "kvm"
+    # "kvm-intel"
     # GPU Passthrough stuff.
     # "vfio_pci"
     # "vfio"

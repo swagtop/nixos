@@ -7,8 +7,8 @@
 {
   environment.systemPackages = with pkgs; [
     self.packages.${pkgs.stdenv.hostPlatform.system}.bitwig-studio
-    yabridge
-    yabridgectl
+    # yabridge
+    # yabridgectl
     libsndfile
     desktop-file-utils
   ];

@@ -55,6 +55,9 @@ in
           # Disable everything wireless, no wireless chip installed.
           WIRELESS = no;
 
+          # Disable sound.
+          SOUND = no;
+
           # Disable touchscreen.
           INPUT_TOUCHSCREEN = no;
         };

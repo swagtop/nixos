@@ -20,7 +20,35 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Optimize kernel.
-  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linuxPackages_latest.kernel;
+  boot.kernelPackages = pkgs.linuxPackagesFor (
+    pkgs.linuxPackages_latest.kernel.override {
+      structuredExtraConfig =
+        let
+          inherit (pkgs.lib.kernel)
+            yes
+            no
+            ;
+        in
+        {
+          # Enable Intel integrated graphics.
+          DRM_I915 = yes;
+
+          # Disable graphics from other vendors.
+          DRM_XE = no;
+          DRM_AMDGPU = no;
+          DRM_RADEON = no;
+          DRM_NOUVEAU = no;
+          DRM_ADP = no;
+          DRM_MGAG200 = no;
+          DRM_AST = no;
+          FB_NVIDIA = no;
+          FB_RADEON = no;
+
+          # Disable touchscreen.
+          INPUT_TOUCHSCREEN = no;
+        };
+    }
+  );
 
   networking.hostName = "cooltop"; # Define your hostname.
   # Pick only one of the below networking options.

@@ -49,7 +49,10 @@ in
       # Check current config with 'zcat /proc/config.gz'.
       structuredExtraConfig =
         let
-          inherit (pkgs.lib.kernel) yes;
+          inherit (pkgs.lib.kernel)
+            yes
+            no
+            ;
         in
         {
           # Build AMDGPU into the kernel, instead of loading as module.
@@ -58,6 +61,15 @@ in
           DRM_TTM = yes;
           DRM_AMDGPU = yes;
           FB = yes;
+
+          # Disable graphics from other vendors.
+          DRM_XE = no;
+          DRM_RADEON = no;
+          DRM_NOUVEAU = no;
+          DRM_ADP = no;
+          DRM_MGAG200 = no;
+          DRM_AST = no;
+          FB_NVIDIA = no;
         };
     })
   );

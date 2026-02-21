@@ -23,11 +23,43 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Optimize kernel.
+  # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
-    optimizeForNative pkgs.linuxPackages_latest.kernel
-  );
+    optimizeForNative (pkgs.linuxPackages_latest.kernel.override {
+      # Check current config with 'zcat /proc/config.gz'.
+      structuredExtraConfig =
+        let
+          inherit (pkgs.lib.kernel)
+            yes
+            no
+            ;
+        in
+        {
+          # Enable Intel integrated graphics.
+          DRM_I915 = yes;
 
+          # Disable graphics from other vendors.
+          DRM_XE = no;
+          DRM_AMDGPU = no;
+          DRM_RADEON = no;
+          DRM_NOUVEAU = no;
+          DRM_ADP = no;
+          DRM_MGAG200 = no;
+          DRM_AST = no;
+          FB_NVIDIA = no;
+          FB_RADEON = no;
+
+          # Disable firewire.
+          FIREWIRE = no;
+
+          # Disable everything wireless, no wireless chip installed.
+          WIRELESS = no;
+
+          # Disable touchscreen.
+          INPUT_TOUCHSCREEN = no;
+        };
+    })
+  );
 
   networking.hostName = "servtop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.

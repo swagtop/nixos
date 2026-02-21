@@ -60,7 +60,7 @@
                 map (s: ''
                   echo "$(date '+%H:%M') Building '${s}'"
                   echo "================${lib.concatMapStrings (_: "=") (lib.range 0 (builtins.stringLength s))}"
-                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s} --no-link
+                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s} --no-link -j 1
                   echo
                 '') nixosSystemsToBuild
               )}

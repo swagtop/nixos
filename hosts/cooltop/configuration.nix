@@ -22,6 +22,7 @@ in
   # Optimize kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
     pkgs.linuxPackages_latest.kernel.override {
+      ignoreConfigErrors = true;
       structuredExtraConfig =
         let
           inherit (pkgs.lib.kernel)

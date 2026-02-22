@@ -27,6 +27,7 @@ in
   boot.kernelPackages = pkgs.linuxPackagesFor (
     optimizeForNative (pkgs.linuxPackages_latest.kernel.override {
       # Check current config with 'zcat /proc/config.gz'.
+      ignoreConfigErrors = true;
       structuredExtraConfig =
         let
           inherit (pkgs.lib.kernel)

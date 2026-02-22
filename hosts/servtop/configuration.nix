@@ -61,6 +61,9 @@ in
 
           # Disable touchscreen.
           INPUT_TOUCHSCREEN = no;
+
+          # Disable industrial IO drivers.
+          IIO = no;
         };
     })
   );

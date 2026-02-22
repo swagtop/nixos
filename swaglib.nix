@@ -8,7 +8,12 @@
     in
     pkg'.overrideAttrs (oldAttrs: {
       env = (oldAttrs.env or { }) // {
+        # For Rust programs.
         RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -C target-cpu=${march}";
+
+        # For the Linux kernel.
+        KCPPFLAGS = "-march=${march} -mtune=${march} -O2";
+        KCFLAGS = "-march=${march} -mtune=${march} -O2";
       };
     });
 }

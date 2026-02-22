@@ -53,22 +53,22 @@ in
               fontconfig
               freetype
               libGL
+              libICE
               libsecret.out
+              libSM
               libsndfile
               libudev0-shim
+              libX11
+              libXcursor
+              libXext
+              libXi
+              libXrandr
               pkg-config
               udev
               vulkan-loader
               wayland
               wayland-protocols
               # wineWowPackages.yabridge
-              xorg.libICE
-              xorg.libSM
-              xorg.libX11
-              xorg.libXcursor
-              xorg.libXext
-              xorg.libXi
-              xorg.libXrandr
               xwayland
               zlib
             ]

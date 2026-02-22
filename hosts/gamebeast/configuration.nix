@@ -71,6 +71,9 @@ in
           DRM_MGAG200 = no;
           DRM_AST = no;
           FB_NVIDIA = no;
+
+          # Disable industrial IO drivers.
+          IIO = no;
         };
     })
   );

@@ -5,20 +5,20 @@
   programs.nix-ld.libraries = with pkgs; [
     alsa-lib-with-plugins
     libGL
+    libICE
+    libSM
+    libX11
+    libXcursor
+    libXext
+    libXi
     libxkbcommon
+    libxkbfile
+    libXrandr
     pkg-config
     steam-run
     udev
     vulkan-loader
     wayland
-    xorg.libICE
-    xorg.libSM
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libXext
-    xorg.libXi
-    xorg.libxkbfile
-    xorg.libXrandr
     xwayland
   ];
 }

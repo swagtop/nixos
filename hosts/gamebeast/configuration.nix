@@ -192,7 +192,7 @@ in
 
   environment.systemPackages = with pkgs; [
     libvirt
-    rocmPackages.rocm-smi # AMD GPU Monitoring
+    # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 
   # Configure keymap in X11

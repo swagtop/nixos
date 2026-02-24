@@ -55,6 +55,29 @@ in
 
           # Disable everything wireless, no wireless chip installed.
           WIRELESS = no;
+          WIRELESS_EXT = no;
+          CFG80211 = no;
+          ATMEL = no;
+          PCMCIA_ATMEL = no;
+          AIRO = no;
+          AIRO_CS = no;
+          HERMES = no;
+          ORINOCO = no;
+          USB_ZD1201 = no;
+          PCMCIA_WL3501 = no;
+          USB_NET_RNDIS_WLAN = no;
+          PRISM2_USB = no;
+          R8712U = no;
+          R8188EU  = no;
+          CFG80211_REQUIRE_SIGNED_REGDB = no;
+          CFG80211_WEXT = lib.mkForce no;
+          LIB80211_CRYPT_WEP = no;
+          LIB80211_CRYPT_CCMP = no;
+          LIB80211_CRYPT_TKIP = no;
+          MAC80211 = no;
+          IWLMLD = no;
+          MAC80211_RC_MINSTREL = no;
+          MAC80211_LEDS = no;
 
           # Disable sound.
           SOUND = no;
@@ -67,6 +90,14 @@ in
         };
     })
   );
+
+  zramSwap.enable = true;
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 32 * 1024;
+    }
+  ];
 
   networking.hostName = "servtop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.

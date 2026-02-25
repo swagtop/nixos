@@ -81,6 +81,14 @@
             '';
         }
         + "/bin/update-system-flake";
+
+      # Setting this service to be nicer, to let other services this server take
+      # the reins when needed. This can run all day no problem.
+      # https://positron.solutions/articles/building-nicely-with-rust-and-nix
+      Nice = 18;
+      IOSchedulingClass = "idle";
+      IOSchedulingPriority = 7;
+
       StandardOutput = "file:/srv/f/cache-log.txt";
       # StandardError = "file:/srv/f/cache-log.txt";
     };
@@ -90,7 +98,7 @@
     wantedBy = [ "timers.target" ];
     timerConfig = {
       RandomizedOffsetSec = "30m";
-      OnCalendar = "2:37";
+      OnCalendar = "12:00";
     };
   };
 }

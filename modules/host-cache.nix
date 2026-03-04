@@ -51,7 +51,8 @@
               ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
               echo
 
-              echo "$(date '+%H:%M') Updating flake inputs"
+              FLAKE_INPUTS_UPDATE_DATE=$(date '+%H:%M')
+              echo "$FLAKE_INPUTS_UPDATE_DATE Updating flake inputs"
               echo "==========================="
               ${pkgs.nix}/bin/nix flake update
               echo
@@ -72,7 +73,7 @@
 
               echo "$(date '+%H:%M') Committing lockfile and pushing"
               echo "====================================="
-              ${pkgs.git}/bin/git commit -m "$(date '+%Y-%m-%d') Automatic lockfile update." flake.lock || true
+              ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
               ${pkgs.git}/bin/git push
               echo
 

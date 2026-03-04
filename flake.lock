@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772392689,
-        "narHash": "sha256-zQy2TFslcFdYlrf1+XbsyxGCLJgfvb/3+D/apntzH48=",
+        "lastModified": 1772563156,
+        "narHash": "sha256-yfKBsqjMRfJbkFlcUREHAqYR9mjnYgTERYCuPZHoXA8=",
         "owner": "swagtop",
         "repo": "hytale-flake",
-        "rev": "515a90cf5f4af93b22099133d10ad594cccfa246",
+        "rev": "976982d6a5aefc0b5bdae353839983c5f56315c1",
         "type": "github"
       },
       "original": {
@@ -22,11 +22,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1772433332,
-        "narHash": "sha256-izhTDFKsg6KeVBxJS9EblGeQ8y+O8eCa6RcW874vxEc=",
+        "lastModified": 1772542754,
+        "narHash": "sha256-WGV2hy+VIeQsYXpsLjdr4GvHv5eECMISX1zKLTedhdg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cf59864ef8aa2e178cccedbe2c178185b0365705",
+        "rev": "8c809a146a140c5c8806f13399592dbcb1bb5dc4",
         "type": "github"
       },
       "original": {

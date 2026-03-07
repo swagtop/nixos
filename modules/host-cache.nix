@@ -51,8 +51,8 @@
               ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
               echo
 
-              FLAKE_INPUTS_UPDATE_DATE=$(date '+%H:%M')
-              echo "$FLAKE_INPUTS_UPDATE_DATE Updating flake inputs"
+              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
+              echo "$(date '+%H:%M') Updating flake inputs"
               echo "==========================="
               ${pkgs.nix}/bin/nix flake update
               echo

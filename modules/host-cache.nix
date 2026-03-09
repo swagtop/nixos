@@ -30,7 +30,6 @@
             let
               nixosSystemsToBuild = [
                 "gamebeast"
-                "cooltop"
                 "servtop"
               ];
             in

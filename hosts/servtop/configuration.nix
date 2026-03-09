@@ -386,12 +386,6 @@ in
   };
 
   services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=no
-    AllowHibernation=no
-    AllowHybridSleep=no
-    AllowSuspendThenHibernate=no
-  '';
 
   # services.seafile = {
   #   enable = true;

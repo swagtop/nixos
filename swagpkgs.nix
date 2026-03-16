@@ -120,7 +120,7 @@ in
   helix = symlinkWrap {
     package = (
       pkgs.helix.overrideAttrs (oldAttrs: {
-        patches = oldAttrs.patches ++ [ ./patches/helix-upppercase-commands.patch ];
+        patches = (oldAttrs.patches or [ ]) ++ [ ./patches/helix-upppercase-commands.patch ];
       })
     );
     execName = "hx";

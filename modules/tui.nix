@@ -1,28 +1,33 @@
 { pkgs, self, ... }:
 
 let
-  # Adds name of Nix shell to PS1, if in one.
-  devShell = "\${name:+[$name] }";
-  # Adds name of hostname if connected through SSH.
-  ssh = "\${SSH_CONNECTION:+@$HOSTNAME}";
   # ANSI escape codes for changing colors of terminal text.
-  reset = ''\[\e[0;0m\]'';
+  reset = ''\[\e[0m\]'';
   green = ''\[\e[1;32m\]'';
   red = ''\[\e[1;31m\]'';
   cyan = ''\[\e[1;36m\]'';
   orange = ''\[\e[1;33m\]'';
 
+  # Adds name of Nix shell to PS1, if in one.
+  devShell = "${cyan}\${name:+[$name] }";
+
+  # Adds name of hostname if connected through SSH.
+  ssh = "${orange}\${SSH_CONNECTION:+@$HOSTNAME}";
+
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
   promptInit = ''
-    if [ "$EUID" -ne 0 ]
-    then
+    if [ "$EUID" -ne 0 ]; then
       # Normal user, green prompt
-      PS1='${green}\u${orange}${ssh} ${cyan}${devShell}${green}\w € ${reset}'
+      USER_COLOR="${green}"
+      USER_SYMBOL="\[€\]"
     else
       # Root, red prompt
-      PS1='${red}\u${orange}${ssh} ${cyan}${devShell}${red}\w £ ${reset}'
+      USER_COLOR="${red}"
+      USER_SYMBOL="\[£\]"
     fi
+
+    PS1="$USER_COLOR\u${ssh} ${devShell}$USER_COLOR\w $USER_SYMBOL ${reset}"
 
     y() {
       tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

@@ -11,25 +11,13 @@
   outputs =
     inputs@{ self, hytale-flake, ... }:
     let
+      inherit (builtins) foldl';
+      inherit (inputs.nixpkgs.lib) genAttrs;
       nixpkgs = inputs.nixpkgs.lib.recursiveUpdate inputs.nixpkgs {
         nixpkgs = {
           config.allowUnfree = true;
         };
       };
-      swagpkgs =
-        system:
-        let
-          pkgs = (
-            import nixpkgs {
-              inherit system;
-              config.allowUnfree = true;
-            }
-          );
-        in
-        import ./swagpkgs.nix {
-          inherit (nixpkgs) lib;
-          inherit pkgs;
-        };
       mkSystem =
         config:
         nixpkgs.lib.nixosSystem (
@@ -47,13 +35,24 @@
             ++ (config.modules or [ ]);
           }
         );
-      eachSystem = f: nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed f;
     in
-    {
-      formatter = eachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
-
-      packages = eachSystem (system: swagpkgs system);
-
+    foldl' (
+      accumulator: system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        step = {
+          packages.${system} = import ./swagpkgs.nix pkgs;
+        };
+      in
+      accumulator
+      // genAttrs [ "packages" "devShells" "formatter" ] (
+        attribute: accumulator.${attribute} or { } // step.${attribute} or { }
+      )
+    ) { } inputs.nixpkgs.lib.systems.flakeExposed 
+    // {
       nixosConfigurations = {
         gamebeast = mkSystem {
           modules = [

@@ -27,16 +27,7 @@ in
   bitwig-studio =
     let
       version = "5.3.13";
-      bitwig-studio-at-version = pkgs.bitwig-studio.override (old: {
-        bitwig-studio-unwrapped = old.bitwig-studio-unwrapped.overrideAttrs rec {
-          inherit version;
-          src = pkgs.fetchurl {
-            name = "bitwig-studio-${version}.deb";
-            url = "https://www.bitwig.com/dl/Bitwig%20Studio/${version}/installer_linux/";
-            hash = "sha256-tx+Dz9fTm4DIobwLa055ZOCMG+tU7vQl11NFnEKMAno=";
-          };
-        };
-      });
+      bitwig-studio-at-version = pkgs.bitwig-studio5;
     in
     symlinkWrap {
       package = bitwig-studio-at-version;

@@ -98,6 +98,9 @@
       "relatime"
       "uid=1000"
       "gid=100"
+      "exec"
+      "permissions"
+      "big_writes"
       "iocharset=utf8"
       "uhelper=udisks2"
       "x-gvfs-hide" # Hide unmount button, don't want that happening.

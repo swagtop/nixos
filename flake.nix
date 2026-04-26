@@ -45,13 +45,14 @@
         };
         step = {
           packages.${system} = import ./swagpkgs.nix pkgs;
+          formatter.${system} = pkgs.nixfmt-tree;
         };
       in
       accumulator
       // genAttrs [ "packages" "devShells" "formatter" ] (
         attribute: accumulator.${attribute} or { } // step.${attribute} or { }
       )
-    ) { } inputs.nixpkgs.lib.systems.flakeExposed 
+    ) { } inputs.nixpkgs.lib.systems.flakeExposed
     // {
       nixosConfigurations = {
         gamebeast = mkSystem {

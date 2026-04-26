@@ -18,6 +18,7 @@ in
 
   # Allow unfree packages.
   nixpkgs.config.allowUnfree = true;
+  programs.nix-ld.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot = {
@@ -45,37 +46,39 @@ in
 
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
-    optimizeForNative (pkgs.linuxPackages_latest.kernel.override {
-      # Check current config with 'zcat /proc/config.gz'.
-      ignoreConfigErrors = true;
-      structuredExtraConfig =
-        let
-          inherit (pkgs.lib.kernel)
-            yes
-            no
-            ;
-        in
-        {
-          # Build AMDGPU into the kernel, instead of loading as module.
-          DRM = yes;
-          DRM_KMS_HELPER = yes;
-          DRM_TTM = yes;
-          DRM_AMDGPU = yes;
-          FB = yes;
+    optimizeForNative (
+      pkgs.linuxPackages_latest.kernel.override {
+        # Check current config with 'zcat /proc/config.gz'.
+        ignoreConfigErrors = true;
+        structuredExtraConfig =
+          let
+            inherit (pkgs.lib.kernel)
+              yes
+              no
+              ;
+          in
+          {
+            # Build AMDGPU into the kernel, instead of loading as module.
+            DRM = yes;
+            DRM_KMS_HELPER = yes;
+            DRM_TTM = yes;
+            DRM_AMDGPU = yes;
+            FB = yes;
 
-          # Disable graphics from other vendors.
-          DRM_XE = no;
-          DRM_RADEON = no;
-          DRM_NOUVEAU = no;
-          DRM_ADP = no;
-          DRM_MGAG200 = no;
-          DRM_AST = no;
-          FB_NVIDIA = no;
+            # Disable graphics from other vendors.
+            DRM_XE = no;
+            DRM_RADEON = no;
+            DRM_NOUVEAU = no;
+            DRM_ADP = no;
+            DRM_MGAG200 = no;
+            DRM_AST = no;
+            FB_NVIDIA = no;
 
-          # Disable industrial IO drivers.
-          IIO = no;
-        };
-    })
+            # Disable industrial IO drivers.
+            IIO = no;
+          };
+      }
+    )
   );
 
   nixpkgs.overlays = [
@@ -192,6 +195,7 @@ in
 
   environment.systemPackages = with pkgs; [
     libvirt
+    freetype
     # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 

@@ -25,139 +25,141 @@ in
 
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
-    optimizeForNative (pkgs.linuxPackages_7_0.kernel.override {
-      # Check current config with 'zcat /proc/config.gz'.
-      ignoreConfigErrors = true;
-      structuredExtraConfig =
-        let
-          yes = lib.mkForce pkgs.lib.kernel.yes;
-          no = lib.mkForce pkgs.lib.kernel.no;
-        in
-        {
-          # Enable Intel integrated graphics.
-          DRM_I915 = yes;
+    optimizeForNative (
+      pkgs.linuxPackages_7_0.kernel.override {
+        # Check current config with 'zcat /proc/config.gz'.
+        ignoreConfigErrors = true;
+        structuredExtraConfig =
+          let
+            yes = lib.mkForce pkgs.lib.kernel.yes;
+            no = lib.mkForce pkgs.lib.kernel.no;
+          in
+          {
+            # Enable Intel integrated graphics.
+            DRM_I915 = yes;
 
-          # Disable graphics from other vendors.
-          DRM_XE = no;
-          DRM_AMDGPU = no;
-          DRM_RADEON = no;
-          DRM_NOUVEAU = no;
-          DRM_ADP = no;
-          DRM_MGAG200 = no;
-          DRM_AST = no;
-          FB_NVIDIA = no;
-          FB_RADEON = no;
+            # Disable graphics from other vendors.
+            DRM_XE = no;
+            DRM_AMDGPU = no;
+            DRM_RADEON = no;
+            DRM_NOUVEAU = no;
+            DRM_ADP = no;
+            DRM_MGAG200 = no;
+            DRM_AST = no;
+            FB_NVIDIA = no;
+            FB_RADEON = no;
 
-          # Disable firewire.
-          FIREWIRE = no;
+            # Disable firewire.
+            FIREWIRE = no;
 
-          # Disable everything wireless, no wireless chip installed.
-          WIRELESS = no;
-          WIRELESS_EXT = no;
-          ADM8211 = no;
-          AIRO_CS = no;
-          AIRO = no;
-          AR5523 = no;
-          AT76C50X_USB = no;
-          ATH10K = no;
-          ATH10K_SNOC = no;
-          ATH11K = no;
-          ATH12K = no;
-          ATH5K = no;
-          ATH9K_DEBUGFS = no;
-          ATH9K_HTC_DEBUGFS = no;
-          ATH9K_HTC = no;
-          ATH9K = no;
-          ATH9K_STATION_STATISTICS = no;
-          ATMEL = no;
-          B43_BCMA_PIO = no;
-          B43LEGACY = no;
-          B43LEGACY_PCI_AUTOSELECT = no;
-          B43LEGACY_PCICORE_AUTOSELECT = no;
-          B43 = no;
-          B43_PCI_AUTOSELECT = no;
-          B43_PCICORE_AUTOSELECT = no;
-          B43_PIO = no;
-          B43_SDIO = no;
-          BRCMDBG = no;
-          BRCMFMAC = no;
-          BRCMSMAC = no;
-          CARL9170 = no;
-          CFG80211 = no;
-          CFG80211_REQUIRE_SIGNED_REGDB = no;
-          CFG80211_WEXT = no;
-          CONFIG_ATH11K_PCI = no;
-          HERMES = no;
-          IPW2100 = no;
-          IPW2200 = no;
-          IWL3945 = no;
-          IWL4965 = no;
-          IWLMLD = no;
-          IWLMVM = no;
-          IWLWIFI_LEDS = no;
-          IWLWIFI = no;
-          KS7010 = no;
-          LIB80211_CRYPT_CCMP = no;
-          LIB80211_CRYPT_TKIP = no;
-          LIB80211_CRYPT_WEP = no;
-          LIBERTAS = no;
-          LIBERTAS_THINFIRM = no;
-          LIBIPW = no;
-          MAC80211_LEDS = no;
-          MAC80211 = no;
-          MAC80211_RC_MINSTREL = no;
-          MT7603E = no;
-          MT7615E = no;
-          MT7622_WMAC = no;
-          MT7663S = no;
-          MT7663U = no;
-          MT76x0E = no;
-          MT76x0U = no;
-          MT76x2E = no;
-          MT76x2U = no;
-          MT7915E = no;
-          MT7921E = no;
-          MT7921S = no;
-          MT7921U = no;
-          MT798X_WMAC = no;
-          MT7996E = no;
-          ORINOCO = no;
-          ORINOCO_USB = no;
-          P54_COMMON = no;
-          P54_USB = no;
-          PCMCIA_ATMEL = no;
-          PCMCIA_WL3501 = no;
-          PRISM2_USB = no;
-          QTNFMAC_PCIE = no;
-          R8188EU  = no;
-          R8712U = no;
-          RSI_91X = no;
-          RTL8180 = no;
-          RTL8187 = no;
-          RTL8723BS = no;
-          USB_NET_RNDIS_WLAN = no;
-          USB_ZD1201 = no;
-          VT6656 = no;
-          WIL6210 = no;
-          WILC1000_SDIO = no;
-          WILC1000_SPI = no;
-          WL1251 = no;
-          WL12XX = no;
-          WL18XX = no;
-          WLCORE = no;
-          WLCORE_SPI = no;
-          ZD1211RW = no;
+            # Disable everything wireless, no wireless chip installed.
+            WIRELESS = no;
+            WIRELESS_EXT = no;
+            ADM8211 = no;
+            AIRO_CS = no;
+            AIRO = no;
+            AR5523 = no;
+            AT76C50X_USB = no;
+            ATH10K = no;
+            ATH10K_SNOC = no;
+            ATH11K = no;
+            ATH12K = no;
+            ATH5K = no;
+            ATH9K_DEBUGFS = no;
+            ATH9K_HTC_DEBUGFS = no;
+            ATH9K_HTC = no;
+            ATH9K = no;
+            ATH9K_STATION_STATISTICS = no;
+            ATMEL = no;
+            B43_BCMA_PIO = no;
+            B43LEGACY = no;
+            B43LEGACY_PCI_AUTOSELECT = no;
+            B43LEGACY_PCICORE_AUTOSELECT = no;
+            B43 = no;
+            B43_PCI_AUTOSELECT = no;
+            B43_PCICORE_AUTOSELECT = no;
+            B43_PIO = no;
+            B43_SDIO = no;
+            BRCMDBG = no;
+            BRCMFMAC = no;
+            BRCMSMAC = no;
+            CARL9170 = no;
+            CFG80211 = no;
+            CFG80211_REQUIRE_SIGNED_REGDB = no;
+            CFG80211_WEXT = no;
+            CONFIG_ATH11K_PCI = no;
+            HERMES = no;
+            IPW2100 = no;
+            IPW2200 = no;
+            IWL3945 = no;
+            IWL4965 = no;
+            IWLMLD = no;
+            IWLMVM = no;
+            IWLWIFI_LEDS = no;
+            IWLWIFI = no;
+            KS7010 = no;
+            LIB80211_CRYPT_CCMP = no;
+            LIB80211_CRYPT_TKIP = no;
+            LIB80211_CRYPT_WEP = no;
+            LIBERTAS = no;
+            LIBERTAS_THINFIRM = no;
+            LIBIPW = no;
+            MAC80211_LEDS = no;
+            MAC80211 = no;
+            MAC80211_RC_MINSTREL = no;
+            MT7603E = no;
+            MT7615E = no;
+            MT7622_WMAC = no;
+            MT7663S = no;
+            MT7663U = no;
+            MT76x0E = no;
+            MT76x0U = no;
+            MT76x2E = no;
+            MT76x2U = no;
+            MT7915E = no;
+            MT7921E = no;
+            MT7921S = no;
+            MT7921U = no;
+            MT798X_WMAC = no;
+            MT7996E = no;
+            ORINOCO = no;
+            ORINOCO_USB = no;
+            P54_COMMON = no;
+            P54_USB = no;
+            PCMCIA_ATMEL = no;
+            PCMCIA_WL3501 = no;
+            PRISM2_USB = no;
+            QTNFMAC_PCIE = no;
+            R8188EU = no;
+            R8712U = no;
+            RSI_91X = no;
+            RTL8180 = no;
+            RTL8187 = no;
+            RTL8723BS = no;
+            USB_NET_RNDIS_WLAN = no;
+            USB_ZD1201 = no;
+            VT6656 = no;
+            WIL6210 = no;
+            WILC1000_SDIO = no;
+            WILC1000_SPI = no;
+            WL1251 = no;
+            WL12XX = no;
+            WL18XX = no;
+            WLCORE = no;
+            WLCORE_SPI = no;
+            ZD1211RW = no;
 
-          # Disable sound.
-          SOUND = no;
+            # Disable sound.
+            SOUND = no;
 
-          # Disable touchscreen.
-          INPUT_TOUCHSCREEN = no;
+            # Disable touchscreen.
+            INPUT_TOUCHSCREEN = no;
 
-          # Disable industrial IO drivers.
-          IIO = no;
-        };
-    })
+            # Disable industrial IO drivers.
+            IIO = no;
+          };
+      }
+    )
   );
 
   zramSwap.enable = true;

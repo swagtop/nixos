@@ -109,13 +109,11 @@ in
   };
 
   helix = symlinkWrap {
-    package =
-      pkgs.helix.override (old: {
-        helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
-          patches =
-            oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
-        });
+    package = pkgs.helix.override (old: {
+      helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
+        patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
       });
+    });
     execName = "hx";
     args = [
       "--set HELIX_RUNTIME \"${./configs/helix}\""

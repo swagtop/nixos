@@ -1,12 +1,42 @@
-{ pkgs, self, ... }:
+{
+  pkgs,
+  lib,
+  self,
+  ...
+}:
 
 let
+  inherit (lib) concatStrings;
+
   # ANSI escape codes for changing colors of terminal text.
-  reset = ''\[\e[0m\]'';
   green = ''\[\e[1;32m\]'';
   red = ''\[\e[1;31m\]'';
   cyan = ''\[\e[1;36m\]'';
   orange = ''\[\e[1;33m\]'';
+
+  reset = ''\e[0m'';
+
+  moveLeft = ''\e[D'';
+  # moveRight = ''\e[C'';
+
+  saveLocation = ''\e[s'';
+  restoreLocation = ''\e[u'';
+
+  mkPS1 =
+    color: symbol:
+    let
+      symbolRoutine = ''\[${
+        concatStrings [
+          saveLocation
+          moveLeft
+          moveLeft
+          symbol
+          restoreLocation
+          reset
+        ]
+      }\]'';
+    in
+    ''${color}\u${ssh} ${devShell}${color}\w   ${symbolRoutine}'';
 
   # Adds name of Nix shell to PS1, if in one.
   devShell = "${cyan}\${name:+[$name] }";
@@ -19,15 +49,11 @@ let
   promptInit = ''
     if [ "$EUID" -ne 0 ]; then
       # Normal user, green prompt
-      USER_COLOR="${green}"
-      USER_SYMBOL="\[€\]"
+      PS1="${mkPS1 green "€"}"
     else
       # Root, red prompt
-      USER_COLOR="${red}"
-      USER_SYMBOL="\[£\]"
+      PS1="${mkPS1 red "£"}"
     fi
-
-    PS1="$USER_COLOR\u${ssh} ${devShell}$USER_COLOR\w $USER_SYMBOL ${reset}"
 
     y() {
       tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

@@ -14,13 +14,19 @@ let
   cyan = ''\[\e[1;36m\]'';
   orange = ''\[\e[1;33m\]'';
 
-  reset = ''\e[0m'';
+  resetColor = ''\e[0m'';
 
   moveLeft = ''\e[D'';
   # moveRight = ''\e[C'';
 
   saveLocation = ''\e[s'';
   restoreLocation = ''\e[u'';
+
+  # Adds name of Nix shell to PS1, if in one.
+  devShell = "${cyan}\${name:+[$name] }";
+
+  # Adds name of hostname if connected through SSH.
+  ssh = "${orange}\${SSH_CONNECTION:+@$HOSTNAME}";
 
   mkPS1 =
     color: symbol:
@@ -32,17 +38,11 @@ let
           moveLeft
           symbol
           restoreLocation
-          reset
+          resetColor
         ]
       }\]'';
     in
-    ''${color}\u${ssh} ${devShell}${color}\w   ${symbolRoutine}'';
-
-  # Adds name of Nix shell to PS1, if in one.
-  devShell = "${cyan}\${name:+[$name] }";
-
-  # Adds name of hostname if connected through SSH.
-  ssh = "${orange}\${SSH_CONNECTION:+@$HOSTNAME}";
+    ''${color}\u${ssh} ${devShell}${color}\w $ ${symbolRoutine}'';
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.

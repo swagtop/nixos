@@ -37,7 +37,7 @@ let
 
     # What is the real path of this binary?
     realwhich() {
-      $(realpath $(which $1))
+      echo $(realpath $(which $1))
     }
 
     # Go to directory of binary in the store.

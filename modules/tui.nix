@@ -1,13 +1,10 @@
 {
   pkgs,
-  lib,
   self,
   ...
 }:
 
 let
-  inherit (lib) concatStrings;
-
   # ANSI escape codes for changing colors of terminal text.
   green = ''\[\e[1;32m\]'';
   red = ''\[\e[1;31m\]'';
@@ -15,12 +12,6 @@ let
   orange = ''\[\e[1;33m\]'';
 
   resetColor = ''\e[0m'';
-
-  moveLeft = ''\e[D'';
-  # moveRight = ''\e[C'';
-
-  saveLocation = ''\e[s'';
-  restoreLocation = ''\e[u'';
 
   # Adds name of Nix shell to PS1, if in one.
   devShell = "${cyan}\${name:+[$name] }";
@@ -30,29 +21,17 @@ let
 
   mkPS1 =
     color: symbol:
-    let
-      symbolRoutine = ''\[${
-        concatStrings [
-          saveLocation
-          moveLeft
-          moveLeft
-          symbol
-          restoreLocation
-          resetColor
-        ]
-      }\]'';
-    in
-    ''${color}\u${ssh} ${devShell}${color}\w $ ${symbolRoutine}'';
+    ''${color}\u${ssh} ${devShell}${color}\w  \[\x8${symbol}${resetColor}\] '';
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
   promptInit = ''
     if [ "$EUID" -ne 0 ]; then
       # Normal user, green prompt
-      PS1="${mkPS1 green "€"}"
+      PS1=$'${mkPS1 green "€"}'
     else
       # Root, red prompt
-      PS1="${mkPS1 red "£"}"
+      PS1=$'${mkPS1 red "£"}'
     fi
 
     y() {

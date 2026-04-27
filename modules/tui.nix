@@ -13,15 +13,17 @@ let
 
   resetColor = ''\e[0m'';
 
+  backspace = ''\x8'';
+
   # Adds name of Nix shell to PS1, if in one.
-  devShell = "${cyan}\${name:+[$name] }";
+  devShell = ''''${name:+${cyan}[$name] }'';
 
   # Adds name of hostname if connected through SSH.
-  ssh = "${orange}\${SSH_CONNECTION:+@$HOSTNAME}";
+  ssh = ''''${SSH_CONNECTION:+${orange}@$HOSTNAME}'';
 
   mkPS1 =
     color: symbol:
-    ''${color}\u${ssh} ${devShell}${color}\w  \[\x8${symbol}${resetColor}\] '';
+    ''${color}\u${ssh} ${devShell}${color}\w  \[${backspace}${symbol}${resetColor}\] '';
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.

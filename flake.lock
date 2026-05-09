@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778177971,
-        "narHash": "sha256-Pa8mAWM5YYFZa7pzK+CJ2N1KqDdMpBLMX0if42vTsi4=",
+        "lastModified": 1778253360,
+        "narHash": "sha256-Oz7tW1tRMKza9kpDeCYZH458/NZ+5aFsmhTg0RE4Q9c=",
         "owner": "swagtop",
         "repo": "hytale-flake",
-        "rev": "c9a9ce6a90f789092d87849cfc610cf590d08ec1",
+        "rev": "808f93a3919d4dc5bf20287ed1ea967c91c44e1d",
         "type": "github"
       },
       "original": {

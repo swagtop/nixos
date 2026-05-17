@@ -9,15 +9,15 @@
   };
 
   outputs =
-    inputs@{ self, hytale-flake, ... }:
+    inputs@{
+      self,
+      nixpkgs,
+      hytale-flake,
+      ...
+    }:
     let
       inherit (builtins) foldl';
       inherit (inputs.nixpkgs.lib) genAttrs;
-      nixpkgs = inputs.nixpkgs.lib.recursiveUpdate inputs.nixpkgs {
-        nixpkgs = {
-          config.allowUnfree = true;
-        };
-      };
       mkSystem =
         config:
         nixpkgs.lib.nixosSystem (

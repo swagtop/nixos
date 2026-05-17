@@ -125,6 +125,8 @@ in
   # Enable networking.
   networking.networkmanager.enable = true;
 
+  nixpkgs.config.rocmSupport = true;
+
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
 

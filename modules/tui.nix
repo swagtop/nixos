@@ -16,14 +16,13 @@ let
   backspace = ''\x8'';
 
   # Adds name of Nix shell to PS1, if in one.
-  devShell = ''''${name:+${cyan}[$name] }'';
+  devShell = "\${name:+${cyan}[$name] }";
 
   # Adds name of hostname if connected through SSH.
-  ssh = ''''${SSH_CONNECTION:+${orange}@$HOSTNAME}'';
+  ssh = "\${SSH_CONNECTION:+${orange}@$HOSTNAME}";
 
   mkPS1 =
-    color: symbol:
-    ''${color}\u${ssh} ${devShell}${color}\w  \[${backspace}${symbol}${resetColor}\] '';
+    color: symbol: ''${color}\u${ssh} ${devShell}${color}\w  \[${backspace}${symbol}${resetColor}\] '';
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
@@ -36,23 +35,13 @@ let
       PS1=$'${mkPS1 red "£"}'
     fi
 
-    y() {
-      tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-      cwd=""
-      yazi "$@" --cwd-file="$tmp"
-
-      # Read the content of the temporary file into cwd
-      cwd="$(command cat -- "$tmp")"
-
-      # If cwd is non-empty and different from $PWD, change directory
-      if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-          builtin cd -- "$cwd"
-      fi
-
-      # Remove the temporary file
-      rm -f -- "$tmp"
+    function y() {
+    	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    	command yazi "$@" --cwd-file="$tmp"
+    	IFS= read -r -d '''' cwd < "$tmp"
+    	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+    	command rm -f -- "$tmp"
     }
-
   '';
 
   # Quick shortcuts.

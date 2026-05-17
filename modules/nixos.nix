@@ -86,6 +86,8 @@ in
     "L+ ${nixPath} - - - - ${pkgs.path}"
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   # Useful Nix commands.
   environment = {
     systemPackages = with pkgs; [

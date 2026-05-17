@@ -63,11 +63,6 @@ let
   ];
 in
 {
-  nixpkgs.config = {
-    allowUnfree = true;
-    rocmSupport = true;
-  };
-
   programs.nautilus-open-any-terminal = {
     enable = true;
     terminal = "alacritty";
@@ -169,7 +164,6 @@ in
       xwayland
       wayland-protocols
       linux-firmware
-      mullvad-vpn
       ffmpeg
       gnome-boxes
       geary

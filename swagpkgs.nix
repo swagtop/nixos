@@ -109,18 +109,30 @@ in
     ];
   };
 
-  helix = symlinkWrap {
-    package = pkgs.helix.override (old: {
-      helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
-        patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
+  helix = symlinkWrap (
+    let
+      configFile = pkgs.stdenvNoCC.mkDerivation {
+        name = "helix-config";
+        src = ./configs/helix/config.toml;
+        dontUnpack = true;
+        installPhase = ''
+          cp $src $out
+          substituteInPlace $out --replace "cool-theme" "${builtins.head (builtins.split ".toml" "${./configs/helix/themes/cool-theme.toml}")}"
+        '';
+      };
+    in
+    {
+      package = pkgs.helix.override (old: {
+        helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
+          patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
+        });
       });
-    });
-    execName = "hx";
-    args = [
-      # "--set HELIX_RUNTIME \"${./configs/helix}\""
-      "--add-flags \"--config ${./configs/helix/config.toml}\""
-    ];
-  };
+      execName = "hx";
+      args = [
+        "--add-flags \"--config ${configFile}\""
+      ];
+    }
+  );
 
   zellij = symlinkWrap {
     package = pkgs.zellij;

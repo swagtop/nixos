@@ -2,6 +2,7 @@
   pkgs,
   lib,
   swaglib,
+  config,
   ...
 }:
 let
@@ -44,10 +45,25 @@ in
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;
 
-  # Kernel.
+  # Use latest kernel compatible with ZFS.
   boot.kernelPackages = pkgs.linuxPackagesFor (
+    let
+      zfsCompatibleKernelPackages =
+        lib.filterAttrs (
+          name: kernelPackages:
+          (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+          && (builtins.tryEval kernelPackages).success
+          && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
+        ) pkgs.linuxKernel.packages;
+
+      latestKernelPackage = lib.last (
+        lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
+          builtins.attrValues zfsCompatibleKernelPackages
+        )
+      );
+    in
     optimizeForNative (
-      pkgs.linuxPackages_latest.kernel.override {
+      latestKernelPackage.kernel.override {
         # Check current config with 'zcat /proc/config.gz'.
         ignoreConfigErrors = true;
         structuredExtraConfig =

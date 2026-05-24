@@ -75,7 +75,8 @@ in
       let
         flags = "${lib.concatStringsSep " " [
           "--ignore-gpu-blocklist"
-          "--disable-features=UseOzonePlatform"
+          "--enable-features=UseOzonePlatform"
+          "--ozone-platform=wayland"
           "--enable-features=VaapiVideoDecoder"
           "--use-gl=desktop"
           "--enable-gpu-rasterization"

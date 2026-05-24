@@ -41,20 +41,22 @@ in
 
   # Set hostname.
   networking.hostName = "gamebeast";
+  networking.hostId = "8425e349";
 
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;
 
+  boot.zfs.forceImportRoot = false;
+
   # Use latest kernel compatible with ZFS.
   boot.kernelPackages = pkgs.linuxPackagesFor (
     let
-      zfsCompatibleKernelPackages =
-        lib.filterAttrs (
-          name: kernelPackages:
-          (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-          && (builtins.tryEval kernelPackages).success
-          && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
-        ) pkgs.linuxKernel.packages;
+      zfsCompatibleKernelPackages = lib.filterAttrs (
+        name: kernelPackages:
+        (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+        && (builtins.tryEval kernelPackages).success
+        && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
+      ) pkgs.linuxKernel.packages;
 
       latestKernelPackage = lib.last (
         lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
@@ -142,6 +144,14 @@ in
   networking.networkmanager.enable = true;
 
   nixpkgs.config.rocmSupport = true;
+
+  services.displayManager.gdm = {
+    enable = true;
+  };
+  services.desktopManager = {
+    gnome.enable = true;
+    # cosmic.enable = true;
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
@@ -363,4 +373,33 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.04"; # Did you read the comment?
+
+  boot.supportedFilesystems = [ "ntfs" ];
+
+  boot.blacklistedKernelModules = [ "radeon" ];
+  boot.kernelParams = [
+    "radeon.cik_support=0"
+    "radeon.si_support=0"
+    "amdgpu.cik_support=1"
+    "amdgpu.si_support=1"
+    "amdgpu.dc=1"
+
+    "intel_iommu=on"
+    "amd_iommu=on"
+    "iommu=pt"
+    "vfio-pci.ids=1002:aac8"
+
+    # Sleep fixes.
+    "mem_sleep_default=deep"
+    "acpi_sleep=nonvs"
+    "pci=noaer"
+  ];
+
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 }

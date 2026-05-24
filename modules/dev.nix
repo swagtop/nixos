@@ -36,7 +36,7 @@ in
     (python313.withPackages (
       ps: with ps; [
         pyyaml
-        python-lsp-ruff
+        # python-lsp-ruff
         requests
       ]
     ))

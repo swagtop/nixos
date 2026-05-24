@@ -75,7 +75,7 @@ in
   # Enable GNOME, GDM.
   services.displayManager.gdm = {
     enable = true;
-    wayland = true;
+    # wayland = true;
     # extraGSettingsOverrides = ''
     #   [org.gnome.mutter]
     #   experimental-features=['scale-monitor-framebuffer']

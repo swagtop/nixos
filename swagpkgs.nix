@@ -117,8 +117,8 @@ in
     });
     execName = "hx";
     args = [
-      "--set HELIX_RUNTIME \"${./configs/helix}\""
-      "--add-flags \"-c ${./configs/helix/config.toml}\""
+      # "--set HELIX_RUNTIME \"${./configs/helix}\""
+      "--add-flags \"--config ${./configs/helix/config.toml}\""
     ];
   };
 

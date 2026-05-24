@@ -14,76 +14,55 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  # Disable wakeup for Intel AX200 Bluetooth controller, otherwise cannot sleep.
-  services.udev.extraRules = ''
-    ${lib.concatStringsSep ", " [
-      "ACTION==\"add\""
-      "SUBSYSTEM==\"pci\""
-      "KERNELS==\"0000:05:00.0\""
-      "ATTR{power/wakeup}=\"disabled\""
-    ]}
-  '';
-
   boot.initrd.availableKernelModules = [
-    "ahci"
-    "amdgpu"
-    "nvme"
-    "sd_mod"
-    "usbhid"
     "xhci_pci"
+    "ahci"
+    "nvme"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
   ];
-
-  boot.supportedFilesystems = [ "ntfs" ];
-  # I FRIGGIN HATE THE R9 390 !!!!!!!!!!!!!!!!!!!!!
-  boot.initrd.kernelModules = [
-    # "amdgpu"
-    # "vfio_pci" "vfio" "vfio_iommu_type1"
-  ];
-  boot.kernelModules = [
-    # "amdgpu"
-    # "kvm"
-    # "kvm-intel"
-    # GPU Passthrough stuff.
-    # "vfio_pci"
-    # "vfio"
-    # "vfio_iommu_type1"
-    # "vfio_virqfd"
-  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  boot.blacklistedKernelModules = [ "radeon" ];
-  boot.kernelParams = [
-    "radeon.cik_support=0"
-    "radeon.si_support=0"
-    "amdgpu.cik_support=1"
-    "amdgpu.si_support=1"
-    "amdgpu.dc=1"
 
-    "intel_iommu=on"
-    "amd_iommu=on"
-    "iommu=pt"
-    "vfio-pci.ids=1002:aac8"
-
-    # Sleep fixes.
-    "mem_sleep_default=deep"
-    "acpi_sleep=nonvs"
-    "pci=noaer"
+  swapDevices = [
+    {
+      device = "/dev/disk/by-partuuid/cffc134d-4349-4a41-a5d3-0f279dc2bb7c";
+      randomEncryption = true;
+    }
   ];
-
-  # boot.extraModprobeConfig = ''
-  #   options vfio-pci.ids=1002:aac8
-  # '';
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/83ddf5fd-8eab-4173-956d-451dccd814b6";
-    fsType = "ext4";
+    device = "zpool/root";
+    fsType = "zfs";
+    options = [ "zfsutil" ];
+  };
+
+  fileSystems."/nix" = {
+    device = "zpool/nix";
+    fsType = "zfs";
+    options = [ "zfsutil" ];
+  };
+
+  fileSystems."/var" = {
+    device = "zpool/var";
+    fsType = "zfs";
+    options = [ "zfsutil" ];
+  };
+
+  fileSystems."/home" = {
+    device = "zpool/home";
+    fsType = "zfs";
+    options = [ "zfsutil" ];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/4CC7-FD3C";
+    device = "/dev/disk/by-partuuid/1a6d156b-8a3d-4893-8c20-dfaaed32f77f";
     fsType = "vfat";
     options = [
-      "fmask=0077"
-      "dmask=0077"
+      "fmask=0022"
+      "dmask=0022"
     ];
   };
 
@@ -104,16 +83,6 @@
     ];
     neededForBoot = false;
   };
-
-  swapDevices = [ ];
-
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

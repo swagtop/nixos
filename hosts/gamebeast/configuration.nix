@@ -392,7 +392,8 @@ in
     "vfio-pci.ids=1002:aac8"
 
     # Sleep fixes.
-    "mem_sleep_default=deep"
+    "nohibernate"
+    # "mem_sleep_default=deep"
     "acpi_sleep=nonvs"
     "pci=noaer"
   ];

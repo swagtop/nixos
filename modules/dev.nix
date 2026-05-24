@@ -22,6 +22,7 @@ in
     nil
     bash-language-server
     tinymist
+    ruff
 
     # Software development tools.
     man-pages
@@ -36,7 +37,6 @@ in
     (python313.withPackages (
       ps: with ps; [
         pyyaml
-        # python-lsp-ruff
         requests
       ]
     ))

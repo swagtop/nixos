@@ -41,12 +41,14 @@ in
 
   # Set hostname.
   networking.hostName = "gamebeast";
-  networking.hostId = "8425e349";
 
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;
 
+  # ZFS
   boot.zfs.forceImportRoot = false;
+  services.zfs.autoScrub.enable = true;
+  networking.hostId = "8425e349";
 
   # Use latest kernel compatible with ZFS.
   boot.kernelPackages = pkgs.linuxPackagesFor (

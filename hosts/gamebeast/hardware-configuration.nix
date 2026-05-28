@@ -66,6 +66,7 @@
     ];
   };
 
+  boot.supportedFilesystems = [ "ntfs" ];
   fileSystems."/run/media/thedb/stor dreng" = {
     device = "/dev/disk/by-uuid/94686AF9686AD98E";
     fsType = "ntfs3";

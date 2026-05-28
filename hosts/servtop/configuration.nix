@@ -162,7 +162,7 @@ in
     )
   );
 
-  zramSwap.enable = true;
+  boot.zswap.enable = true;
   swapDevices = [
     {
       device = "/swapfile";

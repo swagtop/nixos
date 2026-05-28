@@ -6,13 +6,17 @@
   ...
 }:
 let
+  inherit (builtins)
+    attrValues
+    mapAttrs
+    match
+    tryEval
+    ;
+
   optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
 in
 {
-  imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   # Compile all packages locally.
   # nix.settings.substitute = false;
@@ -22,22 +26,24 @@ in
   programs.nix-ld.enable = true;
 
   # Bootloader.
-  boot.loader.systemd-boot = {
-    enable = true;
-    windows = {
-      "Windows" = {
-        title = "Windows 11";
-        sortKey = "0";
-        efiDeviceHandle = "HD1b";
-      };
-    };
+  boot.loader = {
+    efi.canTouchEfiVariables = true;
 
     # To find out the 'efiDeviceHandle' value for 'windows', boot into this and
     # run 'map -c'. Run 'ls <device>:\EFI' per handle to look for the
     # 'Microsoft' directory. Use this handle for Windows.
     # edk2-uefi-shell.enable = true;
+    systemd-boot = {
+      enable = true;
+      windows = {
+        "Windows" = {
+          title = "Windows 11";
+          sortKey = "0";
+          efiDeviceHandle = "HD1b";
+        };
+      };
+    };
   };
-  boot.loader.efi.canTouchEfiVariables = true;
 
   # Set hostname.
   networking.hostName = "gamebeast";
@@ -45,7 +51,7 @@ in
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;
 
-  # ZFS
+  # ZFS.
   boot.zfs.forceImportRoot = false;
   services.zfs.autoScrub.enable = true;
   networking.hostId = "8425e349";
@@ -55,14 +61,14 @@ in
     let
       zfsCompatibleKernelPackages = lib.filterAttrs (
         name: kernelPackages:
-        (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-        && (builtins.tryEval kernelPackages).success
+        (match "linux_[0-9]+_[0-9]+" name) != null
+        && (tryEval kernelPackages).success
         && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
       ) pkgs.linuxKernel.packages;
 
       latestKernelPackage = lib.last (
         lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
-          builtins.attrValues zfsCompatibleKernelPackages
+          attrValues zfsCompatibleKernelPackages
         )
       );
     in
@@ -113,27 +119,20 @@ in
           gjs = optimizeForNative prev.gjs;
         };
       in
-      {
-        gnome-desktop = optimizeForNative prev.gnome-desktop;
-        gnome-session = optimizeForNative (
-          prev.gnome-session.override {
-            inherit (final) gnome-desktop;
-          }
-        );
-        mutter = optimizeForNative (
-          prev.mutter.override {
-            inherit (native) gtk4;
-            inherit (final) gnome-desktop;
-          }
-        );
-        gnome-shell = optimizeForNative (
-          prev.gnome-shell.override {
-            inherit (native) gtk4 gjs;
-            inherit (final) mutter gnome-desktop;
-          }
-        );
-        # ... and ripgrep for good measure.
-        ripgrep = optimizeForNative prev.ripgrep;
+      mapAttrs (name: value: optimizeForNative value) {
+        inherit (prev) gnome-desktop ripgrep;
+
+        gnome-session = prev.gnome-session.override {
+          inherit (final) gnome-desktop;
+        };
+        mutter = prev.mutter.override {
+          inherit (native) gtk4;
+          inherit (final) gnome-desktop;
+        };
+        gnome-shell = prev.gnome-shell.override {
+          inherit (native) gtk4 gjs;
+          inherit (final) mutter gnome-desktop;
+        };
       }
     )
   ];
@@ -147,9 +146,7 @@ in
 
   nixpkgs.config.rocmSupport = true;
 
-  services.displayManager.gdm = {
-    enable = true;
-  };
+  services.displayManager.gdm.enable = true;
   services.desktopManager = {
     gnome.enable = true;
     # cosmic.enable = true;
@@ -181,47 +178,30 @@ in
       "modesetting"
     ];
   };
+
   services.libinput.enable = true;
   hardware.enableAllFirmware = true;
   hardware.enableRedistributableFirmware = true;
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      mesa
       intel-media-driver
+      vulkan-loader
+      vulkan-validation-layers
+      vulkan-extension-layer
     ];
     enable32Bit = true;
     extraPackages32 = with pkgs.pkgsi686Linux; [
       intel-vaapi-driver
     ];
   };
-  hardware.amdgpu = {
-    legacySupport.enable = true;
-    # amdvlk = {
-    #   enable = true;
-    #   package = pkgs.amdvlk;
-    #   support32Bit.enable = true;
-    #   # https://github.com/GPUOpen-Drivers/AMDVLK?tab=readme-ov-file#runtime-settings
-    #   settings = {
-    #     AllowVkPipelineCachingToDisk = 1;
-    #     ShaderCacheMode = 1;
-    #     IFH = 0;
-    #     EnableVmAlwaysValid = 1;
-    #     IdleAfterSubmitGpuMask = 0;
-    #   };
-    # };
-  };
+
+  hardware.amdgpu.legacySupport.enable = true;
 
   environment.variables = {
-    # AMD stuff
-    AMD_VULKAN_ICD = "RADV";
-    VK_ICD_FILENAMES = "${pkgs.mesa}/share/vulkan/icd.d/radeon_icd.x86_64.json";
-    ROC_ENABLE_PRE_VEGA = "1";
-
     # Intel stuff
     LIBVA_DRIVER_NAME = "iHD";
   };
-  services.udev.enable = true;
 
   environment.systemPackages = with pkgs; [
     libvirt
@@ -229,11 +209,14 @@ in
     # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 
+  services.udev.enable = true;
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "dk";
     variant = "";
   };
+
   # Configure console keymap
   console.keyMap = "dk-latin1";
 
@@ -286,10 +269,7 @@ in
     };
   };
 
-  zramSwap = {
-    enable = true;
-    algorithm = "lz4";
-  };
+  boot.zswap.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -312,15 +292,17 @@ in
     package = pkgs.virt-manager;
   };
 
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu = {
-      package = pkgs.qemu_kvm;
-      swtpm.enable = true;
-      runAsRoot = false;
+  virtualisation = {
+    libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        swtpm.enable = true;
+        runAsRoot = false;
+      };
     };
+    spiceUSBRedirection.enable = true;
   };
-  virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
@@ -329,15 +311,9 @@ in
 
   services.keyd = {
     enable = true;
-    keyboards = {
-      default = {
-        ids = [ "*" ];
-        settings = {
-          main = {
-            capslock = "esc";
-          };
-        };
-      };
+    keyboards.default = {
+      ids = [ "*" ];
+      settings.main.capslock = "esc";
     };
   };
 
@@ -376,8 +352,10 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.04"; # Did you read the comment?
 
-  boot.supportedFilesystems = [ "ntfs" ];
+  # Needed for findings graphics card on boot.
+  boot.initrd.kernelModules = [ "amdgpu" ];
 
+  # A bunch of cool kernel parameters to make AMD R290 cooperate.
   boot.blacklistedKernelModules = [ "radeon" ];
   boot.kernelParams = [
     "radeon.cik_support=0"

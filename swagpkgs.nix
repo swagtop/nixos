@@ -117,7 +117,7 @@ in
         dontUnpack = true;
         installPhase = ''
           cp $src $out
-          substituteInPlace $out --replace "cool-theme" "${builtins.head (builtins.split ".toml" "${./configs/helix/themes/cool-theme.toml}")}"
+            substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
         '';
       };
     in

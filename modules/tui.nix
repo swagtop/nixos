@@ -5,35 +5,45 @@
 }:
 
 let
+  inherit (builtins) mapAttrs;
+  inherit (pkgs.stdenv.hostPlatform) system;
+
   # ANSI escape codes for changing colors of terminal text.
-  green = ''\[\e[1;32m\]'';
-  red = ''\[\e[1;31m\]'';
-  cyan = ''\[\e[1;36m\]'';
-  orange = ''\[\e[1;33m\]'';
+  colors = mapAttrs (name: value: ''\[${value}\]'') {
+    green = ''\e[1;32m'';
+    red = ''\e[1;31m'';
+    cyan = ''\e[1;36m'';
+    orange = ''\e[1;33m'';
+    reset = ''\e[0m'';
+  };
 
-  resetColor = ''\e[0m'';
-
-  backspace = ''\x8'';
+  # Unicode escape sequences for symbols for proper character width when printed.
+  symbols = {
+    "€" = ''\U000020AC'';
+    "£" = ''\U000000A3'';
+  };
 
   # Adds name of Nix shell to PS1, if in one.
-  devShell = "\${name:+${cyan}[$name] }";
+  devShell = "\${name:+${colors.cyan}[$name] }";
 
   # Adds name of hostname if connected through SSH.
-  ssh = "\${SSH_CONNECTION:+${orange}@$HOSTNAME}";
+  ssh = "\${SSH_CONNECTION:+${colors.orange}@$HOSTNAME}";
 
   mkPS1 =
-    color: symbol: ''${color}\u${ssh} ${devShell}${color}\w  \[${backspace}${symbol}${resetColor}\] '';
+    color: symbol:
+    let
+      PS1 = ''${color}\u${ssh} ${devShell}${color}\w ${symbol}${colors.reset} '';
+    in
+    # Make sure unicode characters are expanded properly.
+    "$'${PS1}'";
 
   # First, green, red prompts for users and root.
   # Second, bash function enabling filesystem navigation with yazi.
   promptInit = ''
-    if [ "$EUID" -ne 0 ]; then
-      # Normal user, green prompt
-      PS1=$'${mkPS1 green "€"}'
-    else
-      # Root, red prompt
-      PS1=$'${mkPS1 red "£"}'
-    fi
+    case "$EUID" in
+      0) PS1=${mkPS1 colors.red symbols."£"};;
+      *) PS1=${mkPS1 colors.green symbols."€"};;
+    esac
 
     function y() {
     	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -64,14 +74,12 @@ let
 in
 {
   # TUI file manager / filesystem navigator.
-  programs.yazi = {
-    enable = true;
-  };
+  programs.yazi.enable = true;
 
   environment.systemPackages = with pkgs; [
     # Pseudo-ide combo.
-    self.packages.${pkgs.stdenv.hostPlatform.system}.zellij
-    self.packages.${pkgs.stdenv.hostPlatform.system}.helix
+    self.packages.${system}.zellij
+    self.packages.${system}.helix
 
     # TUI git manager.
     lazygit

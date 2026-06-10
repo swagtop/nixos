@@ -1,14 +1,17 @@
 { self, pkgs, ... }:
+let
+  inherit (pkgs.stdenv.hostPlatform) system;
+in
 {
   environment.systemPackages = [
-    self.packages.${pkgs.stdenv.hostPlatform.system}.discord
+    self.packages.${system}.discord
   ];
 
   programs.steam = {
     enable = true;
     protontricks.enable = true;
-    package = self.packages.${pkgs.stdenv.hostPlatform.system}.steam;
+    package = self.packages.${system}.steam;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
-    # gamescopeSession.enable = true;
+    gamescopeSession.enable = true;
   };
 }

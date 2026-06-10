@@ -4,9 +4,12 @@
   self,
   ...
 }:
+let
+  inherit (pkgs.stdenv.hostPlatform) system;
+in
 {
   environment.systemPackages = with pkgs; [
-    self.packages.${pkgs.stdenv.hostPlatform.system}.bitwig-studio
+    self.packages.${system}.bitwig-studio
     # yabridge
     # yabridgectl
     libsndfile
@@ -17,7 +20,7 @@
     CLAP_PATH = "${lib.makeSearchPath "lib/clap" [
       pkgs.vital
       # pkgs.chow-tape-model
-      self.packages.${pkgs.stdenv.hostPlatform.system}.locd
+      self.packages.${system}.locd
     ]}";
   };
 

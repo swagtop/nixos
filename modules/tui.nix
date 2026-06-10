@@ -27,10 +27,10 @@ let
     color: symbol:
     let
       # Adds name of Nix shell to PS1, if in one.
-      devShell = "\${name:+[${colors.cyan}$name${color}] }";
+      devShell = "\${name:+${colors.cyan}[$name]${color} }";
 
       # Adds name of hostname if connected through SSH.
-      hostname = "\${SSH_CONNECTION:+@${colors.orange}$HOSTNAME${color}}";
+      hostname = "\${SSH_CONNECTION:+${colors.orange}@$HOSTNAME${color}}";
 
       # Don't end with '\]', or color messes up on line-wrap.
       # This only occurs with unicode characters longer than 1 byte. I have no

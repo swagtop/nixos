@@ -10,31 +10,31 @@ let
       execName,
       args,
     }:
-    (pkgs.symlinkJoin {
+    pkgs.symlinkJoin {
       name = "${package.name}-thru-overlay";
       paths = [ package ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/${execName} ${builtins.concatStringsSep " " args};
       '';
-    })
-    // {
-      meta.mainProgram = execName;
+      passthru.meta.mainProgram = execName;
     };
 
-  helix = symlinkWrap (
+  helix =
     let
       configFile = pkgs.stdenvNoCC.mkDerivation {
         name = "helix-config";
         src = ./configs/helix/config.toml;
-        dontUnpack = true;
+        phases = [ "installPhase" ];
+
+        # Make sure config is pointing to theme in store.
         installPhase = ''
           cp $src $out
-            substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
+          substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
         '';
       };
     in
-    {
+    symlinkWrap {
       package = pkgs.helix.override (old: {
         helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
           patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
@@ -44,8 +44,7 @@ let
       args = [
         "--add-flags \"--config ${configFile}\""
       ];
-    }
-  );
+    };
 
   zellij = symlinkWrap {
     package = pkgs.zellij;
@@ -121,8 +120,7 @@ in
       {
         nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
         postInstall = old.postInstall + ''
-          wrapProgram $out/bin/discord --add-flags "${flags}"
-          wrapProgram $out/bin/Discord --add-flags "${flags}"
+          wrapProgram $out/bin/{discord,Discord} --add-flags "${flags}"
         '';
       }
     )
@@ -135,7 +133,6 @@ in
     '';
   });
 
-  # Applications I want to use my own config.
   alacritty = symlinkWrap {
     package = pkgs.alacritty;
     execName = "alacritty";
@@ -144,37 +141,61 @@ in
     ];
   };
 
-  locd = pkgs.stdenvNoCC.mkDerivation (
+  locd =
     let
-      version = "1.0.5";
-      pname = "locd";
-      name = "${pname}-${version}";
+      package = 
+        {
+          alsa-lib,
+          fetchurl,
+          fontconfig,
+          freetype,
+          lib,
+          libgcc,
+          stdenvNoCC,
+          unzip,
+
+          installStandalone ? true,
+        }:
+        stdenvNoCC.mkDerivation (finalAttrs: {
+          pname = "locd";
+          version = "1.0.5";
+          src = fetchurl {
+            url = "https://api.crql.works/download/locd/linux/${finalAttrs.version}";
+            sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
+
+            # Will not fetch zipfile properly unless setting user agent.
+            curlOpts = "-A Mozilla/5.0";
+          };
+          nativeBuildInputs = [ unzip ];
+          buildInputs = [
+            alsa-lib
+            fontconfig
+            freetype
+            libgcc
+          ];
+          unpackPhase = ''
+            unzip $src
+          '';
+
+          installPhase = ''
+            mkdir -p $out/lib
+            cp -r CLAP $out/lib/clap
+            cp -r VST3 $out/lib/vst3
+          ''
+          + lib.optionalString installStandalone ''
+            mkdir -p $out/bin
+            cp -r Standalone/* $out/bin/
+          '';
+
+          meta = {
+            license = lib.licenses.unfreeRedistributable;
+          }
+          // lib.optionalAttrs installStandalone {
+            mainProgram = "LOCD";
+          };
+        });
     in
-    {
-      inherit name pname version;
-      src = pkgs.fetchurl {
-        url = "https://f002.backblazeb2.com/file/crql-works/LOCD/LOCD-Linux-${version}.zip";
-        sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
-      };
-      nativeBuildInputs = [ pkgs.unzip ];
-      buildInputs = with pkgs; [
-        alsa-lib
-        fontconfig
-        freetype
-        libgcc
-      ];
-      unpackPhase = ''
-        unzip $src
-      '';
-      installPhase = ''
-        mkdir -p $out/{lib,bin}
-        cp -r CLAP $out/lib/clap
-        cp -r VST3 $out/lib/vst3
-        cp -r Standalone/* $out/bin/
-      '';
-      preferLocaBuild = true;
-    }
-  );
+    pkgs.callPackage package { };
 
   ide = pkgs.writeShellApplication {
     name = "ide";

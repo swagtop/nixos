@@ -120,7 +120,8 @@ in
       {
         nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
         postInstall = old.postInstall + ''
-          wrapProgram $out/bin/{discord,Discord} --add-flags "${flags}"
+          wrapProgram $out/bin/discord --add-flags "${flags}"
+          wrapProgram $out/bin/Discord --add-flags "${flags}"
         '';
       }
     )

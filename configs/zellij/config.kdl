@@ -9,6 +9,7 @@ keybinds clear-defaults=true {
         bind "Alt t" { NewTab; }
         bind "Alt u" { HalfPageScrollUp; }
         bind "Alt x" { CloseFocus; }
+        bind "Alt p" { TogglePanePinned; }
     }
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
@@ -135,13 +136,15 @@ keybinds clear-defaults=true {
         }
     }
     shared_except "locked" {
+        // Double increase and decrease rate.
+        bind "Alt +" { Resize "Increase"; Resize "Increase"; }
+        bind "Alt =" { Resize "Increase"; Resize "Increase"; }
+        bind "Alt -" { Resize "Decrease"; Resize "Decrease"; }
+
         bind "Alt left" { MoveFocusOrTab "left"; }
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }
         bind "Alt right" { MoveFocusOrTab "right"; }
-        bind "Alt +" { Resize "Increase"; }
-        bind "Alt -" { Resize "Decrease"; }
-        bind "Alt =" { Resize "Increase"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt f" { ToggleFloatingPanes; }

@@ -21,8 +21,43 @@ let
     // {
       meta.mainProgram = execName;
     };
+
+  helix = symlinkWrap (
+    let
+      configFile = pkgs.stdenvNoCC.mkDerivation {
+        name = "helix-config";
+        src = ./configs/helix/config.toml;
+        dontUnpack = true;
+        installPhase = ''
+          cp $src $out
+            substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
+        '';
+      };
+    in
+    {
+      package = pkgs.helix.override (old: {
+        helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
+          patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
+        });
+      });
+      execName = "hx";
+      args = [
+        "--add-flags \"--config ${configFile}\""
+      ];
+    }
+  );
+
+  zellij = symlinkWrap {
+    package = pkgs.zellij;
+    execName = "zellij";
+    args = [
+      "--add-flags \"-c ${./configs/zellij/config.kdl}\""
+    ];
+  };
 in
 {
+  inherit helix zellij;
+
   # Music production things.
   bitwig-studio =
     let
@@ -109,39 +144,6 @@ in
     ];
   };
 
-  helix = symlinkWrap (
-    let
-      configFile = pkgs.stdenvNoCC.mkDerivation {
-        name = "helix-config";
-        src = ./configs/helix/config.toml;
-        dontUnpack = true;
-        installPhase = ''
-          cp $src $out
-            substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
-        '';
-      };
-    in
-    {
-      package = pkgs.helix.override (old: {
-        helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches or [ ] ++ [ ./patches/helix-upppercase-commands.patch ];
-        });
-      });
-      execName = "hx";
-      args = [
-        "--add-flags \"--config ${configFile}\""
-      ];
-    }
-  );
-
-  zellij = symlinkWrap {
-    package = pkgs.zellij;
-    execName = "zellij";
-    args = [
-      "--add-flags \"-c ${./configs/zellij/config.kdl}\""
-    ];
-  };
-
   locd = pkgs.stdenvNoCC.mkDerivation (
     let
       version = "1.0.5";
@@ -173,4 +175,14 @@ in
       preferLocaBuild = true;
     }
   );
+
+  ide = pkgs.writeShellApplication {
+    name = "ide";
+    runtimeInputs = [
+      helix
+    ];
+    text = ''
+      exec ${zellij}/bin/zellij "$@"
+    '';
+  };
 }

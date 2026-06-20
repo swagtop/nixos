@@ -13,8 +13,8 @@ let
   colors = mapAttrs (name: value: ''\[\x1b[${value}m\]'') {
     red = "1;31";
     green = "1;32";
-    cyan = "1;36";
     orange = "1;33";
+    cyan = "1;36";
   };
 
   # Unicode escape sequences for symbols for proper character width when printed.
@@ -24,22 +24,23 @@ let
   };
 
   mkPS1 =
-    color: symbol:
+    mainColor: symbol:
     let
       # Adds name of Nix shell to PS1, if in one.
-      devShell = "\${name:+${colors.cyan}[$name]${color} }";
+      devShell = "\${name:+${colors.cyan}[$name]${mainColor} }";
 
       # Adds name of hostname if connected through SSH.
-      hostname = "\${SSH_CONNECTION:+${colors.orange}@$HOSTNAME${color}}";
+      hostname = "\${SSH_CONNECTION:+${colors.orange}@$HOSTNAME${mainColor}}";
 
-      # Don't end with '\]', or color messes up on line-wrap.
-      # This only occurs with unicode characters longer than 1 byte. I have no
-      # idea why this happens, but really we don't need to indicate an ending
-      # here, as there are no more printed characters in the PS1.
-      resetColor = ''\[\x1b[0m'';
+      # Don't end with '\]', or color messes up on line-wrap. This only occurs
+      # when including a unicode character longer than 1 byte.
+      # Omitting it avoids this, and we really don't need to end the no-width
+      # escape sequence here, as there are no more printed characters in the PS1
+      # after colors are reset at the end.
+      resetColors = ''\[\x1b[0m'';
     in
-    # Expand unicode characters by using a $'' string.
-    "$'${color}\\u${hostname} ${devShell}\\w ${symbol} ${resetColor}'";
+    # Expand escape and unicode characters and by using a $'' string.
+    "$'${mainColor}\\u${hostname} ${devShell}\\w ${symbol} ${resetColors}'";
 
   promptInit = ''
     # Set red prompt only for root.
@@ -59,20 +60,10 @@ let
 
   # Quick shortcuts.
   shellAliases = {
-    # Zellij.
     zj = "zellij";
-
-    # Lazygit.
     lg = "lazygit";
-
-    # Fastfetch.
     ff = "fastfetch";
-
-    # Pipes.
     pipes = "pipes.sh -t 0 -c 1 -c 2 -c 3 -c 4 -c 5 -c 6 -c";
-
-    # Search nixpkgs with television and nix-search-tv.
-    nixpkgs = "tv nixpkgs";
   };
 in
 {
@@ -87,10 +78,6 @@ in
     # TUI git manager.
     lazygit
 
-    # TUI nix-search interface.
-    television
-    nix-search-tv
-
     # ISO image burner.
     caligula
 
@@ -101,10 +88,7 @@ in
   ];
 
   # Add shell aliases.
-  programs.bash = {
-    promptInit = promptInit;
-    shellAliases = shellAliases;
-  };
+  programs.bash = { inherit promptInit shellAliases; };
 
   # Set Helix as default editor.
   environment.variables = {

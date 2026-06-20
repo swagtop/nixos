@@ -6,13 +6,15 @@
       "https://cache.nixos.org"
     ];
 
-    fallback = true;
-
     trusted-public-keys = [
       "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
   };
+
+  nix.extraOptions = ''
+    fallback = true
+  '';
 
   systemd.services.pull-system-flake = {
     after = [ "network-online.target" ];

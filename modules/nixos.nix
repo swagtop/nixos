@@ -3,7 +3,7 @@
 let
   shellAliases = {
     # Update.
-    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git pull --ff-only'";
+    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git rebase'";
 
     # Rebuild.
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
@@ -59,6 +59,8 @@ in
       ];
       keep-derivations = true;
       keep-outputs = true;
+      download-attempts = 3;
+      connect-timeout = 3;
     };
     gc = {
       automatic = true;

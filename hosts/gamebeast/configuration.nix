@@ -32,7 +32,7 @@ in
     # To find out the 'efiDeviceHandle' value for 'windows', boot into this and
     # run 'map -c'. Run 'ls <device>:\EFI' per handle to look for the
     # 'Microsoft' directory. Use this handle for Windows.
-    # edk2-uefi-shell.enable = true;
+    # systemd-boot.edk2-uefi-shell.enable = true;
     systemd-boot = {
       enable = true;
       windows = {
@@ -57,55 +57,64 @@ in
   networking.hostId = "8425e349";
 
   # Use latest kernel compatible with ZFS.
-  boot.kernelPackages = pkgs.linuxPackagesFor (
+  boot.kernelPackages =
     let
-      zfsCompatibleKernelPackages = lib.filterAttrs (
-        name: kernelPackages:
-        (match "linux_[0-9]+_[0-9]+" name) != null
-        && (tryEval kernelPackages).success
-        && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
-      ) pkgs.linuxKernel.packages;
+      latestZfsCompatibleKernelPackages = lib.pipe pkgs.linuxKernel.packages [
+        (lib.filterAttrs (
+          name: kernel:
+          (match "^linux_[0-9]+_[0-9]+$" name) != null
+          && (tryEval kernel).success
+          && !kernel.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken
+        ))
 
-      latestKernelPackage = lib.last (
-        lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
-          attrValues zfsCompatibleKernelPackages
+        (
+          kernels:
+          assert lib.assertMsg (kernels != { }) "No kernels compatible with zfs were found!";
+          kernels
         )
-      );
+
+        attrValues
+
+        (lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)))
+
+        lib.last
+      ];
+
+      customKernel = 
+        latestZfsCompatibleKernelPackages.kernel.override {
+          # Check current config with 'zcat /proc/config.gz'.
+          ignoreConfigErrors = true;
+          structuredExtraConfig =
+            let
+              inherit (pkgs.lib.kernel)
+                yes
+                no
+                ;
+            in
+            {
+              # Build AMDGPU into the kernel, instead of loading as module.
+              DRM = yes;
+              DRM_KMS_HELPER = yes;
+              DRM_TTM = yes;
+              DRM_AMDGPU = yes;
+              FB = yes;
+
+              # Disable graphics from other vendors.
+              DRM_XE = no;
+              DRM_RADEON = no;
+              DRM_NOUVEAU = no;
+              DRM_ADP = no;
+              DRM_MGAG200 = no;
+              DRM_AST = no;
+              FB_NVIDIA = no;
+
+              # Disable industrial IO drivers.
+              IIO = no;
+            };
+        };
     in
-    optimizeForNative (
-      latestKernelPackage.kernel.override {
-        # Check current config with 'zcat /proc/config.gz'.
-        ignoreConfigErrors = true;
-        structuredExtraConfig =
-          let
-            inherit (pkgs.lib.kernel)
-              yes
-              no
-              ;
-          in
-          {
-            # Build AMDGPU into the kernel, instead of loading as module.
-            DRM = yes;
-            DRM_KMS_HELPER = yes;
-            DRM_TTM = yes;
-            DRM_AMDGPU = yes;
-            FB = yes;
-
-            # Disable graphics from other vendors.
-            DRM_XE = no;
-            DRM_RADEON = no;
-            DRM_NOUVEAU = no;
-            DRM_ADP = no;
-            DRM_MGAG200 = no;
-            DRM_AST = no;
-            FB_NVIDIA = no;
-
-            # Disable industrial IO drivers.
-            IIO = no;
-          };
-      }
-    )
-  );
+    # pkgs.linuxPackagesFor (optimizeForNative customKernel);
+    latestZfsCompatibleKernelPackages;
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.
@@ -171,9 +180,11 @@ in
   };
 
   # Enable the X11 windowing system.
+  hardware.nvidia.open = false;
   services.xserver = {
     enable = true;
     videoDrivers = [
+      "nvidia"
       "amdgpu"
       "modesetting"
     ];
@@ -226,13 +237,7 @@ in
   # Enable sound with pipewire.
   security.rtkit.enable = true;
   services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    # pulse.enable = true;
-
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-  };
+  services.pipewire.enable = true;
   programs.dconf.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -273,6 +278,7 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.firefox.package = pkgs.firefox-esr;
 
   # Some programs need SUID wrappers, can be configured further or are started
   # in user sessions.
@@ -282,9 +288,7 @@ in
   #   enableSSHSupport = true;
   # };
 
-  programs.steam = {
-    localNetworkGameTransfers.openFirewall = true;
-  };
+  programs.steam.localNetworkGameTransfers.openFirewall = true;
 
   # List services that you want to enable:
   programs.virt-manager = {
@@ -360,6 +364,7 @@ in
   boot.kernelParams = [
     "radeon.cik_support=0"
     "radeon.si_support=0"
+
     "amdgpu.cik_support=1"
     "amdgpu.si_support=1"
     "amdgpu.dc=1"

@@ -30,7 +30,7 @@
           };
         in
         {
-          packages = import ./swagpkgs.nix pkgs;
+          packages = import ./packages.nix pkgs;
           formatter = pkgs.nixfmt-tree;
         };
 
@@ -43,7 +43,7 @@
               // {
                 specialArgs = host.specialArgs or { } // {
                   inherit self inputs;
-                  swaglib = import ./swaglib.nix;
+                  swaglib = import ./lib.nix;
                 };
 
                 modules = host.modules or [ ] ++ [

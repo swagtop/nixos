@@ -17,16 +17,16 @@ in
 
       mode = lib.mkOption {
         type = lib.types.enum [
-          "use"
+          "user"
           "host"
         ];
-        default = "use";
+        default = "user";
       };
     };
   };
 
   config = lib.mkMerge [
-    (lib.mkIf (cfg.enable && cfg.mode == "use") {
+    (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {
         substituters = lib.mkForce [
           "https://cache.spirre.vip"

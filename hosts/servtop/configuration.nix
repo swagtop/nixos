@@ -19,6 +19,11 @@ in
     ./hardware-configuration.nix
   ];
 
+  swag.cache = {
+    enable = true;
+    mode = "host";
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

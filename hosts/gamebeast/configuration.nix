@@ -18,6 +18,8 @@ in
 {
   imports = [ ./hardware-configuration.nix ];
 
+  swag.cache.enable = true;
+
   # Compile all packages locally.
   # nix.settings.substitute = false;
 

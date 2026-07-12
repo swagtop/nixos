@@ -34,86 +34,78 @@
           formatter = pkgs.nixfmt-tree;
         };
 
-      flake = {
-        nixosConfigurations =
-          let
-            mapHosts = mapAttrs (
-              name: host:
-              nixpkgs.lib.nixosSystem (
-                host
-                // {
-                  specialArgs = host.specialArgs or { } // {
-                    inherit self inputs;
-                    swaglib = import ./swaglib.nix;
-                  };
+      flake.nixosConfigurations =
+        let
+          mapHosts = mapAttrs (
+            name: host:
+            nixpkgs.lib.nixosSystem (
+              host
+              // {
+                specialArgs = host.specialArgs or { } // {
+                  inherit self inputs;
+                  swaglib = import ./swaglib.nix;
+                };
 
-                  modules = host.modules or [ ] ++ [
-                    ./hosts/${name}/configuration.nix
-                    ./modules/common.nix
-                    ./modules/nixos.nix
+                modules = host.modules or [ ] ++ [
+                  ./hosts/${name}/configuration.nix
+                  ./modules/common.nix
+                  ./modules/nixos.nix
+                  ./modules/cache.nix
+                ];
+              }
+            )
+          );
+        in
+        mapHosts {
+          gamebeast = {
+            modules = [
+              ./modules/dev.nix
+              ./modules/gaming.nix
+              ./modules/gui.nix
+              ./modules/music.nix
+              ./modules/tui.nix
+
+              ./modules/office.nix
+
+              (
+                { pkgs, ... }:
+                let
+                  hostSystem = pkgs.stdenv.hostPlatform.system;
+                in
+                {
+                  environment.systemPackages = [
+                    hytale-flake.packages.${hostSystem}.default
                   ];
                 }
               )
-            );
-          in
-          mapHosts {
-            gamebeast = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gaming.nix
-                ./modules/gui.nix
-                ./modules/music.nix
-                ./modules/tui.nix
-
-                ./modules/office.nix
-
-                (
-                  { pkgs, ... }:
-                  let
-                    hostSystem = pkgs.stdenv.hostPlatform.system;
-                  in
-                  {
-                    environment.systemPackages = [
-                      hytale-flake.packages.${hostSystem}.default
-                    ];
-                  }
-                )
-
-                # ./modules/linker.nix
-                ./modules/use-cache.nix
-              ];
-            };
-            swagtop = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gui.nix
-                ./modules/tui.nix
-
-                ./modules/linker.nix
-                ./modules/use-cache.nix
-              ];
-            };
-            servtop = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/ssh-server.nix
-                ./modules/tui.nix
-
-                ./modules/host-cache.nix
-              ];
-            };
-            cooltop = {
-              modules = [
-                ./modules/gui.nix
-                ./modules/dev.nix
-                ./modules/tui.nix
-
-                ./modules/linker.nix
-                ./modules/use-cache.nix
-              ];
-            };
+            ];
           };
-      };
+          swagtop = {
+            modules = [
+              ./modules/dev.nix
+              ./modules/gui.nix
+              ./modules/tui.nix
+
+              ./modules/linker.nix
+            ];
+          };
+          servtop = {
+            modules = [
+              ./modules/dev.nix
+              ./modules/ssh-server.nix
+              ./modules/tui.nix
+            ];
+          };
+          cooltop = {
+            modules = [
+              ./modules/gui.nix
+              ./modules/dev.nix
+              ./modules/tui.nix
+
+              ./modules/linker.nix
+            ];
+          };
+        };
     in
     foldl' (
       acc: system:

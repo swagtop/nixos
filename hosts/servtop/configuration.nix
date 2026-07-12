@@ -26,7 +26,7 @@ in
   # Kernel.
   boot.kernelPackages = pkgs.linuxPackagesFor (
     optimizeForNative (
-      pkgs.linuxPackages_7_0.kernel.override {
+      pkgs.linuxPackages_7_1.kernel.override {
         # Check current config with 'zcat /proc/config.gz'.
         ignoreConfigErrors = true;
         structuredExtraConfig =

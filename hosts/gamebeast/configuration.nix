@@ -80,38 +80,37 @@ in
         lib.last
       ];
 
-      customKernel = 
-        latestZfsCompatibleKernelPackages.kernel.override {
-          # Check current config with 'zcat /proc/config.gz'.
-          ignoreConfigErrors = true;
-          structuredExtraConfig =
-            let
-              inherit (pkgs.lib.kernel)
-                yes
-                no
-                ;
-            in
-            {
-              # Build AMDGPU into the kernel, instead of loading as module.
-              DRM = yes;
-              DRM_KMS_HELPER = yes;
-              DRM_TTM = yes;
-              DRM_AMDGPU = yes;
-              FB = yes;
+      customKernel = latestZfsCompatibleKernelPackages.kernel.override {
+        # Check current config with 'zcat /proc/config.gz'.
+        ignoreConfigErrors = true;
+        structuredExtraConfig =
+          let
+            inherit (pkgs.lib.kernel)
+              yes
+              no
+              ;
+          in
+          {
+            # Build AMDGPU into the kernel, instead of loading as module.
+            DRM = yes;
+            DRM_KMS_HELPER = yes;
+            DRM_TTM = yes;
+            DRM_AMDGPU = yes;
+            FB = yes;
 
-              # Disable graphics from other vendors.
-              DRM_XE = no;
-              DRM_RADEON = no;
-              DRM_NOUVEAU = no;
-              DRM_ADP = no;
-              DRM_MGAG200 = no;
-              DRM_AST = no;
-              FB_NVIDIA = no;
+            # Disable graphics from other vendors.
+            DRM_XE = no;
+            DRM_RADEON = no;
+            DRM_NOUVEAU = no;
+            DRM_ADP = no;
+            DRM_MGAG200 = no;
+            DRM_AST = no;
+            FB_NVIDIA = no;
 
-              # Disable industrial IO drivers.
-              IIO = no;
-            };
-        };
+            # Disable industrial IO drivers.
+            IIO = no;
+          };
+      };
     in
     # pkgs.linuxPackagesFor (optimizeForNative customKernel);
     latestZfsCompatibleKernelPackages;

@@ -144,7 +144,7 @@ in
 
   locd =
     let
-      package = 
+      package =
         {
           alsa-lib,
           fetchurl,

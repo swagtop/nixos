@@ -48,13 +48,24 @@
 
                 modules = host.modules or [ ] ++ [
                   ./hosts/${name}/configuration.nix
+                  ./modules/cache.nix
                   ./modules/common.nix
                   ./modules/nixos.nix
-                  ./modules/cache.nix
                 ];
               }
             )
           );
+
+          hytaleModule =
+            { pkgs, ... }:
+            let
+              hostSystem = pkgs.stdenv.hostPlatform.system;
+            in
+            {
+              environment.systemPackages = [
+                hytale-flake.packages.${hostSystem}.default
+              ];
+            };
         in
         mapHosts {
           gamebeast = {
@@ -67,17 +78,7 @@
 
               ./modules/office.nix
 
-              (
-                { pkgs, ... }:
-                let
-                  hostSystem = pkgs.stdenv.hostPlatform.system;
-                in
-                {
-                  environment.systemPackages = [
-                    hytale-flake.packages.${hostSystem}.default
-                  ];
-                }
-              )
+              hytaleModule
             ];
           };
           swagtop = {
@@ -98,8 +99,8 @@
           };
           cooltop = {
             modules = [
-              ./modules/gui.nix
               ./modules/dev.nix
+              ./modules/gui.nix
               ./modules/tui.nix
 
               ./modules/linker.nix

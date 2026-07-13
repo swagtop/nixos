@@ -53,7 +53,7 @@ in
           "https://cache.nixos.org"
         ];
 
-        trusted-publicKey = [
+        trusted-public-keys = [
           cfg.publicKey
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         ];

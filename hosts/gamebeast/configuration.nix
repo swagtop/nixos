@@ -64,28 +64,9 @@ in
   # Use latest kernel compatible with ZFS.
   boot.kernelPackages =
     let
-      latestZfsCompatibleKernelPackages = lib.pipe pkgs.linuxKernel.packages [
-        (lib.filterAttrs (
-          name: kernel:
-          (match "^linux_[0-9]+_[0-9]+$" name) != null
-          && (tryEval kernel).success
-          && !kernel.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken
-        ))
+      zfsKernelPackages = swaglib.latestZfsCompatible { inherit pkgs config; };
 
-        (
-          kernels:
-          assert lib.assertMsg (kernels != { }) "No kernels compatible with zfs were found!";
-          kernels
-        )
-
-        attrValues
-
-        (lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)))
-
-        lib.last
-      ];
-
-      customKernel = latestZfsCompatibleKernelPackages.kernel.override {
+      customKernel = zfsKernelPackages.kernel.override {
         # Check current config with 'zcat /proc/config.gz'.
         ignoreConfigErrors = true;
         structuredExtraConfig =
@@ -118,7 +99,7 @@ in
       };
     in
     # pkgs.linuxPackagesFor (optimizeForNative customKernel);
-    latestZfsCompatibleKernelPackages;
+    zfsKernelPackages;
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.

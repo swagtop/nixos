@@ -16,4 +16,43 @@
         KCFLAGS = "-march=${march} -mtune=${march} -O2";
       };
     });
+  
+  latestZfsCompatible =
+    {
+      config,
+      pkgs,
+    }:
+    let
+      inherit (pkgs.lib)
+        assertMsg
+        attrValues
+        filterAttrs
+        last
+        match
+        pipe
+        sort
+        tryEval
+        versionOlder
+        ;
+    in
+    pipe pkgs.linuxKernel.packages [
+      (filterAttrs (
+        name: kernel:
+        (match "^linux_[0-9]+_[0-9]+$" name) != null
+        && (tryEval kernel).success
+        && !kernel.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken
+      ))
+
+      (
+        kernels:
+        assert assertMsg (kernels != { }) "No kernels compatible with zfs were found!";
+        kernels
+      )
+
+      attrValues
+
+      (sort (a: b: (versionOlder a.kernel.version b.kernel.version)))
+
+      last
+    ];
 }

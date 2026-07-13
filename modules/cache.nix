@@ -33,7 +33,7 @@ in
         default = "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU=";
       };
 
-      privateKeyFile = lib.mkOption {
+      secretKeyFile = lib.mkOption {
         type = lib.types.path;
         default = "/var/lib/nixos/cache-priv-key.pem";
       };
@@ -63,7 +63,7 @@ in
         fallback = true
       '';
 
-      systemd.services.pull-system-flake = {
+      systemd.services.user-nixos-cache-update = {
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
@@ -97,95 +97,97 @@ in
 
     (lib.mkIf (cfg.enable && cfg.mode == "host") {
       services.nix-serve = {
+        inherit (cfg) secretKeyFile;
         enable = true;
-        secretKeyFile = cfg.privateKeyFile;
       };
 
-      systemd.services.update-system-flake = {
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
+      systemd.services.host-nixos-cache-update =
+        let
+          update-script = pkgs.writeShellApplication {
+            name = "update-system-flake";
+            runtimeInputs = with pkgs; [
+              coreutils
+              git
+              jq
+              nix
+              nixos-rebuild
+              systemd
+            ];
+            bashOptions = [ ];
+            text = ''
+              printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
 
-        restartIfChanged = false;
+              # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
+              export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
 
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
-          WorkingDirectory = "/etc/nixos";
-          ExecStart =
-            pkgs.writeShellApplication {
-              name = "update-system-flake";
-              runtimeInputs = with pkgs; [
-                coreutils
-                git
-                jq
-                nix
-                nixos-rebuild
-                systemd
-              ];
-              bashOptions = [ ];
-              text = ''
-                printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
+              echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
+              printf "===================================\n\n"
+              # Making sure this service can run, by stopping any lingering rebuilds.
+              ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+              echo
 
-                # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
-                export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
+              echo "$(date '+%H:%M') Pulling repository"
+              echo "========================"
+              ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
+              echo
 
-                echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
-                printf "===================================\n\n"
-                # Making sure this service can run, by stopping any lingering rebuilds.
-                ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
+              echo "$(date '+%H:%M') Updating flake inputs"
+              echo "==========================="
+              ${pkgs.nix}/bin/nix flake update
+              echo
+
+              NIXOS_SYSTEMS=$(nix flake show --json | jq -r '.nixosConfigurations | keys[]')
+              for system in $NIXOS_SYSTEMS; do
+                # Skip building system if it is not using the cache.
+                if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable) == "false" ]]; then
+                  continue
+                fi
+                echo "$(date '+%H:%M') Building '$system'"
+                echo "================"
+                ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1
                 echo
+              done
 
-                echo "$(date '+%H:%M') Pulling repository"
-                echo "========================"
-                ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
-                echo
+              echo "$(date '+%H:%M') Rebuilding and switching"
+              echo "=============================="
+              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
+              echo
 
-                FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
-                echo "$(date '+%H:%M') Updating flake inputs"
-                echo "==========================="
-                ${pkgs.nix}/bin/nix flake update
-                echo
+              echo "$(date '+%H:%M') Committing lockfile and pushing"
+              echo "====================================="
+              ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
+              ${pkgs.git}/bin/git push
+              echo
 
-                NIXOS_SYSTEMS=$(nix flake show --json | jq -r '.nixosConfigurations | keys[]')
-                for system in $NIXOS_SYSTEMS; do
-                  # Skip building system if it is not using the cache.
-                  if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable) == "false" ]]; then
-                    continue
-                  fi
-                  echo "$(date '+%H:%M') Building '$system'"
-                  echo "================"
-                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1
-                  echo
-                done
+              echo "$(date '+%H:%M') Finished update"
+              echo "====================="
+            '';
+          };
+        in
+        {
+          after = [ "network-online.target" ];
+          wants = [ "network-online.target" ];
 
-                echo "$(date '+%H:%M') Rebuilding and switching"
-                echo "=============================="
-                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
-                echo
+          restartIfChanged = false;
 
-                echo "$(date '+%H:%M') Committing lockfile and pushing"
-                echo "====================================="
-                ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
-                ${pkgs.git}/bin/git push
-                echo
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+            WorkingDirectory = "/etc/nixos";
+            ExecStart = "${update-script}${update-script.destination}";
 
-                echo "$(date '+%H:%M') Finished update"
-                echo "====================="
-              '';
-            }
-            + "/bin/update-system-flake";
+            # Setting this service to be nicer, to let other services this server take
+            # the reins when needed. This can run all day no problem.
+            # https://positron.solutions/articles/building-nicely-with-rust-and-nix
+            Nice = 18;
+            IOSchedulingClass = "idle";
+            IOSchedulingPriority = 7;
 
-          # Setting this service to be nicer, to let other services this server take
-          # the reins when needed. This can run all day no problem.
-          # https://positron.solutions/articles/building-nicely-with-rust-and-nix
-          Nice = 18;
-          IOSchedulingClass = "idle";
-          IOSchedulingPriority = 7;
-
-          StandardOutput = "file:${cfg.cacheLogFile}";
-          # StandardError = "file:${cfg.cacheLogFile}";
+            StandardOutput = "file:${cfg.cacheLogFile}";
+            # StandardError = "file:${cfg.cacheLogFile}";
+          };
         };
-      };
 
       systemd.timers.update-system-flake = {
         wantedBy = [ "timers.target" ];

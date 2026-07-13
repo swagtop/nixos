@@ -51,6 +51,7 @@
                   ./modules/cache.nix
                   ./modules/common.nix
                   ./modules/nixos.nix
+                  ./modules/linker.nix
                 ];
               }
             )
@@ -86,8 +87,6 @@
               ./modules/dev.nix
               ./modules/gui.nix
               ./modules/tui.nix
-
-              ./modules/linker.nix
             ];
           };
           servtop = {
@@ -102,8 +101,6 @@
               ./modules/dev.nix
               ./modules/gui.nix
               ./modules/tui.nix
-
-              ./modules/linker.nix
             ];
           };
         };

@@ -39,7 +39,7 @@ in
       };
 
       cacheLogFile = lib.mkOption {
-        type = lib.types.path;
+        type = lib.types.externalPath;
         default = "/srv/f/cache-log.txt";
       };
     };

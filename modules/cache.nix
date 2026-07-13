@@ -22,6 +22,26 @@ in
         ];
         default = "user";
       };
+
+      url = lib.mkOption {
+        type = lib.types.str;
+        default = "https://cache.spirre.vip";
+      };
+
+      publicKey = lib.mkOption {
+        type = lib.types.str;
+        default = "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU=";
+      };
+
+      privateKeyFile = lib.mkOption {
+        type = lib.types.path;
+        default = "/var/lib/nixos/cache-priv-key.pem";
+      };
+
+      cacheLogFile = lib.mkOption {
+        type = lib.types.path;
+        default = "/srv/f/cache-log.txt";
+      };
     };
   };
 
@@ -29,12 +49,12 @@ in
     (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {
         substituters = lib.mkForce [
-          "https://cache.spirre.vip"
+          cfg.url
           "https://cache.nixos.org"
         ];
 
-        trusted-public-keys = [
-          "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU="
+        trusted-publicKey = [
+          cfg.publicKey
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         ];
       };
@@ -78,7 +98,7 @@ in
     (lib.mkIf (cfg.enable && cfg.mode == "host") {
       services.nix-serve = {
         enable = true;
-        secretKeyFile = "/var/lib/nixos/cache-priv-key.pem";
+        secretKeyFile = cfg.privateKeyFile;
       };
 
       systemd.services.update-system-flake = {
@@ -110,7 +130,7 @@ in
                   ];
                 in
                 ''
-                  printf "" > /srv/f/cache-log.txt # Clear log at beginning of service.
+                  printf "" > ${cfg.cacheLogFile} # Clear log at beginning of service.
 
                   # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
                   export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
@@ -169,8 +189,8 @@ in
           IOSchedulingClass = "idle";
           IOSchedulingPriority = 7;
 
-          StandardOutput = "file:/srv/f/cache-log.txt";
-          # StandardError = "file:/srv/f/cache-log.txt";
+          StandardOutput = "file:${cfg.cacheLogFile}";
+          # StandardError = "file:${cfg.cacheLogFile}";
         };
       };
 

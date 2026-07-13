@@ -6,14 +6,19 @@
 }:
 let
   cfg = config.swag.cache;
+
+  # Setting services to be nicer, for less disruptive background updates.
+  # https://positron.solutions/articles/building-nicely-with-rust-and-nix
+  niceService = {
+    Nice = 18;
+    IOSchedulingClass = "idle";
+    IOSchedulingPriority = 7;
+  };
 in
 {
   options = {
     swag.cache = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-      };
+      enable = lib.mkEnableOption "Opt into swag cache system.";
 
       mode = lib.mkOption {
         type = lib.types.enum [
@@ -34,7 +39,7 @@ in
       };
 
       secretKeyFile = lib.mkOption {
-        type = lib.types.path;
+        type = lib.types.externalPath;
         default = "/var/lib/nixos/cache-priv-key.pem";
       };
 
@@ -48,15 +53,8 @@ in
   config = lib.mkMerge [
     (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {
-        substituters = lib.mkForce [
-          cfg.url
-          "https://cache.nixos.org"
-        ];
-
-        trusted-public-keys = [
-          cfg.publicKey
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        ];
+        substituters = lib.mkBefore [ cfg.url ];
+        trusted-public-keys = lib.mkBefore [ cfg.publicKey ];
       };
 
       nix.extraOptions = ''
@@ -67,7 +65,7 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
-        serviceConfig = {
+        serviceConfig = niceService // {
           Type = "oneshot";
           User = "root";
           WorkingDirectory = "/etc/nixos";
@@ -77,12 +75,6 @@ in
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
             fi
           '';
-
-          # Setting this service to be nicer, for less prominent background updates.
-          # https://positron.solutions/articles/building-nicely-with-rust-and-nix
-          Nice = 18;
-          IOSchedulingClass = "idle";
-          IOSchedulingPriority = 7;
         };
       };
 
@@ -171,18 +163,11 @@ in
 
           restartIfChanged = false;
 
-          serviceConfig = {
+          serviceConfig = niceService // {
             Type = "oneshot";
             User = "root";
             WorkingDirectory = "/etc/nixos";
             ExecStart = "${update-script}${update-script.destination}";
-
-            # Setting this service to be nicer, to let other services this server take
-            # the reins when needed. This can run all day no problem.
-            # https://positron.solutions/articles/building-nicely-with-rust-and-nix
-            Nice = 18;
-            IOSchedulingClass = "idle";
-            IOSchedulingPriority = 7;
 
             StandardOutput = "file:${cfg.cacheLogFile}";
             # StandardError = "file:${cfg.cacheLogFile}";

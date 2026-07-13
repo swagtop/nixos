@@ -117,68 +117,61 @@ in
               runtimeInputs = with pkgs; [
                 coreutils
                 git
+                jq
                 nix
                 nixos-rebuild
                 systemd
               ];
               bashOptions = [ ];
-              text =
-                let
-                  nixosSystemsToBuild = [
-                    "gamebeast"
-                    "servtop"
-                  ];
-                in
-                ''
-                  printf "" > ${cfg.cacheLogFile} # Clear log at beginning of service.
+              text = ''
+                printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
 
-                  # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
-                  export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
+                # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
+                export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
 
-                  echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
-                  printf "===================================\n\n"
-                  # Making sure this service can run, by stopping any lingering rebuilds.
-                  ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+                echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
+                printf "===================================\n\n"
+                # Making sure this service can run, by stopping any lingering rebuilds.
+                ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+                echo
+
+                echo "$(date '+%H:%M') Pulling repository"
+                echo "========================"
+                ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
+                echo
+
+                FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
+                echo "$(date '+%H:%M') Updating flake inputs"
+                echo "==========================="
+                ${pkgs.nix}/bin/nix flake update
+                echo
+
+                NIXOS_SYSTEMS=$(nix flake show --json | jq -r '.nixosConfigurations | keys[]')
+                for system in $NIXOS_SYSTEMS; do
+                  # Skip building system if it is not using the cache.
+                  if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable) == "false" ]]; then
+                    continue
+                  fi
+                  echo "$(date '+%H:%M') Building '$system'"
+                  echo "================"
+                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1
                   echo
+                done
 
-                  echo "$(date '+%H:%M') Pulling repository"
-                  echo "========================"
-                  ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
-                  echo
+                echo "$(date '+%H:%M') Rebuilding and switching"
+                echo "=============================="
+                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
+                echo
 
-                  FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
-                  echo "$(date '+%H:%M') Updating flake inputs"
-                  echo "==========================="
-                  ${pkgs.nix}/bin/nix flake update
-                  echo
+                echo "$(date '+%H:%M') Committing lockfile and pushing"
+                echo "====================================="
+                ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
+                ${pkgs.git}/bin/git push
+                echo
 
-                  ${builtins.concatStringsSep "\n" (
-                    map (s: ''
-                      # Skip building system if it is not using the cache.
-                      if [[ $(nix eval .#nixosConfigurations.${s}.config.swag.cache.enable) == "false" ]]; then
-                        continue
-                      fi
-                      echo "$(date '+%H:%M') Building '${s}'"
-                      echo "================${lib.concatMapStrings (_: "=") (lib.range 0 (builtins.stringLength s))}"
-                      ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#${s} --no-link -j 1
-                      echo
-                    '') nixosSystemsToBuild
-                  )}
-
-                  echo "$(date '+%H:%M') Rebuilding and switching"
-                  echo "=============================="
-                  ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
-                  echo
-
-                  echo "$(date '+%H:%M') Committing lockfile and pushing"
-                  echo "====================================="
-                  ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
-                  ${pkgs.git}/bin/git push
-                  echo
-
-                  echo "$(date '+%H:%M') Finished update"
-                  echo "====================="
-                '';
+                echo "$(date '+%H:%M') Finished update"
+                echo "====================="
+              '';
             }
             + "/bin/update-system-flake";
 

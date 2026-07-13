@@ -18,7 +18,7 @@ in
 {
   options = {
     swag.cache = {
-      enable = lib.mkEnableOption "Opt into swag cache system.";
+      enable = lib.mkEnableOption "Opt into the swag cache system.";
 
       mode = lib.mkOption {
         type = lib.types.enum [

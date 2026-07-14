@@ -101,7 +101,6 @@ in
               coreutils
               gawk
               git
-              jq
               nix
               nixos-rebuild
               systemd
@@ -142,7 +141,8 @@ in
               declare -a noBuildSystems=()
 
               for system in $allSystems; do
-                if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable --quiet) == "true" ]]; then
+                cacheEnabled=$(nix eval .#nixosConfigurations."$system".config.swag.cache.enable)
+                if [[ $cacheEnabled == "true" ]]; then
                   buildSystems+=("$system")
                 else
                   noBuildSystems+=("$system")

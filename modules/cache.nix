@@ -151,7 +151,7 @@ in
               printf "%s\n" "''${buildSystems[@]}"
 
               echo
-              echo "Not building the following hosts"
+              echo "Ignoring the following hosts"
               echo "================================"
               printf "%s\n" "''${noBuildSystems[@]}"
               echo

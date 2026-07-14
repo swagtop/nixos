@@ -16,7 +16,7 @@
         KCFLAGS = "-march=${march} -mtune=${march} -O2";
       };
     });
-  
+
   latestZfsCompatible =
     {
       config,

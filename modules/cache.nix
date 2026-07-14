@@ -129,12 +129,35 @@ in
               ${pkgs.nix}/bin/nix flake update --flake .
               echo
 
-              NIXOS_SYSTEMS=$(nix flake show --json | jq -r '.nixosConfigurations | keys[]')
-              for system in $NIXOS_SYSTEMS; do
-                # Skip building system if it is not using the cache.
-                if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable) == "false" ]]; then
-                  continue
+              allSystems=$(
+                nix eval --raw .#nixosConfigurations --apply \
+                  'i: builtins.concatStringsSep "\n" (builtins.attrNames i) + "\n"'
+              )
+
+              declare -a buildSystems=()
+              declare -a noBuildSystems=()
+
+              for system in $allSystems; do
+                if [[ $(nix eval .#nixosConfigurations."$system".config.swag.cache.enable --quiet) == "true" ]]; then
+                  buildSystems+=("$system")
+                else
+                  noBuildSystems+=("$system")
                 fi
+              done
+
+              echo
+              echo "Building the following hosts"
+              echo "============================"
+              printf "%s\n" "''${buildSystems[@]}"
+
+              echo
+              echo "Not building the following hosts"
+              echo "================================"
+              printf "%s\n" "''${noBuildSystems[@]}"
+              echo
+
+              for system in "''${buildSystems[@]}"; do
+                # Skip building system if it is not using the cache.
                 echo "$(date '+%H:%M') Building '$system'"
                 echo "================"
                 ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1

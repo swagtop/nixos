@@ -99,6 +99,7 @@ in
             name = "update-system-flake";
             runtimeInputs = with pkgs; [
               coreutils
+              gawk
               git
               jq
               nix
@@ -109,23 +110,26 @@ in
             text = ''
               printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
 
+              function print-with-underline () {
+                echo "$1"
+                seq ''${#1} | awk '{printf "="}'
+                echo
+              }
+
               # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
               export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
 
-              echo "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
-              printf "===================================\n\n"
+              print-with-underline "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
               # Making sure this service can run, by stopping any lingering rebuilds.
               ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
               echo
 
-              echo "$(date '+%H:%M') Pulling repository"
-              echo "========================"
+              print-with-underline "$(date '+%H:%M') Pulling repository"
               ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
               echo
 
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
-              echo "$(date '+%H:%M') Updating flake inputs"
-              echo "==========================="
+              print-with-underline "$(date '+%H:%M') Updating flake inputs"
               ${pkgs.nix}/bin/nix flake update --flake .
               echo
 
@@ -146,37 +150,31 @@ in
               done
 
               echo
-              echo "Building the following hosts"
-              echo "============================"
+              print-with-underline "Building the following hosts"
               printf "%s\n" "''${buildSystems[@]}"
 
               echo
-              echo "Ignoring the following hosts"
-              echo "================================"
+              print-with-underline "Ignoring the following hosts"
               printf "%s\n" "''${noBuildSystems[@]}"
               echo
 
               for system in "''${buildSystems[@]}"; do
                 # Skip building system if it is not using the cache.
-                echo "$(date '+%H:%M') Building '$system'"
-                echo "================"
+                print-with-underline "$(date '+%H:%M') Building '$system'"
                 ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1
                 echo
               done
 
-              echo "$(date '+%H:%M') Rebuilding and switching"
-              echo "=============================="
+              print-with-underline "$(date '+%H:%M') Rebuilding and switching"
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
               echo
 
-              echo "$(date '+%H:%M') Committing lockfile and pushing"
-              echo "====================================="
+              print-with-underline "$(date '+%H:%M') Committing lockfile and pushing"
               ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
               ${pkgs.git}/bin/git push
               echo
 
-              echo "$(date '+%H:%M') Finished update"
-              echo "====================="
+              print-with-underline "$(date '+%H:%M') Finished update"
             '';
           };
         in

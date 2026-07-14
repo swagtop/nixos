@@ -33,11 +33,21 @@ in
         default = "https://cache.spirre.vip";
       };
 
+      # The publickey generated here is made like so:
+      # 'nix-store --generate-binary-cache-key cache.spirre.vip /var/lib/nixos/cache-priv-key.pem public'.
+      # ... where the 'public' file contains the 'default' value below.
       publicKey = lib.mkOption {
         type = lib.types.str;
         default = "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU=";
       };
 
+      # The public key file here is generated together with the public key in
+      # the command above. Path can be anywhere, here it is placed in a
+      # directory with no read permission for anyone but the 'nix-serve' user.
+      # This is achieved like so:
+      # 'KEY_PATH=/var/lib/nixos/cache-priv-key.pem'
+      # 'chown "$KEY_PATH" nix-serve'
+      # 'chmod 400 "$KEY_PATH"'
       secretKeyFile = lib.mkOption {
         type = lib.types.externalPath;
         default = "/var/lib/nixos/cache-priv-key.pem";

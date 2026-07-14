@@ -63,6 +63,7 @@ let
     zj = "zellij";
     lg = "lazygit";
     ff = "fastfetch";
+    cdgit = "cd ~/Documents/git";
     pipes = "pipes.sh -t 0 -c 1 -c 2 -c 3 -c 4 -c 5 -c 6 -c";
   };
 in

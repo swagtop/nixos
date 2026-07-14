@@ -121,16 +121,16 @@ in
 
               print-with-underline "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
               # Making sure this service can run, by stopping any lingering rebuilds.
-              ${pkgs.systemd}/bin/systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
+              systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
               echo
 
               print-with-underline "$(date '+%H:%M') Pulling repository"
-              ${pkgs.git}/bin/git pull --ff-only || echo 'Failed git pull!'
+              git pull --ff-only || echo 'Failed git pull!'
               echo
 
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
               print-with-underline "$(date '+%H:%M') Updating flake inputs"
-              ${pkgs.nix}/bin/nix flake update --flake .
+              nix flake update --flake .
               echo
 
               allSystems=$(
@@ -161,20 +161,20 @@ in
               for system in "''${buildSystems[@]}"; do
                 # Skip building system if it is not using the cache.
                 print-with-underline "$(date '+%H:%M') Building '$system'"
-                ${pkgs.nixos-rebuild}/bin/nixos-rebuild build --flake .#"$system" --no-link -j 1
+                nixos-rebuild build --flake .#"$system" --no-link -j 1
                 echo
               done
 
               print-with-underline "$(date '+%H:%M') Rebuilding and switching"
-              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake .
+              nixos-rebuild switch --flake .
               echo
 
               print-with-underline "$(date '+%H:%M') Committing lockfile and pushing"
-              ${pkgs.git}/bin/git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
-              ${pkgs.git}/bin/git push
+              git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
+              git push
               echo
 
-              print-with-underline "$(date '+%H:%M') Finished update"
+              print-with-underline "$(date '+%Y-%m-%d @ %H:%M') Finished update"
             '';
           };
         in

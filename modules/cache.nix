@@ -57,6 +57,11 @@ in
         type = lib.types.externalPath;
         default = "/srv/f/cache-log.txt";
       };
+
+      flakeDir = lib.mkOption {
+        type = lib.types.path;
+        default = "/etc/nixos";
+      };
     };
   };
 
@@ -78,11 +83,11 @@ in
         serviceConfig = niceService // {
           Type = "oneshot";
           User = "root";
-          WorkingDirectory = "/etc/nixos";
+          WorkingDirectory = cfg.flakeDir;
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
             GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
             if [[ $GIT_PULL_RESULT != "Already up to date." ]]; then
-              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake /etc/nixos
+              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ${cfg.flakeDir}
             fi
           '';
         };
@@ -121,7 +126,7 @@ in
 
               function print-with-underline () {
                 echo "$1"
-                seq ''${#1} | awk '{printf "="}'
+                seq ''${#1} | awk '{ printf "=" }'
                 echo
               }
 
@@ -197,7 +202,7 @@ in
           serviceConfig = niceService // {
             Type = "oneshot";
             User = "root";
-            WorkingDirectory = "/etc/nixos";
+            WorkingDirectory = cfg.flakeDir;
             ExecStart = "${update-script}${update-script.destination}";
 
             StandardOutput = "file:${cfg.cacheLogFile}";

@@ -125,25 +125,31 @@ in
               printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
 
               function print-with-underline () {
-                echo "$1"
-                seq ''${#1} | awk '{ printf "=" }'
+                case "$2" in
+                  --time) string="$(date '+%H:%M') $1";;
+                  --date-time) string="$(date '+%Y-%m-%d @ %H:%M') $1";;
+                  *) string="$1"
+                esac
+
+                echo "$string"
+                seq ''${#string} | awk '{ printf "=" }'
                 echo
               }
 
               # https://discourse.nixos.org/t/ssl-cert-file-and-connection-issues-in-nix-shells/7856
               export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt"
 
-              print-with-underline "$(date '+%Y-%m-%d @ %H:%M') Beginning update"
+              print-with-underline "Beginning update" --date-time
               # Making sure this service can run, by stopping any lingering rebuilds.
               systemctl stop nixos-rebuild-switch-to-configuration.service 2>&1 /dev/null
               echo
 
-              print-with-underline "$(date '+%H:%M') Pulling repository"
+              print-with-underline "Pulling repository" --time
               git pull --ff-only || echo 'Failed git pull!'
               echo
 
-              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d')
-              print-with-underline "$(date '+%H:%M') Updating flake inputs"
+              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 
+              print-with-underline "Updating flake inputs" --time
               nix flake update --flake .
               echo
 
@@ -175,21 +181,21 @@ in
 
               for system in "''${buildSystems[@]}"; do
                 # Skip building system if it is not using the cache.
-                print-with-underline "$(date '+%H:%M') Building '$system'"
+                print-with-underline "Building '$system'" --time
                 nixos-rebuild build --flake .#"$system" --no-link -j 1
                 echo
               done
 
-              print-with-underline "$(date '+%H:%M') Rebuilding and switching"
+              print-with-underline "Rebuilding and switching" --time
               nixos-rebuild switch --flake .
               echo
 
-              print-with-underline "$(date '+%H:%M') Committing lockfile and pushing"
+              print-with-underline "Committing lockfile and pushing" --time
               git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock || true
               git push
               echo
 
-              print-with-underline "$(date '+%Y-%m-%d @ %H:%M') Finished update"
+              print-with-underline "Finished update" --date-time
             '';
           };
         in
@@ -203,7 +209,7 @@ in
             Type = "oneshot";
             User = "root";
             WorkingDirectory = cfg.flakeDir;
-            ExecStart = "${update-script}${update-script.destination}";
+            ExecStart = lib.getExe update-script;
 
             StandardOutput = "file:${cfg.cacheLogFile}";
             # StandardError = "file:${cfg.cacheLogFile}";

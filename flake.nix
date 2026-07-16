@@ -30,7 +30,7 @@
           };
         in
         {
-          packages = import ./packages.nix pkgs;
+          packages = import ./packages pkgs;
           formatter = pkgs.nixfmt-tree;
         };
 

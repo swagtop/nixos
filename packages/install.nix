@@ -1,12 +1,14 @@
 {
-  pkgs,
+  writeShellApplication,
+  coreutils,
+  git,
   ...
 }:
-pkgs.writeShellApplication {
+writeShellApplication {
   name = "install-system";
   runtimeInputs = [
-    pkgs.coreutils
-    pkgs.git
+    coreutils
+    git
   ];
   bashOptions = [ ];
   text = ''

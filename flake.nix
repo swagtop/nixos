@@ -48,12 +48,7 @@
 
                 modules = host.modules or [ ] ++ [
                   ./hosts/${name}/configuration.nix
-                  ./modules/cache.nix
-                  ./modules/common.nix
-                  ./modules/linker.nix
-                  ./modules/nixos.nix
-                  ./modules/ssh-server.nix
-                  ./modules/tui.nix
+                  ./modules/core
                 ];
               }
             )

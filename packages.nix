@@ -164,6 +164,7 @@ in
         stdenvNoCC.mkDerivation (finalAttrs: {
           pname = "locd";
           version = "1.0.5";
+
           src = fetchurl {
             url = "https://api.crql.works/download/locd/linux/${finalAttrs.version}";
             sha256 = "sha256-nO4LRZTgd9gEordswjeI3C4u2Lfv/xl4Cpaq0+in/MY=";
@@ -171,16 +172,19 @@ in
             # Will not fetch zipfile properly unless setting user agent.
             curlOpts = "-A Mozilla/5.0";
           };
+
           nativeBuildInputs = [
             autoPatchelfHook
             unzip
           ];
+
           buildInputs = [
             alsa-lib
             fontconfig
             freetype
-            libgcc
+            libgcc.lib
           ];
+
           unpackPhase = ''
             unzip $src
           '';
@@ -196,6 +200,8 @@ in
           '';
 
           meta = {
+            description = "Phase-Locked distortion plugin for MEGA crunchiness.";
+            homepage = "https://crql.works/locd/";
             license = lib.licenses.unfreeRedistributable;
           }
           // lib.optionalAttrs installStandalone {

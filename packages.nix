@@ -57,6 +57,8 @@ in
 {
   inherit helix zellij;
 
+  install-system = import ./install-system.nix { inherit pkgs; };
+
   # Music production things.
   bitwig-studio =
     let

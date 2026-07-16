@@ -85,6 +85,7 @@ in
           User = "root";
           WorkingDirectory = cfg.flakeDir;
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
+            git fetch
             GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
             if [[ $GIT_PULL_RESULT != "Already up to date." ]]; then
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ${cfg.flakeDir}

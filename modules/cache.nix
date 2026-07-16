@@ -93,7 +93,7 @@ in
         };
       };
 
-      systemd.timers.pull-system-flake = {
+      systemd.timers.user-nixos-cache-update = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = "11:00";
@@ -216,7 +216,7 @@ in
           };
         };
 
-      systemd.timers.update-system-flake = {
+      systemd.timers.host-nixos-cache-update = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
           RandomizedOffsetSec = "30m";

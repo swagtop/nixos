@@ -87,8 +87,15 @@ in
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
             git fetch
             GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
-            if [[ $GIT_PULL_RESULT != "Already up to date." ]]; then
+
+            if [[ $GIT_PULL_RESULT ~= "Current branch main is up to date." ]]; then
+              echo "No rebuild required."
+            else
+              # Rebuild with new inputs.
               ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ${cfg.flakeDir}
+
+              # Fetch new nixpkgs tarball from registry.
+              ${pkgs.nix}/bin/nix run nixpkgs#hello
             fi
           '';
         };

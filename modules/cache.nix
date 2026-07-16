@@ -33,6 +33,16 @@ in
         default = "https://cache.spirre.vip";
       };
 
+      cacheLogFile = lib.mkOption {
+        type = lib.types.externalPath;
+        default = "/srv/f/cache-log.txt";
+      };
+
+      flakeDir = lib.mkOption {
+        type = lib.types.externalPath;
+        default = "/etc/nixos";
+      };
+
       # The publickey generated here is made like so:
       # 'nix-store --generate-binary-cache-key cache.spirre.vip /var/lib/nixos/cache-priv-key.pem public'.
       # ... where the 'public' file contains the 'default' value below.
@@ -41,7 +51,7 @@ in
         default = "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU=";
       };
 
-      # The public key file here is generated together with the public key in
+      # The private key file here is generated together with the public key in
       # the command above. Path can be anywhere, here it is placed in a
       # directory with no read permission for anyone but the 'nix-serve' user.
       # This is achieved like so:
@@ -51,16 +61,6 @@ in
       secretKeyFile = lib.mkOption {
         type = lib.types.externalPath;
         default = "/var/lib/nixos/cache-priv-key.pem";
-      };
-
-      cacheLogFile = lib.mkOption {
-        type = lib.types.externalPath;
-        default = "/srv/f/cache-log.txt";
-      };
-
-      flakeDir = lib.mkOption {
-        type = lib.types.path;
-        default = "/etc/nixos";
       };
     };
   };

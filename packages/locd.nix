@@ -10,7 +10,6 @@
   unzip,
 
   installStandalone ? true,
-  ...
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "locd";

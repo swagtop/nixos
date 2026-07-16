@@ -2,7 +2,6 @@
   writeShellApplication,
   coreutils,
   git,
-  ...
 }:
 writeShellApplication {
   name = "install-system";
@@ -51,7 +50,7 @@ writeShellApplication {
         sudo rm -rf /etc/nixos
         sudo mv "$TMP_DIR_CURRENT_NIXOS" /etc/nixos
 
-        echo "Step $step: '$2' failed."
+        echo "Step $step: '$*' failed."
         echo "Aborting script, and restoring original '/etc/nixos'."
         echo "No changes have been made."
         exit 1

@@ -19,9 +19,12 @@ in
     ./hardware-configuration.nix
   ];
 
-  swag.cache = {
-    enable = true;
-    mode = "host";
+  swag = {
+    ssh-server.enable = true;
+    cache = {
+      enable = true;
+      mode = "host";
+    };
   };
 
   # Bootloader.

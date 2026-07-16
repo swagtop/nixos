@@ -76,8 +76,8 @@ in
 
   # Music production things.
   bitwig-studio = symlinkWrap {
-    package = pkgs.bitwig-studio-at-version;
-    execName = pkgs.bitwig-studio5;
+    package = pkgs.bitwig-studio5;
+    execName = "bitwig-studio";
     args = [
       "--set LD_LIBRARY_PATH \"${
         lib.makeLibraryPath (

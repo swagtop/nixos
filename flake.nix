@@ -50,8 +50,10 @@
                   ./hosts/${name}/configuration.nix
                   ./modules/cache.nix
                   ./modules/common.nix
-                  ./modules/nixos.nix
                   ./modules/linker.nix
+                  ./modules/nixos.nix
+                  ./modules/ssh-server.nix
+                  ./modules/tui.nix
                 ];
               }
             )
@@ -75,7 +77,6 @@
               ./modules/gaming.nix
               ./modules/gui.nix
               ./modules/music.nix
-              ./modules/tui.nix
 
               ./modules/office.nix
 
@@ -86,21 +87,17 @@
             modules = [
               ./modules/dev.nix
               ./modules/gui.nix
-              ./modules/tui.nix
             ];
           };
           servtop = {
             modules = [
               ./modules/dev.nix
-              ./modules/ssh-server.nix
-              ./modules/tui.nix
             ];
           };
           cooltop = {
             modules = [
               ./modules/dev.nix
               ./modules/gui.nix
-              ./modules/tui.nix
             ];
           };
         };

@@ -1,12 +1,20 @@
 {
+  config,
+  lib,
   pkgs,
   self,
   ...
 }:
 
 let
-  inherit (builtins) mapAttrs;
-  inherit (pkgs.stdenv.hostPlatform) system;
+  inherit (builtins)
+    mapAttrs
+    ;
+  inherit (pkgs.stdenv.hostPlatform)
+    system
+    ;
+
+  cfg = config.swag.tui;
 
   # ANSI escape codes for changing colors of terminal text.
   # https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
@@ -68,31 +76,55 @@ let
   };
 in
 {
-  # TUI file manager / filesystem navigator.
-  programs.yazi.enable = true;
+  options.swag.tui = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+    };
 
-  environment.systemPackages = with pkgs; [
-    # Pseudo-ide combo.
-    self.packages.${system}.zellij
-    self.packages.${system}.helix
+    editor = lib.mkOption {
+      type = lib.types.str;
+      default = "hx";
+    };
 
-    # TUI git manager.
-    lazygit
+    usePatchedPrograms = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+    };
+  };
 
-    # ISO image burner.
-    caligula
+  config = lib.mkIf cfg.enable {
+    # TUI file manager / filesystem navigator.
+    programs.yazi.enable = true;
 
-    # Fluff.
-    fastfetch
-    pipes
-    btop
-  ];
+    environment.systemPackages = with pkgs; [
+      # TUI git manager.
+      lazygit
 
-  # Add shell aliases.
-  programs.bash = { inherit promptInit shellAliases; };
+      # ISO image burner.
+      caligula
 
-  # Set Helix as default editor.
-  environment.variables = {
-    EDITOR = "hx";
+      # Fluff.
+      fastfetch
+      pipes
+      btop
+    ]
+    ++ lib.optionals (cfg.usePatchedPrograms) [
+      # Pseudo-ide combo.
+      self.packages.${system}.zellij
+      self.packages.${system}.helix
+    ]
+    ++ lib.optionals (!cfg.usePatchedPrograms) [
+      zellij
+      helix
+    ];
+
+    # Add shell aliases.
+    programs.bash = { inherit promptInit shellAliases; };
+
+    # Set Helix as default editor.
+    environment.variables = {
+      EDITOR = cfg.editor;
+    };
   };
 }

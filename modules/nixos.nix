@@ -3,7 +3,7 @@
 let
   shellAliases = {
     # Update.
-    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git rebase --autostash'";
+    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
 
     # Rebuild.
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";

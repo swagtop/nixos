@@ -57,7 +57,7 @@ in
 {
   inherit helix zellij;
 
-  install-system = import ./install-system.nix { inherit pkgs; };
+  install = import ./install.nix { inherit pkgs; };
 
   # Music production things.
   bitwig-studio =
@@ -149,6 +149,7 @@ in
       package =
         {
           alsa-lib,
+          autoPatchelfHook,
           fetchurl,
           fontconfig,
           freetype,
@@ -158,6 +159,7 @@ in
           unzip,
 
           installStandalone ? true,
+          ...
         }:
         stdenvNoCC.mkDerivation (finalAttrs: {
           pname = "locd";
@@ -169,7 +171,10 @@ in
             # Will not fetch zipfile properly unless setting user agent.
             curlOpts = "-A Mozilla/5.0";
           };
-          nativeBuildInputs = [ unzip ];
+          nativeBuildInputs = [
+            autoPatchelfHook
+            unzip
+          ];
           buildInputs = [
             alsa-lib
             fontconfig

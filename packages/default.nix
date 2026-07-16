@@ -67,6 +67,7 @@ in
       helix
       pkgs.lazygit
       pkgs.git
+      pkgs.gh
     ];
     text = ''
       exec ${zellij}/bin/zellij "$@"
@@ -74,49 +75,44 @@ in
   };
 
   # Music production things.
-  bitwig-studio =
-    let
-      version = "5.3.13";
-      bitwig-studio-at-version = pkgs.bitwig-studio5;
-    in
-    symlinkWrap {
-      package = bitwig-studio-at-version;
-      execName = "bitwig-studio";
-      args = [
-        "--set LD_LIBRARY_PATH \"${
-          lib.makeLibraryPath (
-            with pkgs;
-            [
-              alsa-lib
-              alsa-utils
-              bitwig-studio
-              curlWithGnuTls
-              fontconfig
-              freetype
-              libGL
-              libICE
-              libsecret.out
-              libSM
-              libsndfile
-              libudev0-shim
-              libX11
-              libXcursor
-              libXext
-              libXi
-              libXrandr
-              pkg-config
-              udev
-              vulkan-loader
-              wayland
-              wayland-protocols
-              # wineWowPackages.yabridge
-              xwayland
-              zlib
-            ]
-          )
-        }\""
-      ];
-    };
+  bitwig-studio = symlinkWrap {
+    package = pkgs.bitwig-studio-at-version;
+    execName = pkgs.bitwig-studio5;
+    args = [
+      "--set LD_LIBRARY_PATH \"${
+        lib.makeLibraryPath (
+          with pkgs;
+          [
+            alsa-lib
+            alsa-utils
+            bitwig-studio
+            curlWithGnuTls
+            fontconfig
+            freetype
+            libGL
+            libICE
+            libsecret.out
+            libSM
+            libsndfile
+            libudev0-shim
+            libX11
+            libXcursor
+            libXext
+            libXi
+            libXrandr
+            pkg-config
+            udev
+            vulkan-loader
+            wayland
+            wayland-protocols
+            # wineWowPackages.yabridge
+            xwayland
+            zlib
+          ]
+        )
+      }\""
+    ];
+  };
 
   # Gaming stuff.
   discord = (

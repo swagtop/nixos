@@ -145,7 +145,7 @@ in
               echo
 
               print-with-underline "Pulling repository" --time
-              git pull --ff-only || echo 'Failed git pull!'
+              git pull --rebase || echo 'Failed git pull!'
               echo
 
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 

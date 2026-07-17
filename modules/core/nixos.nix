@@ -76,7 +76,7 @@ in
       Type = "oneshot";
       User = "root";
       ExecStart = pkgs.writeShellScript "fetch-nixpkgs-tarball" ''
-        exec ${pkgs.nix}/bin/nix run ${pkgs.path}#hello
+        exec ${pkgs.nix}/bin/nix run nixpkgs#hello
       '';
     };
   };

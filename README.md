@@ -1,1 +1,1 @@
-# Home of my personal Nix and NixOS configurations
+# Home of my cool Nix configurations

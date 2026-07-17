@@ -54,7 +54,7 @@
 
                   modules = host.modules or [ ] ++ [
                     ./hosts/${name}/configuration.nix
-                    { imports = importDirectory { dir = ./modules/core; }; }
+                    (importDirectory { dir = ./modules/core; })
                   ];
                 }
               )

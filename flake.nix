@@ -1,5 +1,5 @@
 {
-  description = "My cool system flake!";
+  description = "Home of my cool Nix configurations.";
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     hytale-flake = {

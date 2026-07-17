@@ -47,12 +47,12 @@ writeShellApplication {
     function abort-on-failure () {
       ((step+=1))
       if ! eval "$*"; then
+        echo "Step $step: '$*' failed."
+        echo "Aborting script, and restoring original '/etc/nixos'."
+
         sudo rm -rf /etc/nixos
         sudo mv "$TMP_DIR_CURRENT_NIXOS" /etc/nixos
 
-        echo "Step $step: '$*' failed."
-        echo "Aborting script, and restoring original '/etc/nixos'."
-        echo "No changes have been made."
         exit 1
       fi
     }
@@ -60,7 +60,7 @@ writeShellApplication {
     abort-on-failure sudo rm -rf /etc/nixos/*
     abort-on-failure sudo mv "$TMP_DIR_CLONED_NIXOS"/* "$TMP_DIR_CLONED_NIXOS"/.* /etc/nixos
     abort-on-failure sudo mkdir /etc/nixos/hosts/"$REPLY"
-    abort-on-failure sudo mv "$TMP_DIR_CURRENT_NIXOS"/* /etc/nixos/hosts/"$REPLY"
+    abort-on-failure sudo cp -r "$TMP_DIR_CURRENT_NIXOS"/* /etc/nixos/hosts/"$REPLY"
     abort-on-failure cd /etc/nixos; sudo git add .
 
     echo "Succcessfully installed flake on system."

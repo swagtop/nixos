@@ -1,5 +1,5 @@
 let
-  nixFilesInDir =
+  getNixFiles =
     {
       dir,
       excludeDefault ? false,
@@ -16,25 +16,22 @@ let
 
       pipe = foldl' (acc: f: f acc);
 
-      isNixFile =
+      checkFile =
         filename:
         let
           nameLength = stringLength filename;
           lastThreeChars = substring (nameLength - 4) nameLength filename;
+          isDefault = filename == "default.nix";
         in
-        lastThreeChars == ".nix";
+        lastThreeChars == ".nix" && (if excludeDefault then isDefault else true);
+
     in
-    pipe dir (
-      [
-        readDir
-        attrNames
-        (filter isNixFile)
-      ]
-      ++ (if excludeDefault then [ (filter (name: name != "default.nix")) ] else [ ])
-      ++ [
-        (map (name: "${dir}/${name}"))
-      ]
-    );
+    pipe dir ([
+      readDir
+      attrNames
+      (filter (checkFile))
+      (map (name: "${dir}/${name}"))
+    ]);
 in
 {
   # Run 'gcc -march=native -Q --help=target | grep march' to get march.
@@ -49,14 +46,16 @@ in
       pkg' = pkg.override { stdenv = nativeStdenv; };
     in
     pkg'.overrideAttrs (oldAttrs: {
-      env = (oldAttrs.env or { }) // mapAttrs (name: value: (value.oldAttrs or "") + value) {
-        # For Rust programs.
-        RUSTFLAGS = " -C target-cpu=${march}";
+      env =
+        (oldAttrs.env or { })
+        // mapAttrs (name: value: (oldAttrs.${name} or "") + value) {
+          # For Rust programs.
+          RUSTFLAGS = " -C target-cpu=${march}";
 
-        # For the Linux kernel.
-        KCPPFLAGS = "-march=${march} -mtune=${march} -O2";
-        KCFLAGS = "-march=${march} -mtune=${march} -O2";
-      };
+          # For the Linux kernel.
+          KCPPFLAGS = "-march=${march} -mtune=${march} -O2";
+          KCFLAGS = "-march=${march} -mtune=${march} -O2";
+        };
     });
 
   latestZfsCompatible =
@@ -104,6 +103,6 @@ in
       excludeDefault ? false,
     }:
     {
-      imports = nixFilesInDir { inherit dir excludeDefault; };
+      imports = getNixFiles { inherit dir excludeDefault; };
     };
 }

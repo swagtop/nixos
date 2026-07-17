@@ -1,8 +1,14 @@
-{ inputs, pkgs, lib, config, ... }:
+{
+  inputs,
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 let
   cfg = config.swag.default-nixos;
-  
+
   shellAliases = {
     # Update.
     ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
@@ -57,7 +63,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable  {
+  config = lib.mkIf cfg.enable {
     # NixOS store optimization and garbage collection.
     nix = {
       settings = {

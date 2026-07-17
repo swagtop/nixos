@@ -23,6 +23,17 @@ in
     linker.enable = true;
   };
 
+  programs.obs-studio = {
+    enable = true;
+    package = pkgs.obs-studio.override {
+      cudaSupport = true;
+    };
+    plugins = with pkgs; [
+      obs-studio-plugins.obs-pipewire-audio-capture
+      obs-studio-plugins.obs-vaapi
+    ];
+  };
+
   # Compile all packages locally.
   # nix.settings.substitute = false;
 
@@ -182,9 +193,7 @@ in
     enable = true;
     extraPackages = with pkgs; [
       intel-media-driver
-      vulkan-loader
-      vulkan-validation-layers
-      vulkan-extension-layer
+      nvidia-vaapi-driver
     ];
     enable32Bit = true;
     extraPackages32 = with pkgs.pkgsi686Linux; [

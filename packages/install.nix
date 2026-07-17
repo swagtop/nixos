@@ -24,7 +24,7 @@ writeShellApplication {
     fi
 
     echo
-    
+
     TMP_DIR_CLONED_NIXOS=$(mktemp -d)
     if ! git clone https://github.com/swagtop/nixos "$TMP_DIR_CLONED_NIXOS"; then
       echo "Failed cloning 'github:swagtop/nixos' into a temp directory."

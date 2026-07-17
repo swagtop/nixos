@@ -21,9 +21,9 @@ let
         let
           nameLength = stringLength filename;
           lastThreeChars = substring (nameLength - 4) nameLength filename;
-          isDefault = filename == "default.nix";
+          isNotDefault = filename != "default.nix";
         in
-        lastThreeChars == ".nix" && (if excludeDefault then isDefault else true);
+        lastThreeChars == ".nix" && (if excludeDefault then isNotDefault else true);
 
     in
     pipe dir ([

@@ -23,12 +23,16 @@ writeShellApplication {
       exit 1
     fi
 
+    echo
+    
     TMP_DIR_CLONED_NIXOS=$(mktemp -d)
     if ! git clone https://github.com/swagtop/nixos "$TMP_DIR_CLONED_NIXOS"; then
       echo "Failed cloning 'github:swagtop/nixos' into a temp directory."
       echo "Aborting script, no changes have been made."
       exit 1
     fi
+
+    echo
 
     if [ -d "$TMP_DIR_CLONED_NIXOS/hosts/$REPLY" ]; then
       echo "Host '$REPLY' already exists in repo, choose another name."
@@ -43,10 +47,13 @@ writeShellApplication {
       exit 1
     fi
 
+    echo
+
     step=0
     function abort-on-failure () {
       ((step+=1))
       if ! eval "$*"; then
+        echo
         echo "Step $step: '$*' failed."
         echo "Aborting script, and restoring original '/etc/nixos'."
 
@@ -62,6 +69,8 @@ writeShellApplication {
     abort-on-failure sudo mkdir /etc/nixos/hosts/"$REPLY"
     abort-on-failure sudo cp -r "$TMP_DIR_CURRENT_NIXOS"/* /etc/nixos/hosts/"$REPLY"
     abort-on-failure cd /etc/nixos; sudo git add .
+
+    echo
 
     echo "Succcessfully installed flake on system."
     echo "Add your host to the flake by importing your 'configuration.nix' in 'flake.nix'."

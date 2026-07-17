@@ -41,13 +41,17 @@ in
   optimizeForNative =
     pkgs: march: pkg:
     let
+      inherit (builtins)
+        mapAttrs
+        ;
+
       nativeStdenv = pkgs.stdenvAdapters.withCFlags [ "-march=${march}" "-mtune=${march}" ] pkgs.stdenv;
       pkg' = pkg.override { stdenv = nativeStdenv; };
     in
     pkg'.overrideAttrs (oldAttrs: {
-      env = (oldAttrs.env or { }) // {
+      env = (oldAttrs.env or { }) // mapAttrs (name: value: (value.oldAttrs or "") + value) {
         # For Rust programs.
-        RUSTFLAGS = (oldAttrs.RUSTFLAGS or "") + " -C target-cpu=${march}";
+        RUSTFLAGS = " -C target-cpu=${march}";
 
         # For the Linux kernel.
         KCPPFLAGS = "-march=${march} -mtune=${march} -O2";

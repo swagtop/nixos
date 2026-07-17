@@ -88,7 +88,7 @@ in
             git fetch
             GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
 
-            if [[ $GIT_PULL_RESULT ~= "Current branch main is up to date." ]]; then
+            if [[ $GIT_PULL_RESULT =~ "Current branch main is up to date." ]]; then
               echo "No rebuild required."
             else
               # Rebuild with new inputs.

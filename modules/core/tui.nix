@@ -97,27 +97,29 @@ in
     # TUI file manager / filesystem navigator.
     programs.yazi.enable = true;
 
-    environment.systemPackages = with pkgs; [
-      # TUI git manager.
-      lazygit
+    environment.systemPackages =
+      with pkgs;
+      [
+        # TUI git manager.
+        lazygit
 
-      # ISO image burner.
-      caligula
+        # ISO image burner.
+        caligula
 
-      # Fluff.
-      fastfetch
-      pipes
-      btop
-    ]
-    ++ lib.optionals (cfg.usePatchedPrograms) [
-      # Pseudo-ide combo.
-      self.packages.${system}.zellij
-      self.packages.${system}.helix
-    ]
-    ++ lib.optionals (!cfg.usePatchedPrograms) [
-      zellij
-      helix
-    ];
+        # Fluff.
+        fastfetch
+        pipes
+        btop
+      ]
+      ++ lib.optionals (cfg.usePatchedPrograms) [
+        # Pseudo-ide combo.
+        self.packages.${system}.zellij
+        self.packages.${system}.helix
+      ]
+      ++ lib.optionals (!cfg.usePatchedPrograms) [
+        zellij
+        helix
+      ];
 
     # Add shell aliases.
     programs.bash = { inherit promptInit shellAliases; };

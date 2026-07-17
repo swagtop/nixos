@@ -55,4 +55,41 @@
 
       last
     ];
+
+  importDirectory =
+    {
+      dir,
+      excludeDefault ? false,
+    }:
+    let
+      inherit (builtins)
+        foldl'
+        readDir
+        attrNames
+        filter
+        substring
+        stringLength
+        ;
+
+      pipe = foldl' (acc: f: f acc);
+
+      isNixFile =
+        filename:
+        let
+          nameLength = stringLength filename;
+          lastThreeChars = substring (nameLength - 4) nameLength filename;
+        in
+        lastThreeChars == ".nix";
+    in
+    pipe dir (
+      [
+        readDir
+        attrNames
+        (filter isNixFile)
+      ]
+      ++ (if excludeDefault then [ (filter (name: name != "default.nix")) ] else [ ])
+      ++ [
+        (map (name: "${dir}/${name}"))
+      ]
+    );
 }

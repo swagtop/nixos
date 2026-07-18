@@ -23,7 +23,7 @@ let
   helix =
     let
       configFile = pkgs.stdenvNoCC.mkDerivation {
-        name = "helix-config";
+        name = "helix-config.toml";
         src = ../configs/helix/config.toml;
         phases = [ "installPhase" ];
 

@@ -32,7 +32,7 @@ let
         return
       fi
 
-      declare -a nsCommand=(
+      local -a nsCommand=(
         "NIXPKGS_ALLOW_UNFREE=1"
         "nix" "shell" "--impure"
       )

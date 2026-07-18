@@ -37,7 +37,11 @@ let
         "nix" "shell" "--impure"
       )
 
-      local nsName="ns: "
+      if [[ ''${name:0:4} == "ns: " ]]; then
+        local nsName="''$name, "
+      else
+        local nsName="ns: "
+      fi
 
       for arg in "''${@:1:$#-1}"; do
         nsCommand+=("nixpkgs#$arg")

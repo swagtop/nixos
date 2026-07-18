@@ -48,15 +48,15 @@ let
           nsCommand+=("$1")
         else
           nsCommand+=("nixpkgs#$1")
-          nsName+="$1''${2:+, }"
+          nsName+="$([[ -z $2 ]] && printf ', ')$1"
         fi
       }
 
-      for arg in "''${@:1:$#-1}"; do
-        add-arg-to-commands "$arg" add-comma
-      done
+      add-arg-to-commands "''${@:1}" no-before-comma
 
-      add-arg-to-commands "''${@:$#}"
+      for arg in "''${@:2:$#}"; do
+        add-arg-to-commands "$arg"
+      done
       
       name="$nsName" eval "''${nsCommand[*]}"
     }

@@ -66,8 +66,8 @@ writeShellApplication {
 
     abort-on-failure sudo rm -rf /etc/nixos/*
     abort-on-failure sudo mv "$TMP_DIR_CLONED_NIXOS"/* "$TMP_DIR_CLONED_NIXOS"/.* /etc/nixos
-    abort-on-failure sudo mkdir /etc/nixos/hosts/"$REPLY"
-    abort-on-failure sudo cp -r "$TMP_DIR_CURRENT_NIXOS"/* /etc/nixos/hosts/"$REPLY"
+    abort-on-failure sudo mkdir "/etc/nixos/hosts/$REPLY"
+    abort-on-failure sudo cp -r "$TMP_DIR_CURRENT_NIXOS"/* "/etc/nixos/hosts/$REPLY"
     abort-on-failure cd /etc/nixos; sudo git add .
 
     echo

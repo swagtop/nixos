@@ -199,8 +199,8 @@ in
               echo
 
               print-with-underline "Committing lockfile and pushing" --time
-              GIT_COMMIT_RESULT=(git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock)
-              if [[ $GIT_COMMIT_RESULT !=~ "nothing to commit" ]]; then
+              GIT_COMMIT_RESULT=$(git commit -m "$FLAKE_INPUTS_UPDATE_DATE Automatic lockfile update." flake.lock)
+              if [[ ! $GIT_COMMIT_RESULT =~ "nothing to commit" ]]; then
                 echo "Pushing to main."
                 git push
               else

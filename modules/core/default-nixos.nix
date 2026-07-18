@@ -27,40 +27,47 @@ let
 
   promptInit = ''
     # Shorthand for `nix shell nixpkgs#$1 nixpkgs#$2 ...`.
-    ns() {
+    function ns {
       if [[ $# == 0 ]]; then
         return
       fi
 
-      local -a nsCommand=(
+      declare -a nsCommand=(
         "NIXPKGS_ALLOW_UNFREE=1"
         "nix" "shell" "--impure"
       )
 
       if [[ ''${name:0:4} == "ns: " ]]; then
-        local nsName="''$name, "
+        nsName="''$name, "
       else
-        local nsName="ns: "
+        nsName="ns: "
       fi
 
+      function add-arg-to-commands {
+        if [[ ''${1:0:1} == "-" ]]; then
+          nsCommand+=("$1")
+        else
+          nsCommand+=("nixpkgs#$1")
+          nsName+="$1''${2:+, }"
+        fi
+      }
+
       for arg in "''${@:1:$#-1}"; do
-        nsCommand+=("nixpkgs#$arg")
-        nsName+="$arg, "
+        add-arg-to-commands "$arg" add-comma
       done
 
-      nsCommand+=("nixpkgs#''${@:$#}")
-      nsName+="''${@:$#}"
+      add-arg-to-commands "''${@:$#}"
       
       name="$nsName" eval "''${nsCommand[*]}"
     }
 
     # What is the real path of this binary?
-    realwhich() {
+    function realwhich {
       echo $(realpath $(which $1))
     }
 
     # Go to directory of binary in the store.
-    godrv() {
+    function godrv {
       cd $(dirname $(realwhich $1))
     }
   '';

@@ -50,7 +50,7 @@ writeShellApplication {
     echo
 
     step=0
-    function abort-on-failure () {
+    function abort-on-failure {
       ((step+=1))
       if ! eval "$*"; then
         echo

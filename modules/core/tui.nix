@@ -57,7 +57,7 @@ let
       *) PS1=${mkPS1 colors.green symbols."€"};;
     esac
 
-    function y() {
+    function y {
     	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     	command yazi "$@" --cwd-file="$tmp"
     	IFS= read -r -d "" cwd < "$tmp"

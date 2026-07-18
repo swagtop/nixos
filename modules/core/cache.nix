@@ -132,7 +132,7 @@ in
             text = ''
               printf "" > "${cfg.cacheLogFile}" # Clear log at beginning of service.
 
-              function print-with-underline () {
+              function print-with-underline {
                 case "$2" in
                   --time) string="$(date '+%H:%M') $1";;
                   --date-time) string="$(date '+%Y-%m-%d @ %H:%M') $1";;

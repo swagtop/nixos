@@ -52,7 +52,7 @@ writeShellApplication {
     step=0
     function abort-on-failure {
       ((step+=1))
-      if ! eval "$*"; then
+      if ! "$@"; then
         echo
         echo "Step $step: '$*' failed."
         echo "Aborting script, and restoring original '/etc/nixos'."

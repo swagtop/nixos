@@ -28,18 +28,26 @@ let
   promptInit = ''
     # Shorthand for `nix shell nixpkgs#$1 nixpkgs#$2 ...`.
     ns() {
-      ORIGINAL_NAME="$name"
-      local NIX_SHELL="NIXPKGS_ALLOW_UNFREE=1 nix shell --impure"
-      if [[ "$@" == "" ]]; then
+      if [[ $# == 0 ]]; then
         return
       fi
-      name='ns'
-      for arg in "$@"; do
-        NIX_SHELL+=" nixpkgs#$arg"
-        name+="-$arg"
+
+      declare -a nsCommand=(
+        "NIXPKGS_ALLOW_UNFREE=1"
+        "nix" "shell" "--impure"
+      )
+
+      local nsName="ns: "
+
+      for arg in "''${@:1:$#-1}"; do
+        nsCommand+=("nixpkgs#$arg")
+        nsName+="$arg, "
       done
-      export name=$name && (eval "$NIX_SHELL" || export name=$ORIGINAL_NAME)
-      export name=$ORIGINAL_NAME
+
+      nsCommand+=("nixpkgs#''${@:$#}")
+      nsName+="''${@:$#}"
+      
+      name="$nsName" eval "''${nsCommand[*]}"
     }
 
     # What is the real path of this binary?

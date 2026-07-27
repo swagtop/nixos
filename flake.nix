@@ -2,6 +2,10 @@
   description = "Home of my cool Nix configurations.";
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hytale-flake = {
       url = "github:swagtop/hytale-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,6 +16,7 @@
     inputs@{
       self,
       nixpkgs,
+      lanzaboote,
       hytale-flake,
       ...
     }:
@@ -60,7 +65,7 @@
               )
             );
 
-            hytaleModule =
+            hytale-module =
               { pkgs, ... }:
               let
                 hostSystem = pkgs.stdenv.hostPlatform.system;
@@ -70,6 +75,7 @@
                   hytale-flake.packages.${hostSystem}.default
                 ];
               };
+
           in
           mapHosts {
             gamebeast = {
@@ -81,7 +87,7 @@
 
                 ./modules/office.nix
 
-                hytaleModule
+                hytale-module
               ];
             };
             swagtop = {
@@ -99,6 +105,13 @@
               modules = [
                 ./modules/dev.nix
                 ./modules/gui.nix
+              ];
+            };
+            duster = {
+              modules = [
+                ./modules/dev.nix
+                ./modules/gui.nix
+                lanzaboote.nixosModules.lanzaboote
               ];
             };
           };

@@ -15,9 +15,6 @@
     ./hardware-configuration.nix
   ];
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.efi.canTouchEfiVariables = true;
-
   networking.hostName = "duster"; # Define your hostname.
 
   # Configure network connections interactively with nmcli or nmtui.
@@ -47,6 +44,9 @@
     };
   };
 
+  services.auto-cpufreq.enable = true;
+  services.power-profiles-daemon.enable = false;
+
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
 
@@ -65,6 +65,7 @@
     LC_TIME = "da_DK.UTF-8";
   };
 
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.lanzaboote = {
     enable = true;

@@ -85,7 +85,7 @@ in
           User = "root";
           WorkingDirectory = cfg.flakeDir;
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
-            git fetch
+            ${pkgs.git}/bin/git fetch
             GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
 
             if [[ $GIT_PULL_RESULT =~ "Current branch main is up to date." ]]; then

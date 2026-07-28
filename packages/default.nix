@@ -4,6 +4,10 @@
   ...
 }:
 let
+  inherit (pkgs.lib)
+    concatStringsSep
+    ;
+
   symlinkWrap =
     {
       package,
@@ -15,7 +19,7 @@ let
       paths = [ package ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
-        wrapProgram $out/bin/${execName} ${builtins.concatStringsSep " " args};
+        wrapProgram $out/bin/${execName} ${concatStringsSep " " args};
       '';
       passthru.meta.mainProgram = execName;
     };

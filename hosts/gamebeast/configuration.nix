@@ -20,7 +20,7 @@ in
 
   swag = {
     cache.enable = true;
-    linker.enable = true;
+    # linker.enable = true;
   };
 
   programs.obs-studio = {
@@ -156,6 +156,9 @@ in
     gnome.enable = true;
     # cosmic.enable = true;
   };
+
+  services.auto-cpufreq.enable = true;
+  services.power-profiles-daemon.enable = false;
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";

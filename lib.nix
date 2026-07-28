@@ -20,10 +20,10 @@ let
         filename:
         let
           nameLength = stringLength filename;
-          lastThreeChars = substring (nameLength - 4) nameLength filename;
+          lastFourChars = substring (nameLength - 4) nameLength filename;
           isNotDefault = filename != "default.nix";
         in
-        lastThreeChars == ".nix" && (if excludeDefault then isNotDefault else true);
+        lastFourChars == ".nix" && (if excludeDefault then isNotDefault else true);
 
     in
     pipe dir ([

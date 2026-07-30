@@ -90,21 +90,9 @@
                 hytale-module
               ];
             };
-            swagtop = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gui.nix
-              ];
-            };
             servtop = {
               modules = [
                 ./modules/dev.nix
-              ];
-            };
-            cooltop = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gui.nix
               ];
             };
             duster = {

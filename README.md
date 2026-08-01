@@ -11,7 +11,7 @@ much thought into this.
 ### Cache
 
 The coolest thing I've got going is my cache setup, which once a day updates the
-flake inputs, builds all hosts subscribed to the cache with
+flake inputs, and builds all hosts subscribed to the cache with
 `swag.cache.enable = true`.
 
 If all hosts are built successfully, the lockfile is commited and pushed, and

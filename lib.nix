@@ -26,12 +26,12 @@ let
         lastFourChars == ".nix" && (if excludeDefault then isNotDefault else true);
 
     in
-    pipe dir ([
+    pipe dir [
       readDir
       attrNames
       (filter (checkFile))
       (map (name: "${dir}/${name}"))
-    ]);
+    ];
 in
 {
   # Run 'gcc -march=native -Q --help=target | grep march' to get march.

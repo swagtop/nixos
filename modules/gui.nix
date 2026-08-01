@@ -174,6 +174,11 @@ in
     lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0"
       gstreamerPackages;
 
+  services.mullvad-vpn = {
+    enable = true;
+    gui.enable = true;
+  };
+
   programs.bash.shellAliases = shellAliases;
 
   programs.appimage = {

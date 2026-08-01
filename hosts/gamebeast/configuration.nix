@@ -6,11 +6,9 @@
   ...
 }:
 let
-  inherit (builtins)
-    attrValues
+  inherit (lib)
     mapAttrs
-    match
-    tryEval
+    optionals
     ;
 
   optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
@@ -19,15 +17,13 @@ in
   imports = [ ./hardware-configuration.nix ];
 
   swag = {
-    cache.enable = true;
+    cache.enable = false;
     # linker.enable = true;
   };
 
   programs.obs-studio = {
     enable = true;
-    package = pkgs.obs-studio.override {
-      cudaSupport = true;
-    };
+    package = pkgs.obs-studio.override { cudaSupport = true; };
     plugins = with pkgs; [
       obs-studio-plugins.obs-pipewire-audio-capture
       obs-studio-plugins.obs-vaapi
@@ -91,28 +87,30 @@ in
             # Build AMDGPU into the kernel, instead of loading as module.
             DRM = yes;
             DRM_KMS_HELPER = yes;
+            DRM_NOUVEAU = yes;
+            FB_NVIDIA = yes;
             DRM_TTM = yes;
-            DRM_AMDGPU = yes;
             FB = yes;
 
             # Disable graphics from other vendors.
             DRM_XE = no;
+            DRM_AMDGPU = no;
             DRM_RADEON = no;
-            DRM_NOUVEAU = no;
             DRM_ADP = no;
             DRM_MGAG200 = no;
             DRM_AST = no;
-            FB_NVIDIA = no;
 
             # Disable industrial IO drivers.
             IIO = no;
           };
       };
     in
-    # pkgs.linuxPackagesFor (optimizeForNative customKernel);
-    zfsKernelPackages;
+    if config.swag.cache.enable then
+      pkgs.linuxPackagesFor (optimizeForNative customKernel)
+    else
+      zfsKernelPackages;
 
-  nixpkgs.overlays = [
+  nixpkgs.overlays = optionals config.swag.cache.enable [
     # Building GNOME stuff with native optimizations.
     (
       final: prev:

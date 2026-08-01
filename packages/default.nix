@@ -134,8 +134,8 @@ in
         ]}";
       in
       {
-        nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
-        postInstall = old.postInstall + ''
+        nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkgs.makeWrapper ];
+        postInstall = old.postInstall or "" + ''
           wrapProgram $out/bin/discord --add-flags "${flags}"
           wrapProgram $out/bin/Discord --add-flags "${flags}"
         '';
@@ -144,8 +144,8 @@ in
   );
 
   steam = pkgs.steam.overrideAttrs (old: {
-    nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
-    buildCommand = old.buildCommand + ''
+    nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkgs.makeWrapper ];
+    buildCommand = old.buildCommand or "" + ''
       wrapProgram $out/bin/steam --add-flags "steam://unlockh264";
     '';
   });

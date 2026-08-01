@@ -1,10 +1,29 @@
 # Home of my cool Nix configurations
 
-This is where I keep all of my personal Nix configurations, including my patched
-editor, my own wrapped packages, and my NixOS configurations and modules.
+This is where I keep all of my important personal configurations, including my
+dotfiles, Nix packages, and NixOS configurations. These things are organized
+into their own subdirectories, to have some sort of structure, I haven't put too
+much thought into this.
 
-All of these things are located where you would expect them, based on the
-directory structure.
+
+## Features
+
+### Cache
+
+The coolest thing I've got going is my cache setup, which once a day updates the
+flake inputs, builds all hosts subscribed to the cache with
+`swag.cache.enable = true`.
+
+If all hosts are built successfully, the lockfile is commited and pushed, and
+users of the cache pull the lockfile and subsequently their pre-built systems
+automatically.
+
+With this setup I don't really have to worry about causing long rebuilds on
+overrides, as my cache builds everything for me, and distributes it out to all
+of my computers. My low-power laptop doesn't need to spend ages building my
+patched editor, and my high-power desktop doesn't need to spend ages building
+my Linux kernel with extra configuration.
+
 
 ## Installation
 

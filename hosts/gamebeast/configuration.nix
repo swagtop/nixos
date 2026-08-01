@@ -316,8 +316,6 @@ in
     };
   };
 
-  services.mullvad-vpn.enable = true;
-
   # Flatpak and flathub, and adw-gtk3 theme for flatpaks.
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {

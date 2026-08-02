@@ -52,7 +52,7 @@
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/C50E-75AA";
+    device = "/dev/disk/by-partuuid/f6044b79-97f8-4a40-832a-210fe3945fd4";
     fsType = "vfat";
     options = [
       "fmask=0022"
@@ -62,7 +62,8 @@
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/b2b6455a-03cb-4115-97a9-007253df7a3b";
+      device = "/dev/disk/by-partuuid/efb8d90a-28fc-4a38-ab93-00927ecce34b";
+      randomEncryption = true;
     }
   ];
 

@@ -101,6 +101,9 @@ in
         dates = "weekly";
         options = "--delete-older-than 14d";
       };
+      # Make the nix-daemon much nicer.
+      daemonCPUSchedPolicy = "idle";
+      daemonIOSchedClass = "idle";
     };
 
     systemd.services."fetch-nixpkgs-tarball-on-startup" = {

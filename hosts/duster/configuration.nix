@@ -44,6 +44,8 @@
     };
   };
 
+  services.mullvad-vpn.enable = true;
+
   services.auto-cpufreq.enable = true;
   services.power-profiles-daemon.enable = false;
 
@@ -73,6 +75,7 @@
   };
   environment.systemPackages = [
     pkgs.sbctl
+    pkgs.mullvad-vpn
   ];
 
   boot.zfs.forceImportRoot = false;

@@ -102,6 +102,7 @@
                 lanzaboote.nixosModules.lanzaboote
               ];
             };
+            builder = { };
           };
       };
     in

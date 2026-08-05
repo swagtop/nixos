@@ -30,7 +30,7 @@ in
 
       url = lib.mkOption {
         type = lib.types.str;
-        default = "https://cache.spirre.vip";
+        default = "https://cache.spirre.vip/";
       };
 
       cacheLogFile = lib.mkOption {
@@ -113,6 +113,9 @@ in
       services.harmonia.cache = {
         enable = true;
         signKeyPaths = [ cfg.secretKeyFile ];
+        settings = {
+          priority = 20;
+        };
       };
 
       systemd.services.host-nixos-cache-update =

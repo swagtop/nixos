@@ -43,9 +43,9 @@ in
         default = "/etc/nixos";
       };
 
-      # The publickey generated here is made like so:
+      # The publickey generated here was made like so:
       # 'mkdir -p /var/lib/secrets'
-      # 'nix-store --generate-binary-cache-key cache.yourdomain.tld-1 /var/lib/secrets/harmonia.secret /var/lib/secrets/harmonia.pub'
+      # 'nix-store --generate-binary-cache-key cache.spirre.vip-1 /var/lib/secrets/harmonia.secret /var/lib/secrets/harmonia.pub'
       # ... where the 'harmonia.pub' file contains the 'default' value below.
       publicKey = lib.mkOption {
         type = lib.types.str;
@@ -152,7 +152,8 @@ in
               echo
 
               print-with-underline "Pulling repository" --time
-              git pull --rebase || echo 'Failed git pull!'
+              git fetch
+              git rebase --autostash || echo 'Failed git pull!'
               echo
 
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 

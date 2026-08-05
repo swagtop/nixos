@@ -44,28 +44,26 @@ in
       };
 
       # The publickey generated here is made like so:
-      # 'nix-store --generate-binary-cache-key cache.spirre.vip /var/lib/nixos/cache-priv-key.pem public'.
-      # ... where the 'public' file contains the 'default' value below.
+      # 'mkdir -p /var/lib/secrets'
+      # 'nix-store --generate-binary-cache-key cache.yourdomain.tld-1 /var/lib/secrets/harmonia.secret /var/lib/secrets/harmonia.pub'
+      # ... where the 'harmonia.pub' file contains the 'default' value below.
       publicKey = lib.mkOption {
         type = lib.types.str;
-        default = "cache.spirre.vip:jnYuXaQxsp5/9SWHeeCzVYVmYs6xXgl5/5LXnDJ+WbU=";
+        default = "cache.spirre.vip-1:i4kVSThuBka1m8B5WAE/97qLDAydBE9RlKOh4zNmLRc=";
       };
 
       # The private key file here is generated together with the public key in
-      # the command above. Path can be anywhere, here it is placed in a
-      # directory with no read permission for anyone but the 'nix-serve' user.
-      # This is achieved like so:
-      # 'KEY_PATH=/var/lib/nixos/cache-priv-key.pem'
-      # 'chown "$KEY_PATH" nix-serve'
-      # 'chmod 400 "$KEY_PATH"'
+      # the command above.
       secretKeyFile = lib.mkOption {
         type = lib.types.externalPath;
-        default = "/var/lib/nixos/cache-priv-key.pem";
+        default = "/var/lib/secrets/harmonia.secret";
       };
     };
   };
 
   config = lib.mkMerge [
+    (lib.mkIf cfg.enable { environment.systemPackages = [ pkgs.git ]; })
+
     (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {
         substituters = lib.mkBefore [ cfg.url ];
@@ -111,9 +109,10 @@ in
     })
 
     (lib.mkIf (cfg.enable && cfg.mode == "host") {
-      services.nix-serve = {
-        inherit (cfg) secretKeyFile;
+      networking.firewall.allowedTCPPorts = [ 5000 ];
+      services.harmonia.cache = {
         enable = true;
+        signKeyPaths = [ cfg.secretKeyFile ];
       };
 
       systemd.services.host-nixos-cache-update =

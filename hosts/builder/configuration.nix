@@ -25,6 +25,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  swag.cache = {
+    enable = true;
+    mode = "host";
+  };
+
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
 
@@ -59,7 +64,6 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-    git
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -69,14 +73,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  # List services that you want to enable:
-
-  networking.firewall.allowedTCPPorts = [ 5000 ];
-  services.harmonia.cache = {
-    enable = true;
-    signKeyPaths = [ "/var/lib/secrets/harmonia.secret" ];
-  };
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;

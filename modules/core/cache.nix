@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  self,
   ...
 }:
 let
@@ -110,15 +111,17 @@ in
 
     (lib.mkIf (cfg.enable && cfg.mode == "host") {
       networking.firewall.allowedTCPPorts = [ 5000 ];
-      services.harmonia.cache = {
-        enable = true;
-        package = pkgs.harmonia.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches or [ ] ++ [ ../../patches/harmonia-swaglog.patch ];
-        });
-        signKeyPaths = [ cfg.secretKeyFile ];
-        settings = {
-          priority = 20;
+      services.harmonia = {
+        cache = {
+          enable = true;
+          signKeyPaths = [ cfg.secretKeyFile ];
+          settings = {
+            priority = 20;
+          };
         };
+        package = pkgs.harmonia.overrideAttrs (oldAttrs: {
+          patches = oldAttrs.patches or [ ] ++ [ "${self}/patches/harmonia-swaglog.patch" ];
+        });
       };
 
       systemd.services.host-nixos-cache-update =

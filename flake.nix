@@ -21,9 +21,13 @@
       ...
     }:
     let
-      inherit (builtins)
+      inherit (nixpkgs.lib)
+        attrNames
         foldl'
+        listToAttrs
         mapAttrs
+        readDir
+        removeSuffix
         ;
 
       swaglib = import ./lib.nix;
@@ -32,6 +36,19 @@
         importDirectory
         ;
 
+      patches = listToAttrs (
+        let
+          filenames = attrNames (readDir ./patches);
+        in
+        map (
+          name:
+          {
+            name = removeSuffix ".patch" name;
+            value = ./patches/${name};
+          }
+        ) filenames
+      );
+ 
       perSystem =
         system:
         let
@@ -41,7 +58,7 @@
           };
         in
         {
-          packages = import ./packages pkgs;
+          packages = import ./packages (pkgs // { inherit patches; });
           formatter = pkgs.nixfmt-tree;
         };
 
@@ -54,7 +71,7 @@
                 host
                 // {
                   specialArgs = host.specialArgs or { } // {
-                    inherit self swaglib inputs;
+                    inherit self swaglib inputs patches;
                   };
 
                   modules = host.modules or [ ] ++ [

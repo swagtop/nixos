@@ -2,7 +2,7 @@
   config,
   pkgs,
   lib,
-  self,
+  patches,
   ...
 }:
 let
@@ -120,7 +120,7 @@ in
           };
         };
         package = pkgs.harmonia.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches or [ ] ++ [ "${self}/patches/harmonia-swaglog.patch" ];
+          patches = oldAttrs.patches or [ ] ++ [ patches.harmonia-serve-swag-cache-log ];
         });
       };
 

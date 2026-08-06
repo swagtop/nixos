@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  patches,
   ...
 }:
 let
@@ -41,7 +42,7 @@ let
     symlinkWrap {
       package = pkgs.helix.override (old: {
         helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches or [ ] ++ [ ../patches/helix-upppercase-commands.patch ];
+          patches = oldAttrs.patches or [ ] ++ [ patches.helix-upppercase-commands ];
         });
       });
       execName = "hx";

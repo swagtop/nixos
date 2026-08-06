@@ -112,6 +112,9 @@ in
       networking.firewall.allowedTCPPorts = [ 5000 ];
       services.harmonia.cache = {
         enable = true;
+        package = pkgs.harmonia.overrideAttrs (oldAttrs: {
+          patches = oldAttrs.patches or [ ] ++ [ ../../patches/harmonia-swaglog.patch ];
+        });
         signKeyPaths = [ cfg.secretKeyFile ];
         settings = {
           priority = 20;

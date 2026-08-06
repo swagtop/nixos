@@ -176,14 +176,14 @@ in
               )
 
               declare -a buildSystems=()
-              declare -a noBuildSystems=()
+              declare -a ignoreSystems=()
 
               for system in $allSystems; do
                 cacheEnabled=$(nix eval .#nixosConfigurations."$system".config.swag.cache.enable)
                 if [[ $cacheEnabled == "true" ]]; then
                   buildSystems+=("$system")
                 else
-                  noBuildSystems+=("$system")
+                  ignoreSystems+=("$system")
                 fi
               done
 
@@ -193,7 +193,7 @@ in
 
               echo
               print-with-underline "Ignoring the following hosts"
-              printf "%s\n" "''${noBuildSystems[@]}"
+              printf "%s\n" "''${ignoreSystems[@]}"
               echo
 
               for system in "''${buildSystems[@]}"; do

@@ -40,15 +40,12 @@
         let
           filenames = attrNames (readDir ./patches);
         in
-        map (
-          name:
-          {
-            name = removeSuffix ".patch" name;
-            value = ./patches/${name};
-          }
-        ) filenames
+        map (name: {
+          name = removeSuffix ".patch" name;
+          value = ./patches/${name};
+        }) filenames
       );
- 
+
       perSystem =
         system:
         let
@@ -71,7 +68,12 @@
                 host
                 // {
                   specialArgs = host.specialArgs or { } // {
-                    inherit self swaglib inputs patches;
+                    inherit
+                      inputs
+                      patches
+                      self
+                      swaglib
+                      ;
                   };
 
                   modules = host.modules or [ ] ++ [

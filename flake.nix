@@ -1,5 +1,6 @@
 {
-  description = "Home of my cool Nix configurations.";
+  description = "Home of my configuration files.";
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     lanzaboote = {

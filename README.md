@@ -1,4 +1,4 @@
-# Home of my cool Nix configurations
+# Home of my configuration files
 
 This is where I keep all of my important personal configurations, including my
 dotfiles, Nix packages, and NixOS configurations. These things are organized

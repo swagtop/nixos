@@ -22,11 +22,14 @@
       ...
     }:
     let
-      inherit (nixpkgs.lib)
-        attrNames
+      inherit (builtins)
         foldl'
-        listToAttrs
+        path
+        ;
+
+      inherit (nixpkgs.lib)
         mapAttrs
+        mapAttrs'
         readDir
         removeSuffix
         ;
@@ -37,15 +40,13 @@
         importDirectory
         ;
 
-      patches = listToAttrs (
-        let
-          filenames = attrNames (readDir ./patches);
-        in
-        map (name: {
-          name = removeSuffix ".patch" name;
-          value = ./patches/${name};
-        }) filenames
-      );
+      patches = mapAttrs' (name: value: {
+        name = removeSuffix ".patch" name;
+        value = path {
+          inherit name;
+          path = ./patches/${name};
+        };
+      }) (readDir ./patches);
 
       perSystem =
         system:

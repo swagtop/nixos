@@ -62,6 +62,3 @@ index 22ee8e8..e93f517 100644
              .route("/log/{drv}", web::get().to(buildlog::get))
              .route("/version", web::get().to(version::get))
              .route("/health", web::get().to(health::get))
-diff --git a/harmonia-cache/src/swaglog.rs b/harmonia-cache/src/swaglog.rs
-deleted file mode 100644
-index e69de29..0000000

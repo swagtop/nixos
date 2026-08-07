@@ -18,9 +18,7 @@ If all hosts are built successfully, the lockfile is commited and pushed,
 and users of the cache automatically pull the lockfile and subsequently their
 pre-built systems, through the `harmonia` cache.
 
-With this setup I don't really have to worry about causing long rebuilds on
-overrides, as my cache builds everything for me, and distributes it out to all
-of my computers. I don't worry about overriding anything anymore, as the penalty
+I don't worry about overriding anything anymore, as the penalty (long rebuilds)
 for this is paid once, by my build server, overnight, while I'm sleeping.
 
 

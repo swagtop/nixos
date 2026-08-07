@@ -57,7 +57,7 @@
           };
         in
         {
-          packages = import ./packages (pkgs // { inherit patches; });
+          packages = import ./packages (pkgs // { inherit patches swaglib; });
           formatter = pkgs.nixfmt-tree;
         };
 
@@ -85,18 +85,6 @@
                 }
               )
             );
-
-            hytale-module =
-              { pkgs, ... }:
-              let
-                hostSystem = pkgs.stdenv.hostPlatform.system;
-              in
-              {
-                environment.systemPackages = [
-                  hytale-flake.packages.${hostSystem}.default
-                ];
-              };
-
           in
           mapHosts {
             gamebeast = {
@@ -108,7 +96,7 @@
 
                 ./modules/office.nix
 
-                hytale-module
+                hytale-flake.nixosModules.hytale-launcher
               ];
             };
             servtop = {

@@ -105,4 +105,28 @@ in
     {
       imports = getNixFiles { inherit dir excludeDefault; };
     };
+
+  safeOverride =
+    let
+      inherit (builtins)
+        isAttrs
+        isList
+        isString
+        mapAttrs
+        ;
+    in
+    overrides: old:
+    mapAttrs (
+      name: value:
+      (
+        if isAttrs value then
+          old.${name} or { } // value
+        else if isList value then
+          old.${name} or [ ] ++ value
+        else if isString value then
+          old.${name} or "" + value
+        else
+          value
+      )
+    ) overrides;
 }

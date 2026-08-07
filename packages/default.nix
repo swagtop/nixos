@@ -2,11 +2,16 @@
   pkgs,
   lib,
   patches,
+  swaglib,
   ...
 }:
 let
   inherit (pkgs.lib)
     concatStringsSep
+    ;
+
+  inherit (swaglib)
+    safeOverride
     ;
 
   symlinkWrap =
@@ -41,8 +46,8 @@ let
     in
     symlinkWrap {
       package = pkgs.helix.override (old: {
-        helix-unwrapped = old.helix-unwrapped.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches or [ ] ++ [ patches.helix-upppercase-commands ];
+        helix-unwrapped = old.helix-unwrapped.overrideAttrs (safeOverride {
+          patches = [ patches.helix-upppercase-commands ];
         });
       });
       execName = "hx";
@@ -121,8 +126,7 @@ in
 
   # Gaming stuff.
   discord = (
-    pkgs.discord.overrideAttrs (
-      old:
+    pkgs.discord.overrideAttrs (safeOverride (
       let
         flags = "${lib.concatStringsSep " " [
           "--ignore-gpu-blocklist"
@@ -135,18 +139,18 @@ in
         ]}";
       in
       {
-        nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkgs.makeWrapper ];
-        postInstall = old.postInstall or "" + ''
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postInstall = ''
           wrapProgram $out/bin/discord --add-flags "${flags}"
           wrapProgram $out/bin/Discord --add-flags "${flags}"
         '';
       }
-    )
+    ))
   );
 
-  steam = pkgs.steam.overrideAttrs (old: {
-    nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkgs.makeWrapper ];
-    buildCommand = old.buildCommand or "" + ''
+  steam = pkgs.steam.overrideAttrs (safeOverride {
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    buildCommand = ''
       wrapProgram $out/bin/steam --add-flags "steam://unlockh264";
     '';
   });

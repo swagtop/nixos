@@ -117,7 +117,7 @@ in
           signKeyPaths = [ cfg.secretKeyFile ];
           settings = {
             priority = 20;
-            extra-logfile = cfg.cacheLogFile;
+            extra_logfile_path = cfg.cacheLogFile;
           };
         };
         package = pkgs.harmonia.overrideAttrs (oldAttrs: {

@@ -1,27 +1,24 @@
 diff --git a/harmonia-cache/src/config.rs b/harmonia-cache/src/config.rs
-index 255040e..954a37f 100644
+index 255040e..0fc263c 100644
 --- a/harmonia-cache/src/config.rs
 +++ b/harmonia-cache/src/config.rs
-@@ -137,6 +137,9 @@ pub(crate) struct Config {
-     pub(crate) secret_keys: Vec<SecretKey>,
-     #[serde(skip)]
-     pub(crate) store: Store,
-+
+@@ -128,6 +128,8 @@ pub(crate) struct Config {
+     pub(crate) tls_cert_path: Option<String>,
+     #[serde(default)]
+     pub(crate) tls_key_path: Option<String>,
 +    #[serde(default)]
-+    pub(crate) logfile_path: Option<String>,
- }
++    pub(crate) extra_logfile_path: Option<String>,
  
- impl Config {
+     /// Path to the nix SQLite database. Derived from the store layout when unset.
+     #[serde(default)]
 diff --git a/harmonia-cache/src/extra_log.rs b/harmonia-cache/src/extra_log.rs
 new file mode 100644
-index 0000000..a35789f
+index 0000000..0d9b914
 --- /dev/null
 +++ b/harmonia-cache/src/extra_log.rs
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,14 @@
 +use std::error::Error;
-+use std::fs::File;
-+use std::io::prelude::*;
-+
++use std::fs::read_to_string;
 +use actix_web::{HttpResponse, web};
 +
 +use crate::config;
@@ -29,14 +26,8 @@ index 0000000..a35789f
 +pub(crate) async fn get(
 +    config: web::Data<config::Config>,
 +) -> Result<HttpResponse, Box<dyn Error>> {
-+    match &config.logfile_path {
-+        Some(path) => {
-+            let mut file = File::open(path)?;
-+            let mut contents = String::new();
-+            file.read_to_string(&mut contents)?;
-+
-+            Ok(HttpResponse::Ok().body(contents))
-+        },
++    match &config.extra_logfile_path {
++        Some(path) => Ok(HttpResponse::Ok().body(read_to_string(path)?)),
 +        None => Err("No extra logfile defined in configuration.".into()),
 +    }
 +}

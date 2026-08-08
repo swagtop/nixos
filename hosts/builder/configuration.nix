@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -29,6 +29,9 @@
     enable = true;
     mode = "host";
   };
+
+  # Set to garbage collect more often, as it has much more in its store.
+  nix.gc.options = lib.mkForce "--delete-older-than 7d";
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";

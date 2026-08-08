@@ -104,6 +104,7 @@ in
       # Make the nix-daemon much nicer.
       daemonCPUSchedPolicy = "idle";
       daemonIOSchedClass = "idle";
+      daemonIOSchedPriority = 7;
     };
 
     systemd.services."fetch-nixpkgs-tarball-on-startup" = {

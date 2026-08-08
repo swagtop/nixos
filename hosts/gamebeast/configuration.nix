@@ -266,7 +266,7 @@ in
     };
   };
 
-  boot.zswap.enable = true;
+  zramSwap.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -346,30 +346,21 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.04"; # Did you read the comment?
 
-  # Needed for findings graphics card on boot.
-  boot.initrd.kernelModules = [ "amdgpu" ];
-
-  # A bunch of cool kernel parameters to make AMD R290 cooperate.
   boot.blacklistedKernelModules = [ "radeon" ];
+
+  # Sleep fixes.
   boot.kernelParams = [
-    "radeon.cik_support=0"
-    "radeon.si_support=0"
-
-    "amdgpu.cik_support=1"
-    "amdgpu.si_support=1"
-    "amdgpu.dc=1"
-
-    "intel_iommu=on"
-    "amd_iommu=on"
-    "iommu=pt"
-    "vfio-pci.ids=1002:aac8"
-
-    # Sleep fixes.
-    "nohibernate"
-    # "mem_sleep_default=deep"
-    "acpi_sleep=nonvs"
-    "pci=noaer"
+    "mem_sleep_default=deep"
+    "pcie_port_pm=off"
   ];
+
+  # WiFi card fixes.
+  boot.extraModprobeConfig = ''
+    options iwlwifi power_save=0
+    options iwlmvm power_scheme=1
+    options iwlwifi d0i3_disable=1
+    options iwlwifi uapsd_disable=1
+  '';
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

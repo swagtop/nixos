@@ -75,6 +75,7 @@
   # };
 
   # List services that you want to enable:
+  zramSwap.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -118,7 +119,96 @@
         forceSSL = true;
         enableACME = true;
       };
+      "jf.spirre.vip" = {
+        locations = {
+          "/" = {
+            proxyPass = "http://127.0.0.1:8096";
+            proxyWebsockets = true;
+          };
+        };
+        forceSSL = true;
+        enableACME = true;
+      };
     };
+  };
+
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "files";
+        "netbios name" = "files";
+        "security" = "user";
+        "hosts allow" = "10.10.10. 127.0.0.1 localhost";
+        "hosts deny" = "0.0.0.0/0";
+        "guest account" = "nobody";
+        "map to guest" = "Bad User";
+      };
+      "delemappppe" = {
+        "path" = "/home/thedb/delemappe";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-music" = {
+        "path" = "/srv/data/media/music";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-movies" = {
+        "path" = "/srv/data/media/movies";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-shows" = {
+        "path" = "/srv/data/media/shows";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+      "jellyfin-books" = {
+        "path" = "/srv/data/media/books";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0666";
+        "directory mask" = "0777";
+        "force user" = "thedb";
+        "force group" = "nogroup";
+      };
+    };
+  };
+
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.jellyfin = {
+    dataDir = "/srv/data/media";
+    user = "thedb";
+    enable = true;
+    # openFirewall = true;
   };
 
   # This value determines the NixOS release from which the default

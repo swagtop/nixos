@@ -2,8 +2,15 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) mapAttrs;
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -100,36 +107,41 @@
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
 
-    virtualHosts = {
-      "spirre.vip" = {
-        locations."/f/".alias = "/srv/data/files/";
-        forceSSL = true;
-        enableACME = true;
-      };
-      "cache.spirre.vip" = {
-        locations."/".extraConfig = ''
-          proxy_pass http://10.10.100.101:5000;
-          proxy_set_header Host $host;
-          proxy_redirect http:// https://;
-          proxy_http_version 1.1;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection $connection_upgrade;
-        '';
-        forceSSL = true;
-        enableACME = true;
-      };
-      "jf.spirre.vip" = {
-        locations = {
-          "/" = {
-            proxyPass = "http://127.0.0.1:8096";
-            proxyWebsockets = true;
+    virtualHosts =
+      mapAttrs
+        (
+          name: value:
+          value
+          // {
+            forceSSL = true;
+            enableACME = true;
+          }
+        )
+        {
+          "spirre.vip".locations."/".return = "301 https://www.spirre.vip$request_uri";
+          "www.spirre.vip" = {
+            locations."/f/".alias = "/srv/data/files/";
+          };
+          "cache.spirre.vip" = {
+            locations."/".extraConfig = ''
+              proxy_pass http://10.10.100.101:5000;
+              proxy_set_header Host $host;
+              proxy_redirect http:// https://;
+              proxy_http_version 1.1;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $connection_upgrade;
+            '';
+          };
+          "jf.spirre.vip" = {
+            locations = {
+              "/" = {
+                proxyPass = "http://127.0.0.1:8096";
+                proxyWebsockets = true;
+              };
+            };
           };
         };
-        forceSSL = true;
-        enableACME = true;
-      };
-    };
   };
 
   services.samba = {

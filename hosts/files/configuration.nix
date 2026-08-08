@@ -102,7 +102,7 @@
 
     virtualHosts = {
       "spirre.vip" = {
-        locations."/f/".alias = "/srv/f/";
+        locations."/f/".alias = "/srv/data/files/";
         forceSSL = true;
         enableACME = true;
       };
@@ -206,9 +206,7 @@
 
   services.jellyfin = {
     dataDir = "/srv/data/media";
-    user = "thedb";
     enable = true;
-    # openFirewall = true;
   };
 
   # This value determines the NixOS release from which the default

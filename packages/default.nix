@@ -126,26 +126,28 @@ in
 
   # Gaming stuff.
   discord = (
-    pkgs.discord.overrideAttrs (safeOverride (
-      let
-        flags = "${lib.concatStringsSep " " [
-          "--ignore-gpu-blocklist"
-          "--enable-features=UseOzonePlatform"
-          "--ozone-platform=wayland"
-          "--enable-features=VaapiVideoDecoder"
-          "--use-gl=desktop"
-          "--enable-gpu-rasterization"
-          "--enable-zero-copy"
-        ]}";
-      in
-      {
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postInstall = ''
-          wrapProgram $out/bin/discord --add-flags "${flags}"
-          wrapProgram $out/bin/Discord --add-flags "${flags}"
-        '';
-      }
-    ))
+    pkgs.discord.overrideAttrs (
+      safeOverride (
+        let
+          flags = "${lib.concatStringsSep " " [
+            "--ignore-gpu-blocklist"
+            "--enable-features=UseOzonePlatform"
+            "--ozone-platform=wayland"
+            "--enable-features=VaapiVideoDecoder"
+            "--use-gl=desktop"
+            "--enable-gpu-rasterization"
+            "--enable-zero-copy"
+          ]}";
+        in
+        {
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postInstall = ''
+            wrapProgram $out/bin/discord --add-flags "${flags}"
+            wrapProgram $out/bin/Discord --add-flags "${flags}"
+          '';
+        }
+      )
+    )
   );
 
   steam = pkgs.steam.overrideAttrs (safeOverride {

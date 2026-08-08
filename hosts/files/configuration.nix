@@ -163,7 +163,7 @@
         "guest ok" = "yes";
         "create mask" = "0666";
         "directory mask" = "0777";
-        "force user" = "thedb";
+        "force user" = "jellyfin";
         "force group" = "nogroup";
       };
       "jellyfin-movies" = {
@@ -173,7 +173,7 @@
         "guest ok" = "yes";
         "create mask" = "0666";
         "directory mask" = "0777";
-        "force user" = "thedb";
+        "force user" = "jellyfin";
         "force group" = "nogroup";
       };
       "jellyfin-shows" = {
@@ -183,7 +183,7 @@
         "guest ok" = "yes";
         "create mask" = "0666";
         "directory mask" = "0777";
-        "force user" = "thedb";
+        "force user" = "jellyfin";
         "force group" = "nogroup";
       };
       "jellyfin-books" = {
@@ -193,7 +193,7 @@
         "guest ok" = "yes";
         "create mask" = "0666";
         "directory mask" = "0777";
-        "force user" = "thedb";
+        "force user" = "jellyfin";
         "force group" = "nogroup";
       };
     };

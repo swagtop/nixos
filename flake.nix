@@ -93,15 +93,8 @@
                 ./modules/gaming.nix
                 ./modules/gui.nix
                 ./modules/music.nix
-
                 ./modules/office.nix
-
                 hytale-flake.nixosModules.hytale-launcher
-              ];
-            };
-            servtop = {
-              modules = [
-                ./modules/dev.nix
               ];
             };
             duster = {

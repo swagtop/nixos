@@ -24,12 +24,8 @@ in
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "files"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  networking.hostName = "files";
+  networking.wireless.enable = false;
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -66,34 +62,22 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
+  environment.systemPackages = with pkgs; [ ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
   zramSwap.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [
+      80
+      443
+    ];
+    # allowedUDPPorts = [ ... ];
+  };
 
   security.acme = {
     acceptTerms = true;
@@ -163,47 +147,28 @@ in
         "force user" = "thedb";
         "force group" = "nogroup";
       };
-      "jellyfin-music" = {
-        "path" = "/srv/data/media/music";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "yes";
-        "create mask" = "0666";
-        "directory mask" = "0777";
-        "force user" = "jellyfin";
-        "force group" = "nogroup";
-      };
-      "jellyfin-movies" = {
-        "path" = "/srv/data/media/movies";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "yes";
-        "create mask" = "0666";
-        "directory mask" = "0777";
-        "force user" = "jellyfin";
-        "force group" = "nogroup";
-      };
-      "jellyfin-shows" = {
-        "path" = "/srv/data/media/shows";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "yes";
-        "create mask" = "0666";
-        "directory mask" = "0777";
-        "force user" = "jellyfin";
-        "force group" = "nogroup";
-      };
-      "jellyfin-books" = {
-        "path" = "/srv/data/media/books";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "yes";
-        "create mask" = "0666";
-        "directory mask" = "0777";
-        "force user" = "jellyfin";
-        "force group" = "nogroup";
-      };
-    };
+    }
+    //
+      mapAttrs
+        (
+          name: value:
+          value
+          // {
+            "browseable" = "yes";
+            "read only" = "no";
+            "guest ok" = "yes";
+            "create mask" = "0666";
+            "directory mask" = "0777";
+            "force user" = "jellyfin";
+            "force group" = "nogroup";
+          }
+        )
+        {
+          music.path = "/srv/data/media/music";
+          movies.path = "/srv/data/media/movies";
+          shows.path = "/srv/data/media/shows";
+          books.path = "/srv/data/media/books";
+        };
   };
 
   services.samba-wsdd = {
@@ -212,8 +177,8 @@ in
   };
 
   services.jellyfin = {
-    dataDir = "/srv/data/media";
     enable = true;
+    dataDir = "/srv/data/media";
   };
 
   # This value determines the NixOS release from which the default

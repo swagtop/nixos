@@ -119,27 +119,22 @@ in
         )
         {
           "spirre.vip".locations."/".return = "301 https://www.spirre.vip$request_uri";
-          "www.spirre.vip" = {
-            locations."/f/".alias = "/srv/data/files/";
-          };
-          "cache.spirre.vip" = {
-            locations."/".extraConfig = ''
-              proxy_pass http://10.10.100.101:5000;
+          "www.spirre.vip".locations."/f/".alias = "/srv/data/files/";
+
+          "cache.spirre.vip".locations."/" = {
+            proxyPass = "http://builder:5000";
+            extraConfig = ''
               proxy_set_header Host $host;
-              proxy_redirect http:// https://;
-              proxy_http_version 1.1;
+              proxy_set_header http_version 1.1;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
               proxy_set_header Upgrade $http_upgrade;
               proxy_set_header Connection $connection_upgrade;
             '';
           };
-          "jf.spirre.vip" = {
-            locations = {
-              "/" = {
-                proxyPass = "http://127.0.0.1:8096";
-                proxyWebsockets = true;
-              };
-            };
+
+          "jf.spirre.vip".locations."/" = {
+            proxyPass = "http://localhost:8096";
+            proxyWebsockets = true;
           };
         };
   };

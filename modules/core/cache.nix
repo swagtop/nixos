@@ -63,7 +63,7 @@ in
   };
 
   config = lib.mkMerge [
-    (lib.mkIf cfg.enable { environment.systemPackages = [ pkgs.git ]; })
+    (lib.mkIf cfg.enable { environment.systemPackages = [ pkgs.git pkgs.gh ]; })
 
     (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {

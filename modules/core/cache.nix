@@ -191,11 +191,13 @@ in
               echo
               print-with-underline "Building the following hosts"
               printf "%s\n" "''${buildSystems[@]}"
+              echo
 
-              echo
-              print-with-underline "Ignoring the following hosts"
-              printf "%s\n" "''${ignoreSystems[@]}"
-              echo
+              if [[ ''${#ignoreSystems[@]} != 0 ]]; then
+                print-with-underline "Ignoring the following hosts"
+                printf "%s\n" "''${ignoreSystems[@]}"
+                echo
+              fi
 
               for system in "''${buildSystems[@]}"; do
                 # Skip building system if it is not using the cache.

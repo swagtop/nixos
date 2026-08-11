@@ -25,7 +25,7 @@ in
   boot.loader.grub.useOSProber = true;
 
   networking.hostName = "files";
-  networking.wireless.enable = false;
+  networking.wireless.enable = lib.mkForce false;
 
   # Enable networking
   networking.networkmanager.enable = true;

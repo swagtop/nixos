@@ -24,6 +24,7 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.wireless.enable = lib.mkForce false;
 
   swag.cache = {
     enable = true;

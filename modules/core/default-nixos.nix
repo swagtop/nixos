@@ -32,33 +32,37 @@ let
         return
       fi
 
-      declare -a nsCommand=(
-        "NIXPKGS_ALLOW_UNFREE=1"
-        "nix" "shell" "--impure"
-      )
+      declare -a nsCommand=()
 
       if [[ ''${name:0:4} == "ns: " ]]; then
         nsName="''$name, "
       else
+        first=1
         nsName="ns: "
       fi
 
       function add-arg-to-commands {
+        if [[ "$name" =~ " "''${1}(,|$) ]]; then
+          return
+        fi
+
         if [[ ''${1:0:1} == "-" ]]; then
           nsCommand+=("$1")
         else
           nsCommand+=("nixpkgs#$1")
-          nsName+="$([[ -z $2 ]] && printf ', ')$1"
+          nsName+="$([[ ! first ]] && printf ', ')$1"
         fi
       }
 
-      add-arg-to-commands "''${@:1}" no-before-comma
-
-      for arg in "''${@:2:$#}"; do
+      for arg in "''${@:1:$#}"; do
         add-arg-to-commands "$arg"
       done
       
-      name="$nsName" eval "''${nsCommand[*]}"
+      if [[ ''${#nsCommand[@]} == 0 ]] then
+        return
+      fi
+
+      name="$nsName" NIXPKGS_ALLOW_UNFREE=1 nix shell --impure ''${nsCommand[@]}
     }
 
     # What is the real path of this binary?

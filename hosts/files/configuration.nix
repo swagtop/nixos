@@ -179,6 +179,15 @@ in
   services.jellyfin = {
     enable = true;
     dataDir = "/srv/data/media";
+    hardwareAcceleration = {
+      enable = true;
+      type = "qsv";
+      device = "/dev/dri/renderD128";
+    };
+    transcoding = {
+      enableHardwareEncoding = true;
+      enableIntelLowPowerEncoding = true;
+    };
   };
 
   # This value determines the NixOS release from which the default

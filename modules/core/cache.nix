@@ -163,23 +163,33 @@ in
 
               print-with-underline "Pulling repository" --time
               git fetch
-              git rebase --autostash || echo 'Failed git pull!'
+              git rebase --autostash || echo 'Failed git rebase!'
               echo
 
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 
               print-with-underline "Updating flake inputs" --time
-              nix flake update --flake .
+              nix flake update --flake . 2>&1
               echo
 
-              allSystems=$(
-                nix eval --raw .#nixosConfigurations --apply \
-                  'i: builtins.concatStringsSep "\n" (builtins.attrNames i) + "\n"'
+              declare -a allSystems=$()
+
+              local systemCount=$(
+                nix eval .#nixosConfigurations \
+                  --apply 'i: builtins.length (builtins.attrNames i)'
               )
+
+              # Doing all of this to allow for whitespace in hostnames.
+              for i in $(eval echo {0..$systemCount}); do
+                allSystems+=$(
+                  nix eval --raw .#nixosConfigurations --apply \
+                    "i: builtins.elemAt i $i"
+                )
+              done
 
               declare -a buildSystems=()
               declare -a ignoreSystems=()
 
-              for system in $allSystems; do
+              for system in ''${allSystems[@]}; do
                 cacheEnabled=$(nix eval .#nixosConfigurations."$system".config.swag.cache.enable)
                 if [[ $cacheEnabled == "true" ]]; then
                   buildSystems+=("$system")

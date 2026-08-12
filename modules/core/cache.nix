@@ -79,6 +79,8 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
+        path = [ pkgs.gh ];
+
         serviceConfig = niceService // {
           Type = "oneshot";
           User = "root";

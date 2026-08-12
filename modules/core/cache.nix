@@ -79,8 +79,6 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
-        path = [ pkgs.gh ];
-
         serviceConfig = niceService // {
           Type = "oneshot";
           User = "root";
@@ -229,6 +227,12 @@ in
         {
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
+
+          path = [ pkgs.gh ];
+
+          environment = {
+            NO_COLOR = "1";
+          };
 
           restartIfChanged = false;
 

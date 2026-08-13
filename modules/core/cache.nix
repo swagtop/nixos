@@ -79,22 +79,25 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
+        path = [ pkgs.git pkgs.nix pkgs.nixos-rebuild ];
+
         serviceConfig = niceService // {
           Type = "oneshot";
           User = "root";
           WorkingDirectory = cfg.flakeDir;
+
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
-            ${pkgs.git}/bin/git fetch
-            GIT_PULL_RESULT=$(${pkgs.git}/bin/git rebase --autostash)
+            git fetch
+            GIT_PULL_RESULT=$(git rebase --autostash)
 
             if [[ $GIT_PULL_RESULT =~ "Current branch main is up to date." ]]; then
               echo "No rebuild required."
             else
               # Rebuild with new inputs.
-              ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake ${cfg.flakeDir}
+              nixos-rebuild switch --flake ${cfg.flakeDir}
 
               # Fetch new nixpkgs tarball from registry.
-              ${pkgs.nix}/bin/nix run nixpkgs#hello
+              nix run nixpkgs#hello
             fi
           '';
         };
@@ -149,7 +152,8 @@ in
                 esac
 
                 echo "$string"
-                seq ''${#string} | awk '{ printf "=" }'
+                # shellcheck disable=SC2046
+                printf '%0.s=' $(eval echo "{1..''${#string}}")
                 echo
               }
 

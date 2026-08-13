@@ -300,6 +300,17 @@ in
     spiceUSBRedirection.enable = true;
   };
 
+  programs.ssh = {
+    extraConfig = ''
+      Host builder
+        HostName builder
+        ProxyJump hypervisor
+
+      Host files
+        HostName hypervisor
+    '';
+  };
+
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
   services.dbus.enable = true;

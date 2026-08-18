@@ -8,7 +8,7 @@ too much thought into.
 
 ## Features
 
-### Cache
+### Nix Cache
 
 The coolest thing I've got going is my cache setup, which once a day updates the
 flake inputs, and builds all hosts subscribed to the cache with

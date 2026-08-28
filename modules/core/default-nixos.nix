@@ -11,13 +11,13 @@ let
 
   shellAliases = {
     # Update.
-    ud = "sudo /usr/bin/env sh -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
+    ud = "sudo $SHELL -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
 
     # Rebuild.
     rb = "sudo nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "/usr/bin/env sh -c 'cd /etc/nixos; sudo -E su'";
+    ef = "$SHELL -c 'cd /etc/nixos; sudo --preserve-env --shell'";
 
     # Nix commands.
     nd = "nix develop";
@@ -42,12 +42,18 @@ let
       fi
 
       function add-arg-to-commands {
+        # Check if package is already in use.
         if [[ "$name" =~ " "''${1}(,|$) ]]; then
           return
         fi
 
+        # Don't append arg name to 'nixpkgs#', if it a flag.
         if [[ ''${1:0:1} == "-" ]]; then
           nsCommand+=("$1")
+        # Don't append arg name to 'nixpkgs#', if it has a hashtag.
+        elif [[ "$1" =~ "#" ]]; then
+          nsCommand+=("$1")
+          nsName+="$([[ ! first ]] && printf ', ')$1"
         else
           nsCommand+=("nixpkgs#$1")
           nsName+="$([[ ! first ]] && printf ', ')$1"
@@ -90,6 +96,7 @@ in
     # NixOS store optimization and garbage collection.
     nix = {
       settings = {
+        trusted-users = [ "thedb" ];
         auto-optimise-store = true;
         experimental-features = [
           "nix-command"

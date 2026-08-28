@@ -88,11 +88,15 @@ in
 
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
             git fetch
-            GIT_PULL_RESULT=$(git rebase --autostash)
+            GIT_STATUS_RESULT=$(git status)
 
-            if [[ $GIT_PULL_RESULT =~ "Current branch main is up to date." ]]; then
-              echo "No rebuild required."
+            if [[ $GIT_STATUS_RESULT =~ "Your branch is up to date." ]] || \
+               [[ $GIT_STATUS_RESULT =~ "Your branch is ahead of" ]]
+            then
+              echo "System is up to date."
             else
+              git rebase --autostash
+
               # Rebuild with new inputs.
               nixos-rebuild switch --flake ${cfg.flakeDir}
 
@@ -106,7 +110,8 @@ in
       systemd.timers.user-nixos-cache-update = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnCalendar = "11:00";
+          OnUnitActiveSec = "1h";
+          RandomizedDelaySec = "180";
           Persistent = true;
         };
       };
@@ -266,7 +271,7 @@ in
         wantedBy = [ "timers.target" ];
         timerConfig = {
           RandomizedOffsetSec = "30m";
-          OnCalendar = "12:00";
+          OnCalendar = "02:00";
         };
       };
     })

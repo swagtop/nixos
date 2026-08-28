@@ -87,21 +87,22 @@ in
           WorkingDirectory = cfg.flakeDir;
 
           ExecStart = pkgs.writeShellScript "pull-system-flake" ''
-            git fetch
+            git fetch 2>&1 > /dev/null
             GIT_STATUS_RESULT=$(git status)
 
-            if [[ $GIT_STATUS_RESULT =~ "Your branch is up to date." ]] || \
-               [[ $GIT_STATUS_RESULT =~ "Your branch is ahead of" ]]
+            if [[ "$GIT_STATUS_RESULT" =~ "Your branch is up to date" ]] || \
+               [[ "$GIT_STATUS_RESULT" =~ "Your branch is ahead of" ]]
             then
               echo "System is up to date."
             else
+              # Rebase new changes and autostash to avoid any merge conflicts.
               git rebase --autostash
 
               # Rebuild with new inputs.
               nixos-rebuild switch --flake ${cfg.flakeDir}
 
               # Fetch new nixpkgs tarball from registry.
-              nix run nixpkgs#hello
+              nix run nixpkgs#hello -- -g ""
             fi
           '';
         };

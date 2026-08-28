@@ -25,8 +25,8 @@ writeShellApplication {
 
     echo
 
-    TMP_DIR_CLONED_NIXOS=$(mktemp -d)
-    if ! git clone https://github.com/swagtop/nixos "$TMP_DIR_CLONED_NIXOS"; then
+    TMP_DIR_NEW_NIXOS=$(mktemp -d)
+    if ! git clone https://github.com/swagtop/nixos "$TMP_DIR_NEW_NIXOS"; then
       echo "Failed cloning 'github:swagtop/nixos' into a temp directory."
       echo "Aborting script, no changes have been made."
       exit 1
@@ -34,14 +34,14 @@ writeShellApplication {
 
     echo
 
-    if [ -d "$TMP_DIR_CLONED_NIXOS/hosts/$REPLY" ]; then
+    if [ -d "$TMP_DIR_NEW_NIXOS/hosts/$REPLY" ]; then
       echo "Host '$REPLY' already exists in repo, choose another name."
       echo "Aborting script, no changes have been made."
       exit 1
     fi
 
-    TMP_DIR_CURRENT_NIXOS=$(mktemp -d)
-    if ! sudo cp -r /etc/nixos/* "$TMP_DIR_CURRENT_NIXOS"; then
+    TMP_DIR_OLD_NIXOS=$(mktemp -d)
+    if ! sudo cp -r /etc/nixos/* "$TMP_DIR_OLD_NIXOS"; then
       echo "Failed copying existing '/etc/nixos' to a temp directory."
       echo "Aborting script, no changes have been made."
       exit 1
@@ -58,16 +58,16 @@ writeShellApplication {
         echo "Aborting script, and restoring original '/etc/nixos'."
 
         sudo rm -rf /etc/nixos
-        sudo mv "$TMP_DIR_CURRENT_NIXOS" /etc/nixos
+        sudo mv "$TMP_DIR_OLD_NIXOS" /etc/nixos
 
         exit 1
       fi
     }
 
     abort-on-failure sudo rm -rf /etc/nixos/*
-    abort-on-failure sudo mv "$TMP_DIR_CLONED_NIXOS"/* "$TMP_DIR_CLONED_NIXOS"/.* /etc/nixos
+    abort-on-failure sudo mv "$TMP_DIR_NEW_NIXOS"/* "$TMP_DIR_NEW_NIXOS"/.* /etc/nixos
     abort-on-failure sudo mkdir "/etc/nixos/hosts/$REPLY"
-    abort-on-failure sudo cp -r "$TMP_DIR_CURRENT_NIXOS"/* "/etc/nixos/hosts/$REPLY"
+    abort-on-failure sudo cp -r "$TMP_DIR_OLD_NIXOS"/* "/etc/nixos/hosts/$REPLY"
     abort-on-failure cd /etc/nixos; sudo git add .; sudo chown -R root .;
 
     echo

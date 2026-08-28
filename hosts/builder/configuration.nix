@@ -32,7 +32,7 @@
   };
 
   # Set to garbage collect more often, as it has much more in its store.
-  nix.gc.options = lib.mkForce "--delete-older-than 7d";
+  nix.gc.options = lib.mkForce "--delete-older-than 3d";
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";

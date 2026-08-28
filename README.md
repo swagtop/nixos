@@ -10,16 +10,13 @@ too much thought into.
 
 ### Nix Cache
 
-The coolest thing I've got going is my cache setup, which once a day updates the
-flake inputs, and builds all hosts subscribed to the cache with
-`swag.cache.enable = true`.
+My favourite thing I've got going on is my Nix cache. My build server builds
+all of my systems once a day, and each system tries pulling updates from this
+repo once an hour.
 
-If all hosts are built successfully, the lockfile is commited and pushed,
-and users of the cache automatically pull the lockfile and subsequently their
-pre-built systems, through the `harmonia` cache.
-
-I don't worry about overriding anything anymore, as the penalty (long rebuilds)
-for this is paid once, by my build server, overnight, while I'm sleeping.
+I no longer worry about long rebuilds from overrides, as this whole system
+is automated and I don't spend any time doing long rebuilds on my different
+machines.
 
 
 ## Installation

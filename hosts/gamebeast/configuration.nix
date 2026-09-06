@@ -107,35 +107,35 @@ in
     in
     zfsKernelPackages;
 
-  # nixpkgs.overlays = [
-  #   # Building GNOME stuff with native optimizations.
-  #   (
-  #     final: prev:
-  #     let
-  #       # Only using native GTK4 and GJS for some derivations, too many packages
-  #       # need to be compiled if these are native in general.
-  #       native = {
-  #         gtk4 = optimizeForNative prev.gtk4;
-  #         gjs = optimizeForNative prev.gjs;
-  #       };
-  #     in
-  #     mapAttrs (name: value: optimizeForNative value) {
-  #       inherit (prev) gnome-desktop ripgrep;
+  nixpkgs.overlays = [
+    # Building GNOME stuff with native optimizations.
+    (
+      final: prev:
+      let
+        # Only using native GTK4 and GJS for some derivations, too many packages
+        # need to be compiled if these are native in general.
+        native = {
+          gtk4 = optimizeForNative prev.gtk4;
+          gjs = optimizeForNative prev.gjs;
+        };
+      in
+      mapAttrs (name: value: optimizeForNative value) {
+        inherit (prev) gnome-desktop ripgrep;
 
-  #       gnome-session = prev.gnome-session.override {
-  #         inherit (final) gnome-desktop;
-  #       };
-  #       mutter = prev.mutter.override {
-  #         inherit (native) gtk4;
-  #         inherit (final) gnome-desktop;
-  #       };
-  #       gnome-shell = prev.gnome-shell.override {
-  #         inherit (native) gtk4 gjs;
-  #         inherit (final) mutter gnome-desktop;
-  #       };
-  #     }
-  #   )
-  # ];
+        gnome-session = prev.gnome-session.override {
+          inherit (final) gnome-desktop;
+        };
+        mutter = prev.mutter.override {
+          inherit (native) gtk4;
+          inherit (final) gnome-desktop;
+        };
+        gnome-shell = prev.gnome-shell.override {
+          inherit (native) gtk4 gjs;
+          inherit (final) mutter gnome-desktop;
+        };
+      }
+    )
+  ];
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -265,7 +265,7 @@ in
     };
   };
 
-  zramSwap.enable = true;
+  # zramSwap.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;

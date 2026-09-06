@@ -32,8 +32,34 @@ let
       (filter (checkFile))
       (map (name: "${dir}/${name}"))
     ];
+
+  safeOverride =
+    let
+      inherit (builtins)
+        isAttrs
+        isList
+        isString
+        mapAttrs
+        ;
+    in
+    overrides: old:
+    mapAttrs (
+      name: value:
+      (
+        if isAttrs value then
+          old.${name} or { } // value
+        else if isList value then
+          old.${name} or [ ] ++ value
+        else if isString value then
+          old.${name} or "" + value
+        else
+          value
+      )
+    ) overrides;
 in
 {
+  inherit safeOverride;
+  
   # Run 'gcc -march=native -Q --help=target | grep march' to get march.
   optimizeForNative =
     pkgs: march: pkg:
@@ -42,8 +68,12 @@ in
         mapAttrs
         ;
 
-      nativeStdenv = pkgs.stdenvAdapters.withCFlags [ "-march=${march}" "-mtune=${march}" ] pkgs.stdenv;
-      pkg' = pkg.override { stdenv = nativeStdenv; };
+      pkg' = pkg.override (old: {
+        stdenv = pkgs.stdenvAdapters.withCFlags [
+          "-march=${march}"
+          "-mtune=${march}"
+        ] old.stdenv or pkgs.stdenv;
+      });
     in
     pkg'.overrideAttrs (oldAttrs: {
       env =
@@ -105,28 +135,4 @@ in
     {
       imports = getNixFiles { inherit dir excludeDefault; };
     };
-
-  safeOverride =
-    let
-      inherit (builtins)
-        isAttrs
-        isList
-        isString
-        mapAttrs
-        ;
-    in
-    overrides: old:
-    mapAttrs (
-      name: value:
-      (
-        if isAttrs value then
-          old.${name} or { } // value
-        else if isList value then
-          old.${name} or [ ] ++ value
-        else if isString value then
-          old.${name} or "" + value
-        else
-          value
-      )
-    ) overrides;
 }

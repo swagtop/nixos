@@ -174,14 +174,13 @@ in
   };
 
   # Enable the X11 windowing system.
-  hardware.nvidia.open = false;
+  hardware.nvidia = {
+    open = true;
+    modesetting.enable = true;
+  };
   services.xserver = {
     enable = true;
-    videoDrivers = [
-      "nvidia"
-      "amdgpu"
-      "modesetting"
-    ];
+    videoDrivers = [ "nvidia" ];
   };
 
   services.libinput.enable = true;

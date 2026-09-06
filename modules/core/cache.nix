@@ -63,7 +63,12 @@ in
   };
 
   config = lib.mkMerge [
-    (lib.mkIf cfg.enable { environment.systemPackages = [ pkgs.git pkgs.gh ]; })
+    (lib.mkIf cfg.enable {
+      environment.systemPackages = [
+        pkgs.git
+        pkgs.gh
+      ];
+    })
 
     (lib.mkIf (cfg.enable && cfg.mode == "user") {
       nix.settings = {
@@ -79,7 +84,11 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
 
-        path = [ pkgs.git pkgs.nix pkgs.nixos-rebuild ];
+        path = [
+          pkgs.git
+          pkgs.nix
+          pkgs.nixos-rebuild
+        ];
 
         serviceConfig = niceService // {
           Type = "oneshot";

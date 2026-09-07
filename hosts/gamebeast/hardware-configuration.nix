@@ -43,7 +43,10 @@
   fileSystems."/nix" = {
     device = "zpool/nix";
     fsType = "zfs";
-    options = [ "zfsutil" ];
+    options = [
+      "zfsutil"
+      "noatime"
+    ];
   };
 
   fileSystems."/var" = {

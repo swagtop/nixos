@@ -59,7 +59,7 @@ let
 in
 {
   inherit safeOverride;
-  
+
   # Run 'gcc -march=native -Q --help=target | grep march' to get march.
   optimizeForNative =
     pkgs: march: pkg:

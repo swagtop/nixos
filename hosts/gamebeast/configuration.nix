@@ -120,7 +120,7 @@ in
         };
       in
       mapAttrs (name: value: optimizeForNative value) {
-        inherit (prev) gnome-desktop ripgrep;
+        inherit (prev) gnome-desktop;
 
         gnome-session = prev.gnome-session.override {
           inherit (final) gnome-desktop;
@@ -208,6 +208,7 @@ in
   environment.systemPackages = with pkgs; [
     libvirt
     freetype
+    (optimizeForNative pkgs.ripgrep)
     # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 

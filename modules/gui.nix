@@ -109,7 +109,7 @@ in
   };
 
   environment.variables = {
-    GNOME_SHELL_SLOWDOWN_FACTOR = "0.75";
+    GNOME_SHELL_SLOWDOWN_FACTOR = "0.80";
     COLORTERM = "truecolor";
     TERM = "xterm-256color";
   };

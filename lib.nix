@@ -72,6 +72,7 @@ in
         stdenv = pkgs.stdenvAdapters.withCFlags [
           "-march=${march}"
           "-mtune=${march}"
+          "-O3"
         ] old.stdenv or pkgs.stdenv;
       });
     in

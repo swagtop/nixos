@@ -3,7 +3,6 @@
   config,
   lib,
   swaglib,
-  inputs,
   ...
 }:
 let
@@ -20,7 +19,7 @@ in
 
   config._module.args.pkgsNative =
     let
-      nuPkgs = import inputs.nixpkgs {
+      nuPkgs = import pkgs.path {
         inherit (pkgs) config;
         inherit (pkgs.stdenv.hostPlatform) system;
       };

@@ -1,18 +1,11 @@
 {
   pkgs,
+  pkgsNative,
   lib,
   swaglib,
   config,
   ...
 }:
-let
-  inherit (lib)
-    mapAttrs
-    optionals
-    ;
-
-  optimizeForNative = swaglib.optimizeForNative pkgs "skylake";
-in
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -64,7 +57,10 @@ in
   # networking.wireless.enable = true;
 
   # ZFS.
-  boot.zfs.forceImportRoot = false;
+  boot.zfs = {
+    package = pkgsNative.zfs;
+    forceImportRoot = false;
+  };
   services.zfs.autoScrub.enable = true;
   networking.hostId = "8425e349";
 
@@ -109,32 +105,20 @@ in
 
   nixpkgs.overlays = [
     # Building GNOME stuff with native optimizations.
-    (
-      final: prev:
-      let
-        # Only using native GTK4 and GJS for some derivations, too many packages
-        # need to be compiled if these are native in general.
-        native = {
-          gtk4 = optimizeForNative prev.gtk4;
-          gjs = optimizeForNative prev.gjs;
-        };
-      in
-      mapAttrs (name: value: optimizeForNative value) {
-        inherit (prev) gnome-desktop;
+    (final: prev: {
+      inherit (pkgsNative) gnome-desktop;
 
-        gnome-session = prev.gnome-session.override {
-          inherit (final) gnome-desktop;
-        };
-        mutter = prev.mutter.override {
-          inherit (native) gtk4;
-          inherit (final) gnome-desktop;
-        };
-        gnome-shell = prev.gnome-shell.override {
-          inherit (native) gtk4 gjs;
-          inherit (final) mutter gnome-desktop;
-        };
-      }
-    )
+      gnome-session = pkgsNative.gnome-session.override {
+        inherit (pkgsNative) gnome-desktop;
+      };
+      mutter = pkgsNative.mutter.override {
+        inherit (pkgsNative) gtk4 gnome-desktop;
+      };
+      gnome-shell = pkgsNative.gnome-shell.override {
+        inherit (pkgsNative) gtk4 gjs gnome-desktop;
+        inherit (final) mutter;
+      };
+    })
   ];
 
   # Configure network proxy if necessary
@@ -208,7 +192,7 @@ in
   environment.systemPackages = with pkgs; [
     libvirt
     freetype
-    (optimizeForNative pkgs.ripgrep)
+    pkgsNative.ripgrep
     # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 

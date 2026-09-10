@@ -17,7 +17,7 @@ in
     default = null;
   };
 
-  config._module.args.pkgsNative =
+  config._module.args.native =
     let
       nuPkgs = import pkgs.path {
         inherit (pkgs) config;

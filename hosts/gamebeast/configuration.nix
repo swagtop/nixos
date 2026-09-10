@@ -1,6 +1,6 @@
 {
   pkgs,
-  pkgsNative,
+  native,
   lib,
   swaglib,
   config,
@@ -58,7 +58,7 @@
 
   # ZFS.
   boot.zfs = {
-    package = pkgsNative.zfs;
+    package = native.zfs;
     forceImportRoot = false;
   };
   services.zfs.autoScrub.enable = true;
@@ -103,23 +103,47 @@
     in
     zfsKernelPackages;
 
-  nixpkgs.overlays = [
-    # Building GNOME stuff with native optimizations.
-    (final: prev: {
-      inherit (pkgsNative) gnome-desktop;
-
-      gnome-session = pkgsNative.gnome-session.override {
-        inherit (pkgsNative) gnome-desktop;
+  system.replaceDependencies.replacements =
+    let
+      native-mutter = native.mutter.override {
+        inherit (native) gtk4 gnome-desktop;
       };
-      mutter = pkgsNative.mutter.override {
-        inherit (pkgsNative) gtk4 gnome-desktop;
-      };
-      gnome-shell = pkgsNative.gnome-shell.override {
-        inherit (pkgsNative) gtk4 gjs gnome-desktop;
-        inherit (final) mutter;
-      };
-    })
-  ];
+    in
+    [
+      {
+        original = pkgs.gnome-session;
+        replacement = native.gnome-session.override {
+          inherit (native) gnome-desktop;
+        };
+      }
+      {
+        original = pkgs.mutter;
+        replacement = native-mutter;
+      }
+      {
+        original = pkgs.gnome-shell;
+        replacement = native.gnome-shell.override {
+          inherit (native) gtk4 gjs gnome-desktop;
+          mutter = native-mutter;
+        };
+      }
+    ]
+    ++
+      map
+        (name: value: {
+          original = pkgs.${name};
+          replacement = native.${name};
+        })
+        (
+          builtins.attrNames {
+            inherit (pkgs)
+              gnome-desktop
+              libdrm
+              libgbm
+              vulkan-loader
+              ;
+          }
+        );
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -192,7 +216,7 @@
   environment.systemPackages = with pkgs; [
     libvirt
     freetype
-    pkgsNative.ripgrep
+    native.ripgrep
     # rocmPackages.rocm-smi # AMD GPU Monitoring
   ];
 

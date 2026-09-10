@@ -38,5 +38,6 @@
 
   swapDevices = [ ];
 
+  swag.native.march = "alderlake";
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

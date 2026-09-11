@@ -126,6 +126,7 @@ in
           OnUnitActiveSec = "1h";
           RandomizedDelaySec = "180";
           Persistent = true;
+          OnCalendar = "08:00";
         };
       };
     })

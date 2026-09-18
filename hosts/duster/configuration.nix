@@ -46,6 +46,14 @@
     };
   };
 
+  virtualisation.virtualbox.host.enable = true;
+  programs.dconf.enable = true;
+  environment.extraInit = ''
+    export XDG_DATA_DIRS="$XDG_DATA_DIRS:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
+  '';
+
+  # networking.wireless.iwd.enable = true;
+
   services.mullvad-vpn.enable = true;
 
   services.auto-cpufreq.enable = true;
@@ -78,6 +86,7 @@
   environment.systemPackages = [
     pkgs.sbctl
     pkgs.mullvad-vpn
+    # pkgs.futhark
   ];
 
   boot.zfs.forceImportRoot = false;

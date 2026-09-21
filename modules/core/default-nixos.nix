@@ -11,13 +11,13 @@ let
 
   shellAliases = {
     # Update.
-    ud = "sudo $SHELL -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
+    ud = "sudo -k $SHELL -c 'cd /etc/nixos; git fetch; git rebase --autostash'";
 
     # Rebuild.
-    rb = "sudo nixos-rebuild switch --flake /etc/nixos";
+    rb = "sudo -k nixos-rebuild switch --flake /etc/nixos";
 
     # 'Edit flake'. Go to /etc/nixos as root.
-    ef = "$SHELL -c 'cd /etc/nixos; sudo --preserve-env --shell'";
+    ef = "$SHELL -c 'cd /etc/nixos; sudo -k --preserve-env --shell'";
 
     # Nix commands.
     nd = "nix develop";

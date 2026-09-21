@@ -81,7 +81,10 @@ in
       '';
 
       systemd.services.user-nixos-cache-update = {
-        after = [ "network-online.target" ];
+        after = [
+          "network.target"
+          "network-online.target"
+        ];
         wants = [ "network-online.target" ];
 
         path = [
@@ -123,10 +126,9 @@ in
       systemd.timers.user-nixos-cache-update = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnUnitActiveSec = "1h";
           RandomizedDelaySec = "180";
           Persistent = true;
-          OnCalendar = "daily";
+          OnCalendar = "hourly";
         };
       };
     })

@@ -235,10 +235,16 @@ in
                 echo
               fi
 
+              CACHED_HOSTS_DIR=/nix/var/nix/gcroots/cached-hosts
+
+              mkdir -p "$CACHED_HOSTS_DIR"
+              rm -rf "$CACHED_HOSTS_DIR/*"
+
               for system in "''${buildSystems[@]}"; do
                 # Skip building system if it is not using the cache.
                 print-with-underline "Building '$system'" --time
-                nixos-rebuild build --flake .#"$system" --no-link -j 1
+                nixos-rebuild build --flake .#"$system" -j 1
+                mv ./result "$CACHED_HOSTS_DIR/$system"
                 echo
               done
 

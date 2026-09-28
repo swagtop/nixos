@@ -82,7 +82,7 @@ let
     }
   '';
 
-  nixPath = "/etc/nixPath";
+  nixpkgs-path = "/etc/nixpkgs";
 in
 {
   options = {
@@ -132,9 +132,9 @@ in
     };
 
     # Set nix channel to follow system flake nixpkgs input.
-    nix.nixPath = [ "nixpkgs=${nixPath}" ];
+    nix.settings.nix-path = [ "nixpkgs=${nixpkgs-path}" ];
     systemd.tmpfiles.rules = [
-      "L+ ${nixPath} - - - - ${pkgs.path}"
+      "L+ ${nixpkgs-path} - - - - ${pkgs.path}"
     ];
 
     nixpkgs.config.allowUnfree = true;

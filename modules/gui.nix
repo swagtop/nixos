@@ -51,6 +51,9 @@ let
   shellAliases = {
     # Open nautilus in current directory.
     naut = "nautilus .";
+
+    # Open file through DE.
+    open = "xdg-open";
   };
 
   gstreamerPackages = with pkgs.gst_all_1; [

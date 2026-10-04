@@ -145,6 +145,8 @@ in
         nix-search-cli
         nix-index
       ];
+    }
+    // lib.optionalAttrs (inputs ? nixpkgs) {
       variables = {
         NIXPKGS_REV = "${inputs.nixpkgs.rev}";
       };

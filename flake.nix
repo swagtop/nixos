@@ -61,53 +61,48 @@
           formatter = pkgs.nixfmt-tree;
         };
 
-      flake = {
-        nixosConfigurations =
-          let
-            mapHosts = mapAttrs (
-              name: host:
-              nixpkgs.lib.nixosSystem (
-                host
-                // {
-                  specialArgs = host.specialArgs or { } // {
-                    inherit
-                      inputs
-                      patches
-                      self
-                      swaglib
-                      ;
-                  };
-
-                  modules = host.modules or [ ] ++ [
-                    ./hosts/${name}/configuration.nix
-                    (importDirectory { dir = ./modules/core; })
-                  ];
-                }
-              )
-            );
-          in
-          mapHosts {
-            gamebeast = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gaming.nix
-                ./modules/gui.nix
-                ./modules/music.nix
-                ./modules/office.nix
-                hytale-flake.nixosModules.hytale-launcher
-              ];
-            };
-            duster = {
-              modules = [
-                ./modules/dev.nix
-                ./modules/gui.nix
-                lanzaboote.nixosModules.lanzaboote
-              ];
-            };
-            files = { };
-            builder = { };
-          };
-      };
+      flake.nixosConfigurations =
+        let
+          makeHosts = mapAttrs (
+            name: host:
+            nixpkgs.lib.nixosSystem (
+              host
+              // {
+                modules = host.modules or [ ] ++ [
+                  ./hosts/${name}/configuration.nix
+                  (importDirectory { dir = ./modules/core; })
+                  {
+                    config._module.args = {
+                      inherit
+                        inputs
+                        patches
+                        self
+                        swaglib
+                        ;
+                    };
+                  }
+                ];
+              }
+            )
+          );
+        in
+        makeHosts {
+          gamebeast.modules = [
+            ./modules/dev.nix
+            ./modules/gaming.nix
+            ./modules/gui.nix
+            ./modules/music.nix
+            ./modules/office.nix
+            hytale-flake.nixosModules.hytale-launcher
+          ];
+          duster.modules = [
+            ./modules/dev.nix
+            ./modules/gui.nix
+            lanzaboote.nixosModules.lanzaboote
+          ];
+          files = { };
+          builder = { };
+        };
     in
     foldl' (
       acc: system:

@@ -162,6 +162,12 @@ in
       # Media.
       celluloid
 
+      # IRC client.
+      polari
+
+      # Music client.
+      finamp
+
       # Wayland and other useful packages.
       wayland
       xwayland

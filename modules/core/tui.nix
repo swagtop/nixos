@@ -23,6 +23,7 @@ let
     green = "1;32";
     orange = "1;33";
     cyan = "1;36";
+    white = "1;37";
   };
 
   # Unicode escape sequences for symbols for proper character width when printed.

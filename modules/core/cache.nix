@@ -91,6 +91,8 @@ in
           pkgs.git
           pkgs.nix
           pkgs.nixos-rebuild
+          pkgs.libnotify
+          pkgs.sudo
         ];
 
         serviceConfig = niceService // {
@@ -113,11 +115,39 @@ in
               # Stop existing rebuild if in progressm.
               systemctl stop nixos-rebuild-switch-to-configuration
 
+              declare -A notifications
+
+              # Push notification to all users.
+              for u in /run/user/*; do
+                uid="''${u##*/}"
+                if [[ $uid -ge 1000 ]]; then
+                  notifications[$u]=$(
+                    sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
+                      notify-send \
+                        --app-icon=nix-snowflake \
+                        --app-name=swag-cache \
+                        --print-id \
+                        "Updates available, beginning update."
+                  )
+                fi
+              done
+
               # Rebuild with new inputs.
               nixos-rebuild switch --flake ${cfg.flakeDir}
 
               # Fetch new nixpkgs tarball from registry.
               nix run nixpkgs#hello -- -g ""
+
+              # Update notification to signify successful update.
+              for u in ''${!notifications[@]}; do
+                uid="''${u##*/}"
+                sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
+                  notify-send \
+                    --app-icon=nix-snowflake \
+                    --app-name=swag-cache \
+                    --replace-id=''${notifications[$u]} \
+                    "Finished updating."
+              done
             fi
           '';
         };

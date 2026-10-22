@@ -220,6 +220,7 @@
     libvirt
     freetype
     native.ripgrep
+    eartag
   ];
 
   services.udev.enable = true;

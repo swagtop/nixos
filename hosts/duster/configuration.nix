@@ -46,7 +46,7 @@
     };
   };
 
-  virtualisation.virtualbox.host.enable = true;
+  # virtualisation.virtualbox.host.enable = true;
   programs.dconf.enable = true;
   environment.extraInit = ''
     export XDG_DATA_DIRS="$XDG_DATA_DIRS:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
@@ -58,6 +58,8 @@
 
   services.auto-cpufreq.enable = true;
   services.power-profiles-daemon.enable = false;
+
+  services.flatpak.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";

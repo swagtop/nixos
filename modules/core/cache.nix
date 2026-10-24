@@ -127,7 +127,7 @@ in
                         --app-icon=nix-snowflake \
                         --app-name=swag-cache \
                         --print-id \
-                        "Updates available, beginning update."
+                        "Updates available, pulling changes."
                   )
                 fi
               done
@@ -146,7 +146,7 @@ in
                     --app-icon=nix-snowflake \
                     --app-name=swag-cache \
                     --replace-id=''${notifications[$u]} \
-                    "Finished updating."
+                    "Finished pulling and rebuilding. Your system is now up to date!"
               done
             fi
           '';

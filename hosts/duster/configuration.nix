@@ -58,6 +58,7 @@
 
   services.auto-cpufreq.enable = true;
   services.power-profiles-daemon.enable = false;
+  services.thermald.enable = true;
 
   services.flatpak.enable = true;
 

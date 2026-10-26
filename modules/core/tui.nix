@@ -69,6 +69,11 @@ let
     function cdgit {
       cd ~/Documents/git/"$1"
     }
+    _cdgit_completions() {
+      local cur=''${COMP_WORDS[COMP_CWORD]}
+      COMPREPLY=( $(cd $HOME/Documents/git && compgen -d -- "$cur") )
+    }
+    complete -F _cdgit_completions cdgit
   '';
 
   # Quick shortcuts.

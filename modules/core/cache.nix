@@ -109,45 +109,38 @@ in
             then
               echo "System is up to date."
             else
+              function notify-all-users {
+                for u in /run/user/*; do
+                  uid="''${u##*/}"
+                  if [[ $uid -ge 1000 ]]; then
+                    sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
+                      notify-send \
+                        --app-icon=nix-snowflake \
+                        --app-name=swag-cache \
+                        --replace-id 203040 \
+                        "$1"
+                  fi
+                done
+              }
+
+              notify-all-users "Updates available, pulling changes."
+
               # Rebase new changes and autostash to avoid any merge conflicts.
               git rebase --autostash
 
               # Stop existing rebuild if in progressm.
               systemctl stop nixos-rebuild-switch-to-configuration
 
-              declare -A notifications
-
-              # Push notification to all users.
-              for u in /run/user/*; do
-                uid="''${u##*/}"
-                if [[ $uid -ge 1000 ]]; then
-                  notifications[$u]=$(
-                    sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
-                      notify-send \
-                        --app-icon=nix-snowflake \
-                        --app-name=swag-cache \
-                        --print-id \
-                        "Updates available, pulling changes."
-                  )
-                fi
-              done
-
               # Rebuild with new inputs.
-              nixos-rebuild switch --flake ${cfg.flakeDir}
+              if ! nixos-rebuild switch --flake ${cfg.flakeDir}; then
+                notify-all-users "Failed update. Check the logs for why."
+                exit 1
+              fi
 
               # Fetch new nixpkgs tarball from registry.
               nix run nixpkgs#hello -- -g ""
 
-              # Update notification to signify successful update.
-              for u in ''${!notifications[@]}; do
-                uid="''${u##*/}"
-                sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
-                  notify-send \
-                    --app-icon=nix-snowflake \
-                    --app-name=swag-cache \
-                    --replace-id=''${notifications[$u]} \
-                    "Finished pulling and rebuilding. Your system is now up to date!"
-              done
+              notify-all-users "Finished pulling and rebuilding. Your system is now up to date!" 
             fi
           '';
         };

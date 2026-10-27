@@ -34,12 +34,6 @@
         removeSuffix
         ;
 
-      swaglib = import ./lib.nix;
-
-      inherit (swaglib)
-        importDirectory
-        ;
-
       patches = mapAttrs' (name: value: {
         name = removeSuffix ".patch" name;
         value = path {
@@ -47,6 +41,8 @@
           path = ./patches/${name};
         };
       }) (readDir ./patches);
+
+      swaglib = import ./lib.nix;
 
       perSystem =
         system:
@@ -57,7 +53,7 @@
           };
         in
         {
-          packages = import ./packages (pkgs // { inherit patches swaglib; });
+          packages = import ./packages.nix (pkgs // { inherit patches swaglib; });
           formatter = pkgs.nixfmt-tree;
         };
 
@@ -65,22 +61,21 @@
         let
           makeHosts = mapAttrs (
             name: host:
+            let
+              moduleArgs = { pkgs, ... }: {
+                config._module.args = {
+                  inherit inputs patches swaglib;
+                  swagpkgs = self.packages.${pkgs.stdenv.hostPlatform.system};
+                };
+              };
+            in
             nixpkgs.lib.nixosSystem (
               host
               // {
                 modules = host.modules or [ ] ++ [
                   ./hosts/${name}/configuration.nix
-                  (importDirectory { dir = ./modules/core; })
-                  {
-                    config._module.args = {
-                      inherit
-                        inputs
-                        patches
-                        self
-                        swaglib
-                        ;
-                    };
-                  }
+                  moduleArgs
+                  (swaglib.importDirectory { dir = ./modules/core; })
                 ];
               }
             )

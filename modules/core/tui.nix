@@ -2,16 +2,13 @@
   config,
   lib,
   pkgs,
-  self,
+  swagpkgs,
   ...
 }:
 
 let
   inherit (builtins)
     mapAttrs
-    ;
-  inherit (pkgs.stdenv.hostPlatform)
-    system
     ;
 
   cfg = config.swag.tui;
@@ -122,8 +119,8 @@ in
       ]
       ++ lib.optionals (cfg.usePatchedPrograms) [
         # Pseudo-ide combo.
-        self.packages.${system}.zellij
-        self.packages.${system}.helix
+        swagpkgs.zellij
+        swagpkgs.helix
       ]
       ++ lib.optionals (!cfg.usePatchedPrograms) [
         zellij

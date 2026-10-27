@@ -44,13 +44,13 @@ let
 
       configFile = pkgs.stdenvNoCC.mkDerivation {
         name = "helix-config.toml";
-        src = ../configs/helix/config.toml;
+        src = ./configs/helix/config.toml;
         phases = [ "installPhase" ];
 
         # Make sure config is pointing to theme in store.
         installPhase = ''
           cp $src $out
-          substituteInPlace $out --replace "cool-theme" "${../configs/helix/themes}/cool-theme"
+          substituteInPlace $out --replace "cool-theme" "${./configs/helix/themes}/cool-theme"
         '';
       };
     in
@@ -70,16 +70,16 @@ let
     package = pkgs.zellij;
     execName = "zellij";
     args = [
-      "--add-flags \"-c ${../configs/zellij/config.kdl}\""
+      "--add-flags \"-c ${./configs/zellij/config.kdl}\""
     ];
   };
 in
 {
   inherit helix zellij;
 
-  install = pkgs.callPackage (import ./install.nix) { };
+  install = pkgs.callPackage (import ./packages/install.nix) { };
 
-  locd = pkgs.callPackage (import ./locd.nix) { };
+  locd = pkgs.callPackage (import ./packages/locd.nix) { };
 
   ide = pkgs.writeShellApplication {
     name = "ide";
@@ -171,7 +171,7 @@ in
     package = pkgs.alacritty;
     execName = "alacritty";
     args = [
-      "--add-flags \"--config-file ${../configs/alacritty/alacritty.toml}\""
+      "--add-flags \"--config-file ${./configs/alacritty/alacritty.toml}\""
     ];
   };
 }

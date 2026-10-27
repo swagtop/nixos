@@ -1,15 +1,12 @@
 {
   lib,
   pkgs,
-  self,
+  swagpkgs,
   ...
 }:
-let
-  inherit (pkgs.stdenv.hostPlatform) system;
-in
 {
   environment.systemPackages = with pkgs; [
-    self.packages.${system}.bitwig-studio
+    swagpkgs.bitwig-studio
     # yabridge
     # yabridgectl
     libsndfile
@@ -20,7 +17,7 @@ in
     CLAP_PATH = "${lib.makeSearchPath "lib/clap" [
       pkgs.vital
       # pkgs.chow-tape-model
-      self.packages.${system}.locd
+      swagpkgs.locd
     ]}";
   };
 

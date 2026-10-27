@@ -1,7 +1,7 @@
 {
-  self,
-  pkgs,
   lib,
+  pkgs,
+  swagpkgs,
   ...
 }:
 
@@ -72,7 +72,7 @@ in
   };
   # xdg.terminal-exec = {
   #   enable = true;
-  #   package = self.packages.${pkgs.stdenv.hostPlatform.system}.alacritty;
+  #   package = swagpkgs.alacritty;
   # };
 
   # Enable GNOME, GDM.
@@ -143,7 +143,7 @@ in
     with pkgs;
     [
       # Terminal emulator, wrapping in shell script for config.
-      self.packages.${pkgs.stdenv.hostPlatform.system}.alacritty
+      swagpkgs.alacritty
 
       nautilus # For the 'nautilus-open-any-terminal' setup.
       element-desktop

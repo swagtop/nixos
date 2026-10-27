@@ -61,7 +61,6 @@
           formatter = pkgs.nixfmt-tree;
         };
 
-      flake.lib = swaglib // { inherit patches; };
       flake.nixosConfigurations =
         let
           makeHosts = mapAttrs (
@@ -103,6 +102,8 @@
           files = { };
           builder = { };
         };
+
+      flake.lib = swaglib // { inherit patches; };
     in
     foldl' (
       acc: system:

@@ -17,7 +17,13 @@ in
     ./hardware-configuration.nix
   ];
 
-  swag.cache.enable = true;
+  swag.cache = {
+    enable = true;
+    mode = "host";
+  };
+
+  # Set to garbage collect more often, as it has much more in its store.
+  nix.gc.options = lib.mkForce "--delete-older-than 3d";
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -106,7 +112,7 @@ in
           "www.spirre.vip".locations."/f/".alias = "/srv/data/files/";
 
           "cache.spirre.vip".locations."/" = {
-            proxyPass = "http://builder:5000";
+            proxyPass = "http://localhost:5000";
             extraConfig = ''
               proxy_set_header Host $host;
               proxy_set_header http_version 1.1;

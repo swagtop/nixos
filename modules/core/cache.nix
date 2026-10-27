@@ -36,7 +36,7 @@ in
 
       cacheLogFile = lib.mkOption {
         type = lib.types.externalPath;
-        default = "/srv/f/cache-log.txt";
+        default = "/srv/data/files/cache-log.txt";
       };
 
       flakeDir = lib.mkOption {

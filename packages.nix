@@ -1,7 +1,7 @@
 {
-  pkgs,
   lib,
   patches,
+  pkgs,
   swaglib,
   ...
 }:

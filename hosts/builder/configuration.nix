@@ -27,8 +27,7 @@
   networking.wireless.enable = lib.mkForce false;
 
   swag.cache = {
-    enable = true;
-    mode = "host";
+    enable = false;
   };
 
   # Set to garbage collect more often, as it has much more in its store.

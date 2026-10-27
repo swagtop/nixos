@@ -2,21 +2,16 @@
 
 This is where I keep all of my important personal configurations, including my
 dotfiles, Nix packages, and NixOS configurations. These things are organized
-into their own subdirectories, to have some sort of structure, which haven't put
-too much thought into.
+into their own subdirectories, and can be found where you expect them to.
 
 
 ## Features
 
 ### Nix Cache
 
-My favourite thing I've got going on is my Nix cache. My build server builds
-all of my systems once a day, and each system tries pulling updates from this
-repo once an hour.
-
-I no longer worry about long rebuilds from overrides, as this whole system
-is automated and I don't spend any time doing long rebuilds on my different
-machines.
+My home server automatically updates the flake inputs, and builds all of my
+systems, once a day. I don't have to worry about long rebuilds from my custom
+packages, or overrides, as everything is built and updated for me automatically.
 
 
 ## Installation

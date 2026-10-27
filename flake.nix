@@ -34,13 +34,17 @@
         removeSuffix
         ;
 
-      patches = mapAttrs' (name: value: {
-        name = removeSuffix ".patch" name;
-        value = path {
-          inherit name;
-          path = ./patches/${name};
-        };
-      }) (readDir ./patches);
+      patches =
+        let
+          makePurePaths = name: value: {
+            name = removeSuffix ".patch" name;
+            value = path {
+              inherit name;
+              path = ./patches/${name};
+            };
+          };
+        in
+        mapAttrs' makePurePaths (readDir ./patches);
 
       swaglib = import ./lib.nix;
 

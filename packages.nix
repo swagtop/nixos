@@ -6,8 +6,9 @@
   ...
 }:
 let
-  inherit (pkgs.lib)
+  inherit (lib)
     concatStringsSep
+    makeLibraryPath
     ;
 
   inherit (swaglib)
@@ -100,7 +101,7 @@ in
     execName = "bitwig-studio";
     args = [
       "--set LD_LIBRARY_PATH \"${
-        lib.makeLibraryPath (
+        makeLibraryPath (
           with pkgs;
           [
             alsa-lib
@@ -139,7 +140,7 @@ in
     pkgs.discord.overrideAttrs (
       safeOverride (
         let
-          flags = "${lib.concatStringsSep " " [
+          flags = "${concatStringsSep " " [
             "--ignore-gpu-blocklist"
             "--enable-features=UseOzonePlatform"
             "--ozone-platform=wayland"

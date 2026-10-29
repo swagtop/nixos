@@ -100,7 +100,6 @@
             lanzaboote.nixosModules.lanzaboote
           ];
           files = { };
-          builder = { };
         };
 
       flake.lib = swaglib // { inherit patches; };

@@ -1,9 +1,9 @@
 {
-  pkgs,
-  native,
-  lib,
-  swaglib,
   config,
+  lib,
+  native,
+  pkgs,
+  swaglib,
   ...
 }:
 {
@@ -13,22 +13,6 @@
     cache.enable = true;
     # linker.enable = true;
   };
-
-  programs.obs-studio = {
-    enable = true;
-    package = pkgs.obs-studio.override { cudaSupport = true; };
-    plugins = with pkgs; [
-      obs-studio-plugins.obs-pipewire-audio-capture
-      obs-studio-plugins.obs-vaapi
-    ];
-  };
-
-  # Compile all packages locally.
-  # nix.settings.substitute = false;
-
-  # Allow unfree packages.
-  nixpkgs.config.allowUnfree = true;
-  programs.nix-ld.enable = true;
 
   # Bootloader.
   boot.loader = {
@@ -148,14 +132,8 @@
           }
         );
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
   # Enable networking.
   networking.networkmanager.enable = true;
-
-  nixpkgs.config.rocmSupport = true;
 
   services.displayManager.gdm.enable = true;
   services.desktopManager = {
@@ -163,6 +141,16 @@
     # cosmic.enable = true;
   };
 
+  programs.obs-studio = {
+    enable = true;
+    package = pkgs.obs-studio.override { cudaSupport = true; };
+    plugins = with pkgs; [
+      obs-studio-plugins.obs-pipewire-audio-capture
+      obs-studio-plugins.obs-vaapi
+    ];
+  };
+
+  # Lower power usage.
   services.auto-cpufreq.enable = true;
   services.power-profiles-daemon.enable = false;
 
@@ -209,8 +197,6 @@
     ];
   };
 
-  hardware.amdgpu.legacySupport.enable = true;
-
   environment.variables = {
     # Intel stuff
     LIBVA_DRIVER_NAME = "iHD";
@@ -224,12 +210,6 @@
   ];
 
   services.udev.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "dk";
-    variant = "";
-  };
 
   # Configure console keymap
   console.keyMap = "dk-latin1";
@@ -271,25 +251,14 @@
       enable = true;
       setSocketVariable = true;
       daemon.settings = {
-        # dns = [ "10.10.10.1" ];
         registry-mirrors = [ "https://mirror.gcr.io" ];
       };
     };
   };
 
-  # zramSwap.enable = true;
-
   # Install firefox.
   programs.firefox.enable = true;
   programs.firefox.package = pkgs.firefox-esr;
-
-  # Some programs need SUID wrappers, can be configured further or are started
-  # in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
   programs.steam.localNetworkGameTransfers.openFirewall = true;
 
@@ -311,29 +280,9 @@
     spiceUSBRedirection.enable = true;
   };
 
-  programs.ssh = {
-    extraConfig = ''
-      Host builder
-        HostName builder
-        ProxyJump hypervisor
-
-      Host files
-        HostName hypervisor
-    '';
-  };
-
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
   services.dbus.enable = true;
   services.geoclue2.enable = lib.mkForce false;
-
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [ "*" ];
-      settings.main.capslock = "esc";
-    };
-  };
 
   # Flatpak and flathub, and adw-gtk3 theme for flatpaks.
   services.flatpak.enable = true;
@@ -347,18 +296,8 @@
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [
-    8000
-    # 16261
-    # 16262
-  ];
-  networking.firewall.allowedUDPPorts = [
-    # 16261
-    # 16262
-  ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.allowedTCPPorts = [ 8000 ];
+  networking.firewall.allowedUDPPorts = [ ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -385,11 +324,5 @@
     options iwlwifi uapsd_disable=1
   '';
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 }

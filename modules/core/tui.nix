@@ -134,5 +134,14 @@ in
     environment.variables = {
       EDITOR = cfg.editor;
     };
+
+    # Set caps-lock to the escape key.
+    services.keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [ "*" ];
+        settings.main.capslock = "esc";
+      };
+    };
   };
 }

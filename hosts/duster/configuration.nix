@@ -28,7 +28,6 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "keyd"
       "realtime"
       "audio"
       "video"
@@ -36,14 +35,6 @@
       "qemu-libvirtd"
       "nix"
     ];
-  };
-
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [ "*" ];
-      settings.main.capslock = "esc";
-    };
   };
 
   # virtualisation.virtualbox.host.enable = true;

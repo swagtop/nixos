@@ -132,7 +132,7 @@ in
               systemctl stop nixos-rebuild-switch-to-configuration
 
               # Rebuild with new inputs.
-              if ! nixos-rebuild switch --flake ${cfg.flakeDir}; then
+              if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 1; then
                 notify-all-users "Failed update. Check the logs for why."
                 exit 1
               fi

@@ -108,40 +108,41 @@ in
                [[ "$GIT_STATUS_RESULT" =~ "Your branch is ahead of" ]]
             then
               echo "System is up to date."
-            else
-              function notify-all-users {
-                for u in /run/user/*; do
-                  uid="''${u##*/}"
-                  if [[ $uid -ge 1000 ]]; then
-                    sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
-                      notify-send \
-                        --app-icon=nix-snowflake \
-                        --app-name=swag-cache \
-                        --replace-id 203040 \
-                        "$1"
-                  fi
-                done
-              }
-
-              notify-all-users "Updates available, pulling changes."
-
-              # Rebase new changes and autostash to avoid any merge conflicts.
-              git rebase --autostash
-
-              # Stop existing rebuild if in progressm.
-              systemctl stop nixos-rebuild-switch-to-configuration
-
-              # Rebuild with new inputs.
-              if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 1; then
-                notify-all-users "Failed update. Check the logs for why."
-                exit 1
-              fi
-
-              # Fetch new nixpkgs tarball from registry.
-              nix run nixpkgs#hello -- -g ""
-
-              notify-all-users "Finished pulling and rebuilding. Your system is now up to date!" 
+              exit 0
             fi
+
+            function notify-all-users {
+              for u in /run/user/*; do
+                uid="''${u##*/}"
+                if [[ $uid -ge 1000 ]]; then
+                  sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
+                    notify-send \
+                      --app-icon=nix-snowflake \
+                      --app-name=swag-cache \
+                      --replace-id 203040 \
+                      "$1"
+                fi
+              done
+            }
+
+            notify-all-users "Updates available, pulling changes."
+
+            # Rebase new changes and autostash to avoid any merge conflicts.
+            git rebase --autostash
+
+            # Stop existing rebuild if in progressm.
+            systemctl stop nixos-rebuild-switch-to-configuration
+
+            # Rebuild with new inputs.
+            if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 1; then
+              notify-all-users "Failed update. Check the logs for why."
+              exit 1
+            fi
+
+            # Fetch new nixpkgs tarball from registry.
+            nix run nixpkgs#hello -- -g ""
+
+            notify-all-users "Finished pulling and rebuilding. Your system is now up to date!" 
           '';
         };
       };

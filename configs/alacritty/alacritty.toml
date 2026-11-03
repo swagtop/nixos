@@ -22,7 +22,7 @@ args = ["bash", "-c", "bash -c 'zellij; bash; exit'"]
 #args = ["bash", "-c", "zellij; exec bash"]
 
 [window]
-dimensions = { columns = 87, lines = 30 }
+dimensions = { columns = 88, lines = 30 }
 title = "Alacritty"
 dynamic_title = false
 

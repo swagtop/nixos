@@ -140,15 +140,12 @@ in
     pkgs.discord.overrideAttrs (
       safeOverride (
         let
-          flags = "${concatStringsSep " " [
+          flags = concatStringsSep " " [
             "--ignore-gpu-blocklist"
-            "--enable-features=UseOzonePlatform"
-            "--ozone-platform=wayland"
-            "--enable-features=VaapiVideoDecoder"
-            "--use-gl=desktop"
+            "--enable-features=VaapiVideoDecoder,VaapiOnNvidiaGPUs"
             "--enable-gpu-rasterization"
-            "--enable-zero-copy"
-          ]}";
+            "--ozone-platform-hint=auto"
+          ];
         in
         {
           nativeBuildInputs = [ pkgs.makeWrapper ];
@@ -164,7 +161,9 @@ in
   steam = pkgs.steam.overrideAttrs (safeOverride {
     nativeBuildInputs = [ pkgs.makeWrapper ];
     buildCommand = ''
-      wrapProgram $out/bin/steam --add-flags "steam://unlockh264";
+      wrapProgram $out/bin/steam \
+        --add-flags "steam://unlockh264" \
+        --set PROTON_USE_WAYLAND 1
     '';
   });
 

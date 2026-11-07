@@ -117,6 +117,7 @@ in
                 if [[ $uid -ge 1000 ]]; then
                   sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
                     notify-send \
+                      --urgency=normal \
                       --app-icon=nix-snowflake \
                       --app-name=swag-cache \
                       --replace-id 203040 \
@@ -134,7 +135,7 @@ in
             systemctl stop nixos-rebuild-switch-to-configuration
 
             # Rebuild with new inputs.
-            if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 1; then
+            if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 2; then
               notify-all-users "Failed update. Check the logs for why."
               exit 1
             fi

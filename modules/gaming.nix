@@ -10,9 +10,11 @@
 
   programs.steam = {
     enable = true;
-    protontricks.enable = true;
     package = swagpkgs.steam;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
+    extest.enable = true;
+    protontricks.enable = true;
     gamescopeSession.enable = true;
+    localNetworkGameTransfers.openFirewall = true;
   };
 }

@@ -2,8 +2,10 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
+  config,
   lib,
   modulesPath,
+  pkgs,
   ...
 }:
 {
@@ -20,7 +22,7 @@
     "sr_mod"
   ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
@@ -35,6 +37,5 @@
 
   swapDevices = [ ];
 
-  swag.native.march = "alderlake";
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

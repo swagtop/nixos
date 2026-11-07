@@ -1,8 +1,8 @@
 diff --git a/harmonia-cache/src/config.rs b/harmonia-cache/src/config.rs
-index 00a2c45..28b25a5 100644
+index 18cf5e2..7917f64 100644
 --- a/harmonia-cache/src/config.rs
 +++ b/harmonia-cache/src/config.rs
-@@ -127,6 +127,8 @@ pub(crate) struct Config {
+@@ -128,6 +128,8 @@ pub(crate) struct Config {
      pub(crate) tls_cert_path: Option<String>,
      #[serde(default)]
      pub(crate) tls_key_path: Option<String>,
@@ -13,21 +13,24 @@ index 00a2c45..28b25a5 100644
      #[serde(default)]
 diff --git a/harmonia-cache/src/extra_log.rs b/harmonia-cache/src/extra_log.rs
 new file mode 100644
-index 0000000..3f01fee
+index 0000000..79e6cd1
 --- /dev/null
 +++ b/harmonia-cache/src/extra_log.rs
-@@ -0,0 +1,14 @@
-+use actix_web::{HttpResponse, http, web};
+@@ -0,0 +1,17 @@
++use actix_files::NamedFile;
++use actix_web::{HttpResponse, HttpRequest, web};
 +use std::error::Error;
-+use std::fs::read_to_string;
 +
 +use crate::config;
 +
-+pub(crate) async fn get(config: web::Data<config::Config>) -> Result<HttpResponse, Box<dyn Error>> {
++pub(crate) async fn get(config: web::Data<config::Config>, req: HttpRequest) -> Result<HttpResponse, Box<dyn Error>> {
 +    match &config.extra_logfile_path {
-+        Some(path) => Ok(HttpResponse::Ok()
-+            .insert_header(http::header::ContentType::plaintext())
-+            .body(read_to_string(path)?)),
++        Some(path) => {
++            let file = NamedFile::open(path)?
++                .set_content_type(mime::TEXT_PLAIN_UTF_8);
++
++            Ok(file.into_response(&req))
++        },
 +        None => Err("No extra logfile defined in configuration.".into()),
 +    }
 +}

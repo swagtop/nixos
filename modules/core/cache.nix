@@ -246,6 +246,8 @@ in
                 fi
               done
 
+              echo
+
               FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 
               print-with-underline "Updating flake inputs" --time
               nix flake update --flake . 2>&1

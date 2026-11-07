@@ -223,28 +223,6 @@
   services.pipewire.enable = true;
   programs.dconf.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.thedb = {
-    isNormalUser = true;
-    description = "thedb";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "keyd"
-      "realtime"
-      "audio"
-      "video"
-      "libvirtd"
-      "qemu-libvirtd"
-      "nix"
-    ];
-    packages = with pkgs; [
-      spotify
-      transmission_4-gtk
-      prismlauncher
-    ];
-  };
-
   virtualisation.docker = {
     enable = false;
     rootless = {

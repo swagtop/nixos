@@ -54,17 +54,6 @@ in
     LC_TIME = "da_DK.UTF-8";
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users."thedb" = {
-    isNormalUser = true;
-    description = "thedb";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    packages = with pkgs; [ ];
-  };
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 

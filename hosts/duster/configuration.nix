@@ -22,21 +22,6 @@
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
 
-  users.users.thedb = {
-    isNormalUser = true;
-    description = "thedb";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "realtime"
-      "audio"
-      "video"
-      "libvirtd"
-      "qemu-libvirtd"
-      "nix"
-    ];
-  };
-
   # virtualisation.virtualbox.host.enable = true;
   programs.dconf.enable = true;
   environment.extraInit = ''

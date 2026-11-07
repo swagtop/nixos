@@ -217,11 +217,7 @@ in
               git rebase --autostash || echo 'Failed git rebase!'
               echo
 
-              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 
-              print-with-underline "Updating flake inputs" --time
-              nix flake update --flake . 2>&1
-              echo
-
+              print-with-underline "Evaluating which hosts to build"
               declare -a allSystems=()
 
               systemCount=$(
@@ -249,6 +245,11 @@ in
                   ignoreSystems+=("$system")
                 fi
               done
+
+              FLAKE_INPUTS_UPDATE_DATE=$(date '+%Y-%m-%d') 
+              print-with-underline "Updating flake inputs" --time
+              nix flake update --flake . 2>&1
+              echo
 
               echo
               print-with-underline "Building the following hosts"

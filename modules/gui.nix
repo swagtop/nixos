@@ -4,7 +4,6 @@
   swagpkgs,
   ...
 }:
-
 # Define preferred GNOME settings.
 let
   gnomeSettings = [

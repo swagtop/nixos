@@ -5,7 +5,6 @@
   swagpkgs,
   ...
 }:
-
 let
   inherit (builtins)
     mapAttrs

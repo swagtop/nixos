@@ -102,7 +102,9 @@
           files = { };
         };
 
-      flake.lib = swaglib // { inherit patches; };
+      flake.lib = swaglib // {
+        inherit patches;
+      };
     in
     foldl' (
       acc: system:

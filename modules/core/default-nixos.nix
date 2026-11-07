@@ -5,7 +5,6 @@
   config,
   ...
 }:
-
 let
   cfg = config.swag.default-nixos;
 

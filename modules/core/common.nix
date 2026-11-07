@@ -1,5 +1,7 @@
-{ pkgs, ... }:
-
+{
+  pkgs,
+  ...
+}:
 {
   # Generally useful packages.
   environment.systemPackages = with pkgs; [

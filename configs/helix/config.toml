@@ -27,3 +27,4 @@ C-k = "jump_view_up"
 C-l = "jump_view_right"
 'C-`' = "switch_to_uppercase"
 X = "extend_line_above"
+T = "@s[ \t]+$<ret>d<C-o>" # Remove trailing whitespace for selection.

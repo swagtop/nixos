@@ -99,7 +99,9 @@
             ./modules/gui.nix
             lanzaboote.nixosModules.lanzaboote
           ];
-          files = { };
+          files.modules = [
+            ./modules/update-hytale-flake.nix
+          ];
         };
 
       flake.lib = swaglib // {

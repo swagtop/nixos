@@ -6,26 +6,29 @@
 let
   inherit (lib) getExe;
 
-  script = pkgs.writeShellScriptApplication {
+  script = pkgs.writeShellApplication {
     name = "update-hytale-flake";
     runtimeInputs = with pkgs; [
+      bash
       curl
       gh
       git
       jq
+      nix
     ];
     text = ''
       git clone https://github.com/swagtop/hytale-flake
       cd hytale-flake
-      ./update-hashes
+      ./update-hashes.sh
       git add hashes.nix
-      git commit -m "Update to $(cat .version)"
-      git push
+      if git commit -m "Update to $(cat .version)"; then
+        git push
+      fi
     '';
   };
 in
 {
-  services.systemd.update-hytale-flake = {
+  systemd.services.update-hytale-flake = {
     description = "Automatic updates of the hytale-flake.";
     after = [
       "network.target"
@@ -38,9 +41,10 @@ in
       ExecStart = getExe script;
       RuntimeDirectory = "update-hytale-flake";
       WorkingDirectory = "/run/update-hytale-flake";
-      PrivaTmp = true;
+      PrivateTmp = true;
     };
   };
+
   systemd.timers.update-hytale-flake = {
     wantedBy = [ "timers.target" ];
     timerConfig = {

@@ -6,7 +6,7 @@
   ...
 }:
 let
-  cfg = config.swag.default-nixos;
+  cfg = config.swag.nixos-defaults;
 
   shellAliases = {
     # Update.
@@ -80,7 +80,7 @@ let
 in
 {
   options = {
-    swag.default-nixos.enable = lib.mkOption {
+    swag.nixos-defaults.enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
     };
@@ -111,6 +111,10 @@ in
       daemonIOSchedClass = "idle";
       daemonIOSchedPriority = 7;
     };
+
+    # Use earlyoom instead of systemd-oomd.
+    systemd.oomd.enable = lib.mkForce false;
+    services.earlyoom.enable = lib.mkForce true;
 
     systemd.services."fetch-nixpkgs-tarball-on-startup" = {
       after = [ "network-online.target" ];

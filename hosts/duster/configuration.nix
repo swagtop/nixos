@@ -8,7 +8,9 @@
   pkgs,
   ...
 }:
-
+let
+  inherit (lib) optionals;
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -16,6 +18,7 @@
   ];
 
   swag.cache.enable = true;
+  swag.native.march = "tigerlake";
 
   networking.hostName = "duster"; # Define your hostname.
 
@@ -72,6 +75,14 @@
   boot.zfs.forceImportRoot = false;
   networking.hostId = "8425e349";
   zramSwap.enable = true;
+
+  boot.kernelParams = [
+    "acpi_enforce_resources=lax"
+    "i915.enable_dc=0"
+  ] ++ optionals (config.hardware.intelgpu.driver == "i915") [
+    "i915.enable_guc=3"
+  ];
+  hardware.intelgpu.vaapiDriver = "intel-media-driver";
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.

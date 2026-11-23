@@ -11,6 +11,7 @@
 
   swag = {
     cache.enable = true;
+    native.march = "skylake";
     # linker.enable = true;
   };
 

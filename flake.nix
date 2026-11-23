@@ -7,6 +7,10 @@
       url = "github:nix-community/lanzaboote/v1.2.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hytale-flake = {
       url = "github:swagtop/hytale-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,6 +22,7 @@
       self,
       nixpkgs,
       lanzaboote,
+      nixos-hardware,
       hytale-flake,
       ...
     }:
@@ -98,6 +103,7 @@
             ./modules/dev.nix
             ./modules/gui.nix
             lanzaboote.nixosModules.lanzaboote
+            "${nixos-hardware}/common/cpu/intel"
           ];
           files.modules = [
             ./modules/update-hytale-flake.nix

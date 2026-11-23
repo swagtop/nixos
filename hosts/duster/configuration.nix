@@ -35,10 +35,6 @@ in
 
   services.mullvad-vpn.enable = true;
 
-  services.auto-cpufreq.enable = true;
-  services.power-profiles-daemon.enable = false;
-  services.thermald.enable = true;
-
   services.flatpak.enable = true;
 
   # Set your time zone.
@@ -76,6 +72,13 @@ in
   networking.hostId = "8425e349";
   zramSwap.enable = true;
 
+  services.auto-cpufreq.enable = true;
+  services.power-profiles-daemon.enable = false;
+  services.tlp = {
+    enable = true;
+    pd.enable = true; 
+  };
+  services.thermald.enable = true;
   boot.kernelParams = [
     "acpi_enforce_resources=lax"
     "i915.enable_dc=0"

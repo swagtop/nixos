@@ -76,13 +76,14 @@ in
   services.power-profiles-daemon.enable = false;
   services.tlp = {
     enable = true;
-    pd.enable = true; 
+    pd.enable = true;
   };
   services.thermald.enable = true;
   boot.kernelParams = [
     "acpi_enforce_resources=lax"
     "i915.enable_dc=0"
-  ] ++ optionals (config.hardware.intelgpu.driver == "i915") [
+  ]
+  ++ optionals (config.hardware.intelgpu.driver == "i915") [
     "i915.enable_guc=3"
   ];
   hardware.intelgpu.vaapiDriver = "intel-media-driver";

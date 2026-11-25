@@ -158,15 +158,6 @@ in
     )
   );
 
-  steam = pkgs.steam.overrideAttrs (safeOverride {
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    buildCommand = ''
-      wrapProgram $out/bin/steam \
-        --add-flags "steam://unlockh264" \
-        --set PROTON_USE_WAYLAND 1
-    '';
-  });
-
   alacritty = symlinkWrap {
     package = pkgs.alacritty;
     execName = "alacritty";

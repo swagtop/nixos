@@ -14,19 +14,15 @@ in
 
   programs.steam = {
     enable = true;
-    package = swagpkgs.steam;
-    extraCompatPackages =
-      let
-        wayland-steam = pkgs.steam.overrideAttrs (safeOverride {
-          nativeBuildInputs = [ pkgs.makeWrapper ];
-          buildCommand = ''
-            wrapProgram $out/bin/steam \
-              --add-flags "steam://unlockh264" \
-              --set PROTON_USE_WAYLAND 1
-          '';
-        });
-      in
-      [ wayland-steam ];
+    package = pkgs.steam.overrideAttrs (safeOverride {
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      buildCommand = ''
+        wrapProgram $out/bin/steam \
+          --add-flags "steam://unlockh264" \
+          --set PROTON_USE_WAYLAND 1
+      '';
+    });
+    extraCompatPackages = [ pkgs.proton-ge-bin ];
     extest.enable = true;
     protontricks.enable = true;
     gamescopeSession.enable = true;

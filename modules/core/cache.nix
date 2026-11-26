@@ -111,22 +111,37 @@ in
               exit 0
             fi
 
-            function notify-all-users {
-              for u in /run/user/*; do
-                uid="''${u##*/}"
-                if [[ $uid -ge 1000 ]]; then
+            declare -A notifications
+
+            # Push notification to all users.
+            for u in /run/user/*; do
+              uid="''${u##*/}"
+              if [[ $uid -ge 1000 ]]; then
+                notifications[$u]=$(
                   sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
                     notify-send \
-                      --urgency=normal \
                       --app-icon=nix-snowflake \
                       --app-name=swag-cache \
-                      --replace-id 203040 \
-                      "$1"
-                fi
+                      --print-id \
+                      "Updates available" "Pulling changes."
+                )
+              fi
+            done
+
+            function update-notification {
+              for u in ''${!notifications[@]}; do
+                uid="''${u##*/}"
+                notifications[$u]=$(
+                  sudo -u "#$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=$u/bus" \
+                    notify-send \
+                      --app-icon=nix-snowflake \
+                      --app-name=swag-cache \
+                      --replace-id=''${notifications[$u]} \
+                      --print-id \
+                      "''${1[@]}"
+                )
               done
             }
-
-            notify-all-users "Updates available, pulling changes."
 
             # Rebase new changes and autostash to avoid any merge conflicts.
             git rebase --autostash
@@ -136,14 +151,17 @@ in
 
             # Rebuild with new inputs.
             if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 2; then
-              notify-all-users "Failed update. Check the logs for why."
+              update-notification "Failed update" "Check the logs for why."
               exit 1
             fi
 
             # Fetch new nixpkgs tarball from registry.
             nix run nixpkgs#hello -- -g ""
 
-            notify-all-users "Finished pulling and rebuilding. Your system is now up to date!" 
+            # Update notification to signify successful update.
+            update-notification \
+              "Finished pulling and rebuilding" \
+              "Your system is now up to date!"
           '';
         };
       };

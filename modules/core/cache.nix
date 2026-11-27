@@ -138,7 +138,7 @@ in
                       --app-name=swag-cache \
                       --replace-id=''${notifications[$u]} \
                       --print-id \
-                      "''${1[@]}"
+                      "''${@}"
                 )
               done
             }
@@ -147,7 +147,7 @@ in
             git rebase --autostash
 
             # Stop existing rebuild if in progressm.
-            systemctl stop nixos-rebuild-switch-to-configuration
+            systemctl stop nixos-rebuild-switch-to-configuration || true
 
             # Rebuild with new inputs.
             if ! nixos-rebuild switch --flake ${cfg.flakeDir} -j 2; then

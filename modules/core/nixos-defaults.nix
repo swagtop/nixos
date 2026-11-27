@@ -114,7 +114,10 @@ in
 
     # Use earlyoom instead of systemd-oomd.
     systemd.oomd.enable = lib.mkForce false;
-    services.earlyoom.enable = lib.mkForce true;
+    services.earlyoom = {
+      enable = lib.mkForce true;
+      freeMemThreshold = 5;
+    };
 
     systemd.services."fetch-nixpkgs-tarball-on-startup" = {
       after = [ "network-online.target" ];
